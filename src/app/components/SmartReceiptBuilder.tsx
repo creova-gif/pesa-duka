@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ClickPesaPayment from "./ClickPesaPayment";
 
 // ─── SmartReceiptBuilder ──────────────────────────────────────────────────────
 // Owner/staff selects items already in the system → receipt auto-builds.
@@ -43,10 +44,12 @@ const INVENTORY = [
 const CATEGORIES = ["All", ...Array.from(new Set(INVENTORY.map(p => p.category)))];
 
 const PAYMENT_METHODS = [
-  { id:"mpesa",  label:"M-Pesa",       icon:"📱", color:"#22c55e" },
-  { id:"airtel", label:"Airtel Money", icon:"📲", color:"#ef4444" },
-  { id:"cash",   label:"Cash",         icon:"💵", color:"var(--t2)" },
-  { id:"tigo",   label:"Mixx by Yas",  icon:"💳", color:"#3b82f6" },
+  { id:"mpesa",    label:"M-Pesa",       icon:"📱", color:"#22c55e", requiresClickPesa: true },
+  { id:"halopesa", label:"Halopesa",     icon:"📞", color:"#f59e0b", requiresClickPesa: true },
+  { id:"tigopesa", label:"Tigo Pesa",    icon:"📲", color:"#3b82f6", requiresClickPesa: true },
+  { id:"airtel",   label:"Airtel Money", icon:"💳", color:"#ef4444", requiresClickPesa: true },
+  { id:"card",     label:"Card",         icon:"💎", color:"#8b5cf6", requiresClickPesa: true },
+  { id:"cash",     label:"Cash",         icon:"💵", color:"var(--t2)", requiresClickPesa: false },
 ];
 
 let receiptCounter = 261;
@@ -163,6 +166,7 @@ export default function SmartReceiptBuilder({
   const [payMethod, setPayMethod] = useState("mpesa");
   const [view, setView]           = useState<"build" | "receipt" | "done">("build");
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
+  const [showClickPesa, setShowClickPesa] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const filteredProducts = INVENTORY.filter(p => {
@@ -223,6 +227,9 @@ export default function SmartReceiptBuilder({
     };
     setReceiptData(receipt);
     setView("receipt");
+    if (PAYMENT_METHODS.find(p => p.id === payMethod)?.requiresClickPesa) {
+      setShowClickPesa(true);
+    }
   };
 
   if (view === "done") {
@@ -494,6 +501,18 @@ export default function SmartReceiptBuilder({
           </div>
         </div>
       </div>
+      {showClickPesa && receiptData && (
+        <ClickPesaPayment
+          amount={grandTotal}
+          receiptNo={receiptData.receiptNo}
+          onSuccess={(transactionId) => {
+            setShowClickPesa(false);
+            setView("done");
+          }}
+          onCancel={() => setShowClickPesa(false)}
+          theme={theme}
+        />
+      )}
     </>
   );
 }
