@@ -1,0 +1,402 @@
+import { useState } from "react";
+
+const BRAND = "#E56B0A";
+
+const css = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+  .nc-root { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+  /* ---- Bell Trigger ---- */
+  .nc-bell-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  .nc-bell-btn {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--bg-card, #1a1d27);
+    border: 1px solid var(--border, #2e3347);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .nc-bell-btn:hover { border-color: ${BRAND}; }
+  .nc-badge {
+    position: absolute;
+    top: -4px; right: -4px;
+    min-width: 18px; height: 18px;
+    background: ${BRAND};
+    color: white;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--bg-base, #0f1117);
+    animation: nc-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes nc-pop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+
+  /* ---- Panel ---- */
+  .nc-panel {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 380px;
+    background: var(--bg-card, #1a1d27);
+    border: 1px solid var(--border, #2e3347);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    z-index: 1000;
+    overflow: hidden;
+    animation: nc-slide 0.2s ease;
+  }
+  @keyframes nc-slide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .nc-panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border, #2e3347);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nc-panel-title { font-size: 15px; font-weight: 800; color: var(--text-primary, #f0f2ff); }
+  .nc-panel-actions { display: flex; gap: 8px; align-items: center; }
+  .nc-clear-btn {
+    font-size: 12px;
+    font-weight: 600;
+    color: ${BRAND};
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.1s;
+  }
+  .nc-clear-btn:hover { background: rgba(229,107,10,0.1); }
+
+  /* ---- Tabs ---- */
+  .nc-tabs {
+    display: flex;
+    padding: 12px 20px 0;
+    gap: 4px;
+  }
+  .nc-tab {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+    background: transparent;
+    color: var(--text-secondary, #7c85a8);
+  }
+  .nc-tab.active {
+    background: ${BRAND};
+    color: white;
+  }
+  .nc-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 0 4px;
+    margin-left: 4px;
+  }
+  .nc-tab:not(.active) .nc-tab-count {
+    background: var(--border, #2e3347);
+    color: var(--text-secondary, #7c85a8);
+  }
+
+  /* ---- List ---- */
+  .nc-list {
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 8px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border, #2e3347) transparent;
+  }
+  .nc-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.1s;
+    position: relative;
+    border-bottom: 1px solid var(--border, #2e3347);
+  }
+  .nc-item:last-child { border-bottom: none; }
+  .nc-item:hover { background: var(--bg-input, #22263a); }
+  .nc-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px; height: 6px;
+    background: ${BRAND};
+    border-radius: 50%;
+  }
+  .nc-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+  .nc-icon.warning { background: rgba(245,158,11,0.12); }
+  .nc-icon.success { background: rgba(34,197,94,0.12); }
+  .nc-icon.info { background: rgba(59,130,246,0.12); }
+  .nc-icon.danger { background: rgba(239,68,68,0.12); }
+  .nc-icon.brand { background: rgba(229,107,10,0.12); }
+  .nc-item-body { flex: 1; min-width: 0; }
+  .nc-item-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary, #f0f2ff);
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+  .nc-item.unread .nc-item-title { color: var(--text-primary, #f0f2ff); }
+  .nc-item:not(.unread) .nc-item-title { color: var(--text-secondary, #7c85a8); font-weight: 600; }
+  .nc-item-desc {
+    font-size: 12px;
+    color: var(--text-secondary, #7c85a8);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nc-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .nc-item-time { font-size: 11px; color: var(--text-muted, #4a5170); }
+  .nc-item-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .nc-item-tag.low-stock { background: rgba(245,158,11,0.12); color: #f59e0b; }
+  .nc-item-tag.payment { background: rgba(34,197,94,0.12); color: #22c55e; }
+  .nc-item-tag.reminder { background: rgba(59,130,246,0.12); color: #3b82f6; }
+  .nc-item-tag.sync { background: rgba(229,107,10,0.12); color: ${BRAND}; }
+  .nc-item-tag.system { background: var(--badge-bg, #1e2235); color: var(--text-secondary, #7c85a8); }
+  .nc-dismiss {
+    background: none;
+    border: none;
+    color: var(--text-muted, #4a5170);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.1s;
+    align-self: center;
+    flex-shrink: 0;
+  }
+  .nc-dismiss:hover { background: var(--border, #2e3347); color: var(--text-primary, #f0f2ff); }
+  .nc-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-muted, #4a5170);
+    font-size: 13px;
+  }
+  .nc-empty-icon { font-size: 32px; margin-bottom: 8px; }
+  .nc-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border, #2e3347);
+    text-align: center;
+  }
+  .nc-footer-btn {
+    font-size: 13px;
+    font-weight: 600;
+    color: ${BRAND};
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .nc-footer-btn:hover { text-decoration: underline; }
+`;
+
+const INITIAL_NOTIFICATIONS = [
+  {
+    id: 1, type: "warning", icon: "📦", tag: "low-stock", unread: true,
+    title: "Unga wa Sembe — Low Stock",
+    desc: "Only 3 units remaining. Reorder threshold is 10.",
+    time: "2 min ago",
+  },
+  {
+    id: 2, type: "warning", icon: "🧴", tag: "low-stock", unread: true,
+    title: "Mafuta ya Kupikia — Low Stock",
+    desc: "1 unit left. Last sold: today at 09:14.",
+    time: "15 min ago",
+  },
+  {
+    id: 3, type: "success", icon: "💸", tag: "payment", unread: true,
+    title: "Payment Received — TSh 45,000",
+    desc: "Fatuma Ally settled overdue balance via M-Pesa.",
+    time: "1 hr ago",
+  },
+  {
+    id: 4, type: "info", icon: "🔔", tag: "reminder", unread: false,
+    title: "Credit Reminder Sent",
+    desc: "Auto-reminder sent to 4 customers with balances due this week.",
+    time: "3 hrs ago",
+  },
+  {
+    id: 5, type: "brand", icon: "🔄", tag: "sync", unread: false,
+    title: "Data Synced",
+    desc: "89 transactions synced after coming back online. All up to date.",
+    time: "5 hrs ago",
+  },
+  {
+    id: 6, type: "info", icon: "📊", tag: "system", unread: false,
+    title: "Weekly Report Ready",
+    desc: "Your week ending March 14 report is available in Reports.",
+    time: "Yesterday",
+  },
+  {
+    id: 7, type: "warning", icon: "🧃", tag: "low-stock", unread: false,
+    title: "Juice Box (12pk) — Out of Stock",
+    desc: "Product is now at 0 units. Hidden from POS grid.",
+    time: "Yesterday",
+  },
+  {
+    id: 8, type: "danger", icon: "⚠️", tag: "system", unread: false,
+    title: "Sync Failed — 3 Transactions",
+    desc: "3 offline transactions failed to sync. Tap to retry.",
+    time: "2 days ago",
+  },
+];
+
+export default function NotificationCenter({ theme = "dark" }) {
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState("all");
+  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
+
+  const unreadCount = notifications.filter((n) => n.unread).length;
+
+  const filtered = notifications.filter((n) => {
+    if (tab === "all") return true;
+    if (tab === "stock") return n.tag === "low-stock";
+    if (tab === "payments") return n.tag === "payment" || n.tag === "reminder";
+    if (tab === "system") return n.tag === "sync" || n.tag === "system";
+    return true;
+  });
+
+  const dismiss = (id) => setNotifications((prev) => prev.filter((n) => n.id !== id));
+  const markRead = (id) => setNotifications((prev) =>
+    prev.map((n) => (n.id === id ? { ...n, unread: false } : n))
+  );
+  const clearAll = () => setNotifications([]);
+  const markAllRead = () => setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+
+  const tabs = [
+    { key: "all", label: "All", count: notifications.length },
+    { key: "stock", label: "Stock", count: notifications.filter(n => n.tag === "low-stock").length },
+    { key: "payments", label: "Payments", count: notifications.filter(n => n.tag === "payment" || n.tag === "reminder").length },
+    { key: "system", label: "System", count: notifications.filter(n => n.tag === "sync" || n.tag === "system").length },
+  ];
+
+  return (
+    <>
+      <style>{css}</style>
+      <div className={`nc-root ${theme}`} style={{ position: "relative" }}>
+        <div className="nc-bell-wrap">
+          <button className="nc-bell-btn" onClick={() => setOpen((o) => !o)}>
+            🔔
+            {unreadCount > 0 && (
+              <span className="nc-badge">{unreadCount > 9 ? "9+" : unreadCount}</span>
+            )}
+          </button>
+
+          {open && (
+            <div className="nc-panel">
+              <div className="nc-panel-header">
+                <span className="nc-panel-title">Notifications</span>
+                <div className="nc-panel-actions">
+                  {unreadCount > 0 && (
+                    <button className="nc-clear-btn" onClick={markAllRead}>Mark all read</button>
+                  )}
+                  {notifications.length > 0 && (
+                    <button className="nc-clear-btn" onClick={clearAll}>Clear all</button>
+                  )}
+                </div>
+              </div>
+
+              <div className="nc-tabs">
+                {tabs.map(({ key, label, count }) => (
+                  <button
+                    key={key}
+                    className={`nc-tab ${tab === key ? "active" : ""}`}
+                    onClick={() => setTab(key)}
+                  >
+                    {label}
+                    {count > 0 && <span className="nc-tab-count">{count}</span>}
+                  </button>
+                ))}
+              </div>
+
+              <div className="nc-list">
+                {filtered.length === 0 ? (
+                  <div className="nc-empty">
+                    <div className="nc-empty-icon">🎉</div>
+                    <div>All caught up!</div>
+                    <div style={{ color: "var(--text-muted)", marginTop: 4 }}>No notifications here</div>
+                  </div>
+                ) : (
+                  filtered.map((n) => (
+                    <div
+                      key={n.id}
+                      className={`nc-item ${n.unread ? "unread" : ""}`}
+                      onClick={() => markRead(n.id)}
+                    >
+                      <div className={`nc-icon ${n.type}`}>{n.icon}</div>
+                      <div className="nc-item-body">
+                        <div className="nc-item-title">{n.title}</div>
+                        <div className="nc-item-desc">{n.desc}</div>
+                        <div className="nc-item-meta">
+                          <span className="nc-item-time">{n.time}</span>
+                          <span className={`nc-item-tag ${n.tag}`}>
+                            {n.tag === "low-stock" ? "Low Stock" :
+                             n.tag === "payment" ? "Payment" :
+                             n.tag === "reminder" ? "Reminder" :
+                             n.tag === "sync" ? "Sync" : "System"}
+                          </span>
+                        </div>
+                      </div>
+                      <button className="nc-dismiss" onClick={(e) => { e.stopPropagation(); dismiss(n.id); }}>✕</button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="nc-footer">
+                <button className="nc-footer-btn">View notification settings →</button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}

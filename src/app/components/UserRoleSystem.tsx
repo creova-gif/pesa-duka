@@ -1,0 +1,73 @@
+const BRAND = "#E56B0A";
+
+// ── Role definitions ─────────────────────────────────────────────────────────
+export const ROLES = {
+  owner: {
+    label: "Owner / Admin",
+    labelSw: "Mmiliki",
+    color: BRAND,
+    bg: "rgba(229,107,10,.1)",
+    border: "rgba(229,107,10,.3)",
+    permissions: {
+      dashboard: true, pos: true, inventory: true, cashbook: true,
+      invoices: true, mobile_money: true, customers: true, staff: true,
+      tax: true, reports: true, settings: true, akili: true,
+      credit: true, formalize: true, government: true, skills: true,
+      user_management: true, view_all_staff_activity: true,
+      delete_transactions: true, apply_discounts: true,
+      void_transactions: true, export_data: true, change_prices: true,
+    },
+  },
+  manager: {
+    label: "Manager",
+    labelSw: "Msimamizi",
+    color: "#3b82f6",
+    bg: "rgba(59,130,246,.1)",
+    border: "rgba(59,130,246,.3)",
+    permissions: {
+      dashboard: true, pos: true, inventory: true, cashbook: true,
+      invoices: true, customers: true, skills: true,
+      staff: false, tax: false, reports: false, settings: false,
+      akili: false, credit: false, formalize: false, government: false,
+      mobile_money: false, user_management: false,
+      view_all_staff_activity: false, delete_transactions: false,
+      apply_discounts: true, void_transactions: true,
+      export_data: false, change_prices: false,
+    },
+  },
+  cashier: {
+    label: "Cashier",
+    labelSw: "Mkashia",
+    color: "#22c55e",
+    bg: "rgba(34,197,94,.1)",
+    border: "rgba(34,197,94,.3)",
+    permissions: {
+      dashboard: true, pos: true, inventory: true,
+      cashbook: false, invoices: false, mobile_money: false,
+      customers: false, staff: false, tax: false, reports: false,
+      settings: false, akili: false, credit: false, formalize: false,
+      government: false, user_management: false,
+      view_all_staff_activity: false, delete_transactions: false,
+      apply_discounts: false, void_transactions: false,
+      export_data: false, change_prices: false,
+      skills: false,
+    },
+  },
+  viewer: {
+    label: "Viewer / Partner",
+    labelSw: "Mshirika",
+    color: "#a855f7",
+    bg: "rgba(168,85,247,.1)",
+    border: "rgba(168,85,247,.3)",
+    permissions: {
+      dashboard: true, pos: false, inventory: false, cashbook: false,
+      invoices: false, mobile_money: false, customers: false, staff: false,
+      tax: false, reports: true, settings: false, akili: false,
+      credit: false, formalize: false, government: false,
+      user_management: false, view_all_staff_activity: false,
+      delete_transactions: false, apply_discounts: false,
+      void_transactions: false, export_data: false, change_prices: false,
+      skills: false,
+    },
+  },
+} as const;

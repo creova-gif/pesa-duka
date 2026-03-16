@@ -1,0 +1,448 @@
+import { useState, useEffect } from "react";
+
+const BRAND = "#E56B0A";
+
+const css = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+  .os-root { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+  /* ---- Header Status Pill ---- */
+  .os-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: default;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+    user-select: none;
+  }
+  .os-pill.online {
+    background: rgba(34,197,94,0.1);
+    color: #22c55e;
+    border-color: rgba(34,197,94,0.25);
+  }
+  .os-pill.offline {
+    background: rgba(239,68,68,0.1);
+    color: #ef4444;
+    border-color: rgba(239,68,68,0.25);
+    animation: os-pulse 2s infinite;
+  }
+  .os-pill.syncing {
+    background: rgba(229,107,10,0.1);
+    color: ${BRAND};
+    border-color: rgba(229,107,10,0.25);
+  }
+  @keyframes os-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .os-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+  }
+  .os-pill.online .os-dot { background: #22c55e; }
+  .os-pill.offline .os-dot { background: #ef4444; }
+  .os-pill.syncing .os-dot { background: ${BRAND}; animation: os-spin-dot 1s linear infinite; }
+  @keyframes os-spin-dot {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.5); }
+    100% { transform: scale(1); }
+  }
+
+  /* ---- Offline Banner ---- */
+  .os-banner {
+    width: 100%;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(239,68,68,0.06) 100%);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    animation: os-slide-in 0.3s ease;
+  }
+  @keyframes os-slide-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .os-banner-left { display: flex; align-items: center; gap: 12px; }
+  .os-banner-icon {
+    width: 36px; height: 36px;
+    background: rgba(239,68,68,0.12);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .os-banner-title { font-size: 14px; font-weight: 700; color: #ef4444; }
+  .os-banner-desc { font-size: 12px; color: var(--text-secondary, #7c85a8); margin-top: 2px; }
+  .os-banner-queue {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(239,68,68,0.12);
+    color: #ef4444;
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ---- Sync Banner ---- */
+  .os-sync-banner {
+    width: 100%;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, rgba(229,107,10,0.1) 0%, rgba(229,107,10,0.04) 100%);
+    border: 1px solid rgba(229,107,10,0.3);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: os-slide-in 0.3s ease;
+  }
+  .os-progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border, #2e3347);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .os-progress-fill {
+    height: 100%;
+    background: ${BRAND};
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+  .os-sync-text { font-size: 13px; font-weight: 600; color: ${BRAND}; white-space: nowrap; }
+  .os-spin {
+    display: inline-block;
+    animation: os-rotate 1s linear infinite;
+  }
+  @keyframes os-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* ---- Queue Panel ---- */
+  .os-queue-panel {
+    background: var(--bg-card, #1a1d27);
+    border: 1px solid var(--border, #2e3347);
+    border-radius: 16px;
+    overflow: hidden;
+    width: 100%;
+  }
+  .os-queue-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border, #2e3347);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .os-queue-title { font-size: 14px; font-weight: 800; color: var(--text-primary, #f0f2ff); }
+  .os-queue-subtitle { font-size: 12px; color: var(--text-secondary, #7c85a8); margin-top: 2px; }
+  .os-queue-count {
+    background: rgba(239,68,68,0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .os-queue-list { max-height: 280px; overflow-y: auto; }
+  .os-queue-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border, #2e3347);
+    transition: background 0.1s;
+  }
+  .os-queue-item:last-child { border-bottom: none; }
+  .os-queue-item:hover { background: var(--bg-input, #22263a); }
+  .os-q-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .os-q-icon.sale { background: rgba(34,197,94,0.1); }
+  .os-q-icon.expense { background: rgba(239,68,68,0.1); }
+  .os-q-icon.stock { background: rgba(59,130,246,0.1); }
+  .os-q-body { flex: 1; min-width: 0; }
+  .os-q-title { font-size: 13px; font-weight: 700; color: var(--text-primary, #f0f2ff); }
+  .os-q-desc { font-size: 11px; color: var(--text-secondary, #7c85a8); margin-top: 1px; }
+  .os-q-amount { font-size: 13px; font-weight: 800; color: var(--text-primary, #f0f2ff); }
+  .os-q-time { font-size: 11px; color: var(--text-muted, #4a5170); text-align: right; }
+  .os-q-status {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px dashed rgba(239,68,68,0.5);
+    flex-shrink: 0;
+  }
+  .os-queue-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border, #2e3347);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .os-retry-btn {
+    background: ${BRAND};
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .os-retry-btn:hover { background: #FF8C3A; }
+  .os-retry-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .os-footer-note { font-size: 11px; color: var(--text-muted, #4a5170); }
+
+  /* ---- Demo Controls ---- */
+  .os-demo {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .os-demo-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1px solid var(--border, #2e3347);
+    background: var(--bg-card, #1a1d27);
+    color: var(--text-secondary, #7c85a8);
+    transition: all 0.15s;
+  }
+  .os-demo-btn:hover { border-color: ${BRAND}; color: ${BRAND}; }
+  .os-demo-label { font-size: 11px; color: var(--text-muted, #4a5170); align-self: center; }
+`;
+
+const QUEUED = [
+  { id: 1, type: "sale", icon: "🛒", title: "Sale — TSh 8,500", desc: "3 items · Cash payment", amount: "+8,500", time: "11:32 AM" },
+  { id: 2, type: "sale", icon: "🛒", title: "Sale — TSh 3,200", desc: "1 item · M-Pesa · Receipt pending", amount: "+3,200", time: "11:45 AM" },
+  { id: 3, type: "expense", icon: "📤", title: "Expense — TSh 15,000", desc: "Utilities · Monthly electricity", amount: "−15,000", time: "12:10 PM" },
+  { id: 4, type: "stock", icon: "📦", title: "Stock Received", desc: "Unga x20, Mafuta x10 from Supplier", amount: "", time: "12:22 PM" },
+  { id: 5, type: "sale", icon: "🛒", title: "Sale — TSh 22,000", desc: "5 items · Airtel Money · Credit", amount: "+22,000", time: "12:55 PM" },
+];
+
+export default function OfflineStateUI({ theme = "dark" }) {
+  const [status, setStatus] = useState("offline"); // "online" | "offline" | "syncing"
+  const [syncProgress, setSyncProgress] = useState(0);
+  const [queue, setQueue] = useState(QUEUED);
+  const [synced, setSynced] = useState(0);
+
+  const startSync = () => {
+    if (status !== "offline" || queue.length === 0) return;
+    setStatus("syncing");
+    setSyncProgress(0);
+    setSynced(0);
+    const total = queue.length;
+    let done = 0;
+
+    const interval = setInterval(() => {
+      done += 1;
+      setSynced(done);
+      setSyncProgress(Math.round((done / total) * 100));
+      setQueue((prev) => prev.slice(1));
+      if (done >= total) {
+        clearInterval(interval);
+        setTimeout(() => {
+          setStatus("online");
+          setSyncProgress(100);
+        }, 400);
+      }
+    }, 700);
+  };
+
+  const goOffline = () => {
+    setStatus("offline");
+    setQueue(QUEUED);
+    setSynced(0);
+    setSyncProgress(0);
+  };
+
+  const statusLabel = {
+    online: "Connected",
+    offline: "Working Offline",
+    syncing: `Syncing… ${syncProgress}%`,
+  }[status];
+
+  return (
+    <>
+      <style>{css}</style>
+      <div className={`os-root ${theme}`}>
+        {/* Demo controls */}
+        <div className="os-demo">
+          <span className="os-demo-label">Simulate:</span>
+          <button className="os-demo-btn" onClick={() => setStatus("online")}>🟢 Go Online</button>
+          <button className="os-demo-btn" onClick={goOffline}>🔴 Go Offline</button>
+          <button className="os-demo-btn" onClick={startSync} disabled={status !== "offline" || queue.length === 0}>
+            🔄 Reconnect & Sync
+          </button>
+        </div>
+
+        {/* Status Pill — embed this in your header */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase" }}>
+            Header Status Pill (embed in your Navbar)
+          </div>
+          <span className={`os-pill ${status}`}>
+            <span className="os-dot" />
+            {statusLabel}
+          </span>
+        </div>
+
+        {/* Offline Banner */}
+        {status === "offline" && (
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase" }}>
+              Offline Banner (show at top of all pages)
+            </div>
+            <div className="os-banner">
+              <div className="os-banner-left">
+                <div className="os-banner-icon">📵</div>
+                <div>
+                  <div className="os-banner-title">You're Working Offline</div>
+                  <div className="os-banner-desc">
+                    Sales and changes are saved locally. They'll sync when you reconnect.
+                  </div>
+                </div>
+              </div>
+              {queue.length > 0 && (
+                <div className="os-banner-queue">
+                  ⏳ {queue.length} queued
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Syncing Banner */}
+        {status === "syncing" && (
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase" }}>
+              Sync Progress Banner
+            </div>
+            <div className="os-sync-banner">
+              <span style={{ fontSize: 20 }}><span className="os-spin">🔄</span></span>
+              <div className="os-progress-track">
+                <div className="os-progress-fill" style={{ width: `${syncProgress}%` }} />
+              </div>
+              <div className="os-sync-text">
+                {synced}/{QUEUED.length} synced
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Queued Transactions */}
+        {(status === "offline" || status === "syncing") && (
+          <div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase" }}>
+              Queued Transactions Panel (show on Dashboard / Cashbook)
+            </div>
+            <div className="os-queue-panel">
+              <div className="os-queue-header">
+                <div>
+                  <div className="os-queue-title">Pending Sync</div>
+                  <div className="os-queue-subtitle">
+                    Saved locally · will sync automatically on reconnection
+                  </div>
+                </div>
+                {queue.length > 0 && (
+                  <span className="os-queue-count">{queue.length} pending</span>
+                )}
+              </div>
+
+              <div className="os-queue-list">
+                {queue.length === 0 ? (
+                  <div style={{ padding: "32px 20px", textAlign: "center", color: "var(--text-muted)" }}>
+                    <div style={{ fontSize: 28, marginBottom: 8 }}>✅</div>
+                    <div style={{ fontSize: 13 }}>All transactions synced</div>
+                  </div>
+                ) : (
+                  queue.map((item) => (
+                    <div className="os-queue-item" key={item.id}>
+                      <div className={`os-q-icon ${item.type}`}>{item.icon}</div>
+                      <div className="os-q-body">
+                        <div className="os-q-title">{item.title}</div>
+                        <div className="os-q-desc">{item.desc}</div>
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        {item.amount && (
+                          <div className="os-q-amount" style={{
+                            color: item.amount.startsWith("+") ? "#22c55e" : "#ef4444"
+                          }}>
+                            TSh {item.amount}
+                          </div>
+                        )}
+                        <div className="os-q-time">{item.time}</div>
+                      </div>
+                      <div className="os-q-status" />
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="os-queue-footer">
+                <div className="os-footer-note">
+                  {queue.length > 0
+                    ? `${queue.length} transaction${queue.length > 1 ? "s" : ""} waiting to sync`
+                    : "Queue is clear"}
+                </div>
+                <button
+                  className="os-retry-btn"
+                  onClick={startSync}
+                  disabled={status === "syncing" || queue.length === 0}
+                >
+                  {status === "syncing" ? (
+                    <><span className="os-spin">🔄</span> Syncing…</>
+                  ) : (
+                    <>🔄 Retry Sync</>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Back Online confirmation */}
+        {status === "online" && (
+          <div style={{
+            background: "rgba(34,197,94,0.08)",
+            border: "1px solid rgba(34,197,94,0.25)",
+            borderRadius: 12,
+            padding: "14px 18px",
+            display: "flex", alignItems: "center", gap: 12,
+            animation: "os-slide-in 0.3s ease"
+          }}>
+            <div style={{ fontSize: 24 }}>✅</div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#22c55e" }}>Back Online — All Synced</div>
+              <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
+                {QUEUED.length} transactions successfully synced to the cloud.
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}

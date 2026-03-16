@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "name": "CREOVA SME Business OS",
+    "version": "1.0.0",
+    "description": "Design tokens for the CREOVA SME Business Operating System",
+    "target": "Dar es Salaam, Tanzania pilot"
+  },
+  "colors": {
+    "light": {
+      "background": { "hex": "#F5F6FA", "hsl": "210 20% 98%", "usage": "Page background" },
+      "foreground": { "hex": "#1C2333", "hsl": "220 20% 12%", "usage": "Primary text" },
+      "card": { "hex": "#FFFFFF", "hsl": "0 0% 100%", "usage": "Card/panel backgrounds" },
+      "card-foreground": { "hex": "#1C2333", "hsl": "220 20% 12%", "usage": "Text on cards" },
+      "border": { "hex": "#E2E4EB", "hsl": "220 13% 90%", "usage": "Borders and dividers" },
+      "muted": { "hex": "#EEF0F3", "hsl": "220 14% 94%", "usage": "Muted backgrounds" },
+      "muted-foreground": { "hex": "#636B80", "hsl": "220 10% 44%", "usage": "Secondary/muted text" },
+      "primary": { "hex": "#E56B0A", "hsl": "25 95% 48%", "usage": "Primary accent — buttons, active nav, CTAs" },
+      "primary-foreground": { "hex": "#FFFFFF", "hsl": "0 0% 100%", "usage": "Text on primary backgrounds" },
+      "destructive": { "hex": "#C4321E", "hsl": "0 72% 48%", "usage": "Error states, delete actions" },
+      "destructive-foreground": { "hex": "#FFFFFF", "hsl": "0 0% 100%", "usage": "Text on destructive backgrounds" },
+      "accent": { "hex": "#E8EBF0", "hsl": "220 14% 92%", "usage": "Hover states, subtle emphasis" },
+      "sidebar": { "hex": "#F0F2F5", "hsl": "220 16% 96%", "usage": "Sidebar background" },
+      "sidebar-accent": { "hex": "#E0E3EA", "hsl": "220 14% 90%", "usage": "Active nav item background" }
+    },
+    "dark": {
+      "background": { "hex": "#151821", "hsl": "220 16% 8%", "usage": "Page background" },
+      "foreground": { "hex": "#ECF0F5", "hsl": "210 15% 94%", "usage": "Primary text" },
+      "card": { "hex": "#1A1E2A", "hsl": "220 14% 11%", "usage": "Card/panel backgrounds" },
+      "card-foreground": { "hex": "#ECF0F5", "hsl": "210 15% 94%", "usage": "Text on cards" },
+      "border": { "hex": "#282D3A", "hsl": "220 12% 18%", "usage": "Borders and dividers" },
+      "muted": { "hex": "#2D3345", "hsl": "220 12% 20%", "usage": "Muted backgrounds" },
+      "muted-foreground": { "hex": "#8A92A8", "hsl": "220 10% 60%", "usage": "Secondary/muted text" },
+      "primary": { "hex": "#E8832A", "hsl": "25 90% 55%", "usage": "Primary accent" },
+      "primary-foreground": { "hex": "#FFFFFF", "hsl": "0 0% 100%", "usage": "Text on primary backgrounds" },
+      "sidebar": { "hex": "#181C27", "hsl": "220 14% 10%", "usage": "Sidebar background" }
+    },
+    "semantic": {
+      "success": { "hex": "#22C55E", "usage": "Positive values, profit, stock OK" },
+      "warning": { "hex": "#F59E0B", "usage": "Low stock, caution" },
+      "error": { "hex": "#EF4444", "usage": "Negative values, losses, critical alerts" },
+      "info": { "hex": "#3B82F6", "usage": "Informational badges" }
+    },
+    "payment-methods": {
+      "cash": { "hex": "#64748B", "label": "Cash", "usage": "Slate gray for cash transactions" },
+      "mpesa": { "hex": "#22C55E", "label": "M-Pesa", "usage": "Green — Safaricom brand" },
+      "airtel": { "hex": "#EF4444", "label": "Airtel Money", "usage": "Red — Airtel brand" },
+      "tigo": { "hex": "#3B82F6", "label": "Tigo Pesa", "usage": "Blue — Tigo brand" },
+      "credit": { "hex": "#F59E0B", "label": "Credit/Deni", "usage": "Amber for credit sales" }
+    },
+    "chart": {
+      "chart-1": { "hex": "#E56B0A", "hsl": "25 95% 48%", "usage": "Primary chart color" },
+      "chart-2": { "hex": "#2A9D6E", "hsl": "160 60% 40%", "usage": "Secondary chart color" },
+      "chart-3": { "hex": "#3366CC", "hsl": "220 70% 52%", "usage": "Tertiary chart color" },
+      "chart-4": { "hex": "#F5B800", "hsl": "45 90% 50%", "usage": "Fourth chart color" },
+      "chart-5": { "hex": "#CC3366", "hsl": "340 65% 48%", "usage": "Fifth chart color" }
+    }
+  },
+  "typography": {
+    "font-family": {
+      "primary": "'General Sans', sans-serif",
+      "mono": "'JetBrains Mono', monospace",
+      "source": "https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
+    },
+    "scale": {
+      "xs": { "size": "12px", "line-height": "16px", "weight": 400, "usage": "Tiny labels, metadata, badges" },
+      "sm": { "size": "14px", "line-height": "20px", "weight": 400, "usage": "Buttons, nav links, table cells" },
+      "base": { "size": "16px", "line-height": "24px", "weight": 400, "usage": "Body text, form inputs" },
+      "lg": { "size": "18px", "line-height": "28px", "weight": 600, "usage": "Section headings, card titles" },
+      "xl": { "size": "24px", "line-height": "32px", "weight": 700, "usage": "Page titles (max heading size)" }
+    },
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "features": {
+      "financial-data": "font-variant-numeric: tabular-nums lining-nums",
+      "note": "ALL monetary values and numbers in tables must use tabular-nums for alignment"
+    }
+  },
+  "spacing": {
+    "unit": "4px",
+    "scale": {
+      "1": "4px",
+      "2": "8px",
+      "3": "12px",
+      "4": "16px",
+      "5": "20px",
+      "6": "24px",
+      "8": "32px",
+      "10": "40px",
+      "12": "48px",
+      "16": "64px"
+    },
+    "component-spacing": {
+      "card-padding": "24px",
+      "card-gap": "16px",
+      "sidebar-width": "240px",
+      "sidebar-collapsed": "64px",
+      "page-padding": "32px",
+      "section-gap": "24px",
+      "kpi-card-padding": "20px",
+      "table-cell-padding": "12px 16px",
+      "input-padding": "8px 12px",
+      "button-padding": "8px 16px"
+    }
+  },
+  "radii": {
+    "sm": "6px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px",
+    "full": "9999px"
+  },
+  "shadows": {
+    "sm": "0px 1px 3px rgba(28, 35, 51, 0.06), 0px 1px 2px rgba(28, 35, 51, 0.04)",
+    "md": "0px 4px 8px rgba(28, 35, 51, 0.08), 0px 2px 4px rgba(28, 35, 51, 0.04)",
+    "lg": "0px 8px 16px rgba(28, 35, 51, 0.08), 0px 4px 8px rgba(28, 35, 51, 0.04)"
+  },
+  "currency": {
+    "code": "TZS",
+    "symbol": "TSh",
+    "format": "TSh #,###",
+    "locale": "en-TZ",
+    "example": "TSh 88,100",
+    "js-formatter": "new Intl.NumberFormat('en-TZ', { style: 'currency', currency: 'TZS', minimumFractionDigits: 0 })"
+  },
+  "localization": {
+    "languages": ["English", "Swahili"],
+    "date-format": "DD/MM/YYYY",
+    "time-format": "24-hour",
+    "number-format": "Comma as thousands separator",
+    "cultural-terms": {
+      "duka": "Small retail shop",
+      "rejareja": "Retail business",
+      "deni": "Credit/debt",
+      "bidhaa": "Product/goods"
+    }
+  }
+}
