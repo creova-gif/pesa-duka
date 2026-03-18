@@ -1,10 +1,22 @@
 import { useState } from "react";
-import { TrendingUp, TrendingDown, BookOpen, Hash, Plus, ChevronDown, ArrowUpRight } from "lucide-react";
-import { transactions } from "../data/mockData";
+import { TrendingUp, TrendingDown, BookOpen, Hash, Plus, ChevronDown, ArrowUpRight, X } from "lucide-react";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { useTransactions, useCreateTransaction } from "../hooks/useData";
+import { toast } from "sonner";
 
 export function Cashbook() {
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
+  const [showAddExpense, setShowAddExpense] = useState(false);
+  const [expenseForm, setExpenseForm] = useState({
+    description: "",
+    amount: "",
+    paymentMethod: "Cash",
+  });
+
+  // Fetch transactions from backend
+  const { data: transactions = [], isLoading } = useTransactions();
+  const createTransaction = useCreateTransaction();
 
   const totalIncome = transactions
     .filter(t => t.type === 'income')
@@ -23,7 +35,7 @@ export function Cashbook() {
 
   // Group transactions by date
   const groupedTransactions = filteredTransactions.reduce((groups, transaction) => {
-    const date = transaction.date.toLocaleDateString('en-GB');
+    const date = new Date(transaction.date).toLocaleDateString('en-GB');
     if (!groups[date]) {
       groups[date] = [];
     }
@@ -31,11 +43,54 @@ export function Cashbook() {
     return groups;
   }, {} as Record<string, typeof transactions>);
 
+  const handleAddExpense = () => {
+    if (!expenseForm.description || !expenseForm.amount) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    const now = new Date();
+    createTransaction.mutate(
+      {
+        type: 'expense',
+        description: expenseForm.description,
+        amount: parseFloat(expenseForm.amount),
+        paymentMethod: expenseForm.paymentMethod,
+        date: now.toISOString(),
+        time: now.toLocaleTimeString('en-TZ', { hour: '2-digit', minute: '2-digit' }),
+      },
+      {
+        onSuccess: () => {
+          toast.success("Expense added successfully");
+          setShowAddExpense(false);
+          setExpenseForm({ description: "", amount: "", paymentMethod: "Cash" });
+        },
+        onError: (error) => {
+          toast.error(`Failed to add expense: ${error.message}`);
+        },
+      }
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading cashbook...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 md:p-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl md:text-2xl font-semibold">Cashbook</h1>
-        <Button className="bg-primary hover:bg-primary/90 text-white text-sm md:text-base">
+        <Button 
+          className="bg-primary hover:bg-primary/90 text-white text-sm md:text-base"
+          onClick={() => setShowAddExpense(true)}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add Expense
         </Button>
@@ -195,6 +250,72 @@ export function Cashbook() {
           </div>
         ))}
       </div>
+
+      {/* Add Expense Form */}
+      {showAddExpense && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-lg p-6 md:p-8 w-full max-w-md shadow-xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold">Add Expense</h2>
+              <button
+                className="text-muted-foreground hover:text-foreground"
+                onClick={() => setShowAddExpense(false)}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Description</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., Rent, Electricity, Salaries"
+                  value={expenseForm.description}
+                  onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Amount (TSh)</label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={expenseForm.amount}
+                  onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Payment Method</label>
+                <select
+                  className="w-full bg-background rounded-lg border border-border px-3 py-2 text-sm"
+                  value={expenseForm.paymentMethod}
+                  onChange={(e) => setExpenseForm({ ...expenseForm, paymentMethod: e.target.value })}
+                >
+                  <option value="Cash">Cash</option>
+                  <option value="M-Pesa">M-Pesa</option>
+                  <option value="Tigo Pesa">Tigo Pesa</option>
+                  <option value="Airtel Money">Airtel Money</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-6 flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowAddExpense(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-primary hover:bg-primary/90 text-white flex-1"
+                onClick={handleAddExpense}
+                disabled={createTransaction.isPending}
+              >
+                {createTransaction.isPending ? "Adding..." : "Add Expense"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

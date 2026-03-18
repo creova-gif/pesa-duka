@@ -67,7 +67,7 @@ export function Reports() {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">Reports</h1>
         <div className="flex gap-3">

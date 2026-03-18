@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { Search, Plus, Minus, Edit, CirclePlus } from "lucide-react";
-import { products, categories } from "../data/mockData";
+import { categories } from "../data/mockData";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { StockOrderModal } from "../components/StockOrderModal";
+import { useProducts, useUpdateStock, useCreateProduct } from "../hooks/useData";
+import { toast } from "sonner";
 
 export function Inventory() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showStockOrderModal, setShowStockOrderModal] = useState(false);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+
+  // Fetch products from backend
+  const { data: products = [], isLoading } = useProducts();
+  const updateStock = useUpdateStock();
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
@@ -22,8 +29,34 @@ export function Inventory() {
   const inventoryValue = products.reduce((sum, p) => sum + (p.cost * p.stock), 0);
   const lowStockItems = products.filter(p => p.stock < 20).length;
 
+  const handleStockChange = (productId: string, currentStock: number, delta: number) => {
+    const newStock = Math.max(0, currentStock + delta);
+    updateStock.mutate(
+      { id: productId, stock: newStock },
+      {
+        onSuccess: () => {
+          toast.success(`Stock updated to ${newStock}`);
+        },
+        onError: (error) => {
+          toast.error(`Failed to update stock: ${error.message}`);
+        },
+      }
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading inventory...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Inventory</h1>
@@ -125,13 +158,20 @@ export function Inventory() {
                   <td className="p-3 md:p-4 text-sm md:text-base hidden md:table-cell">TSh {product.price.toLocaleString()}</td>
                   <td className="p-3 md:p-4">
                     <div className="flex items-center gap-2">
-                      <button className="w-6 h-6 md:w-7 md:h-7 rounded bg-muted hover:bg-accent flex items-center justify-center">
+                      <button 
+                        onClick={() => handleStockChange(product.id, product.stock, -1)}
+                        disabled={product.stock === 0}
+                        className="w-6 h-6 md:w-7 md:h-7 rounded bg-muted hover:bg-accent flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
                         <Minus className="w-3 h-3 md:w-4 md:h-4" />
                       </button>
                       <span className={`font-semibold text-sm md:text-base ${product.stock < 20 ? 'text-green-600 dark:text-green-400' : ''}`}>
                         {product.stock}
                       </span>
-                      <button className="w-6 h-6 md:w-7 md:h-7 rounded bg-muted hover:bg-accent flex items-center justify-center">
+                      <button 
+                        onClick={() => handleStockChange(product.id, product.stock, 1)}
+                        className="w-6 h-6 md:w-7 md:h-7 rounded bg-muted hover:bg-accent flex items-center justify-center"
+                      >
                         <Plus className="w-3 h-3 md:w-4 md:h-4" />
                       </button>
                     </div>

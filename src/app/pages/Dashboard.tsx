@@ -1,12 +1,12 @@
 import { DollarSign, ShoppingCart, TrendingUp, AlertTriangle } from "lucide-react";
 import { StatCard } from "../components/StatCard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { transactions, products } from "../data/mockData";
 import { useState, useEffect } from "react";
 import MorningBriefing from "../components/MorningBriefing";
 import EndOfDayClose from "../components/EndOfDayClose";
 import WeeklyAIDigest from "../components/WeeklyAIDigest";
 import CreditScoreCard from "../components/CreditScoreCard";
+import { useTransactions, useProducts } from "../hooks/useData";
 
 const weeklyData = [
   { day: 'Sun', sales: 37000, id: 'week-sun' },
@@ -31,6 +31,10 @@ export function Dashboard() {
   const [showEndOfDay, setShowEndOfDay] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
+  // Fetch real data from backend
+  const { data: transactions = [], isLoading: loadingTransactions } = useTransactions();
+  const { data: products = [], isLoading: loadingProducts } = useProducts();
+
   // Detect theme changes
   useEffect(() => {
     const checkTheme = () => {
@@ -43,24 +47,35 @@ export function Dashboard() {
   }, []);
 
   const todayIncome = transactions
-    .filter(t => t.type === 'income' && t.date.toDateString() === new Date('2026-03-14').toDateString())
+    .filter(t => t.type === 'income' && new Date(t.date).toDateString() === new Date().toDateString())
     .reduce((sum, t) => sum + t.amount, 0);
 
   const todayTransactions = transactions.filter(
-    t => t.date.toDateString() === new Date('2026-03-14').toDateString()
+    t => new Date(t.date).toDateString() === new Date().toDateString()
   ).length;
 
   const lowStockProducts = products.filter(p => p.stock < 20);
 
-  const recentTransactions = transactions.slice(0, 6);
+  const recentTransactions = transactions
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 6);
 
   const topProducts = [
     { name: 'Ndovu Cement 50kg', revenue: 66000 },
     { name: 'Vodacom Airtime 10000', revenue: 50000 },
     { name: 'Nishati Rice 5kg', revenue: 45000 },
-    { name: 'Tigo Airtime Voucher 5000', revenue: 30000 },
-    { name: 'Korie Cooking Oil 1L', revenue: 27500 },
   ];
+
+  if (loadingTransactions || loadingProducts) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   const morningBriefingData = {
     ownerName: "Amina",
@@ -241,7 +256,7 @@ export function Dashboard() {
                 <div className="flex-1">
                   <p className="text-sm font-medium">{transaction.description}</p>
                   <p className="text-xs text-muted-foreground">
-                    {transaction.date.toLocaleDateString('en-GB')} {transaction.time}
+                    {new Date(transaction.date).toLocaleDateString('en-GB')} {transaction.time}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">

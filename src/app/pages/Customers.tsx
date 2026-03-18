@@ -1,15 +1,18 @@
 import { Search, Phone, MapPin, CirclePlus } from "lucide-react";
 import { useState, useEffect } from "react";
-import { customers } from "../data/mockData";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import DebtFollowUpQueue from "../components/DebtFollowUpQueue";
 import { LoyaltySystem } from "../components/LoyaltySystem";
+import { useCustomers } from "../hooks/useData";
 
 export function Customers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "debt" | "loyalty">("all");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  // Fetch customers from backend
+  const { data: customers = [], isLoading } = useCustomers();
 
   // Detect theme changes
   useEffect(() => {
@@ -43,6 +46,17 @@ export function Customers() {
     paymentHistory: [1, 1, c.owes > 0 ? 0 : 1, 1, 1, c.owes > 50000 ? 0 : 1, 1, c.owes > 0 ? 0 : 1, 1, 1],
     creditLimit: Math.max(100000, c.purchases * 0.2),
   }));
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading customers...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8">

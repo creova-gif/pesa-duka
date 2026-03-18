@@ -6,7 +6,7 @@ import { NotificationCenter } from "./NotificationCenter";
 import { OfflineStatusPill, type ConnectionStatus } from "./OfflineStatus";
 
 const navItems = [
-  { path: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { path: "/pos", icon: ShoppingCart, label: "POS" },
   { path: "/inventory", icon: Package, label: "Inventory" },
   { path: "/cashbook", icon: Book, label: "Cashbook" },

@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import { Layout } from "./components/Layout";
+import { LandingPage } from "./pages/LandingPage";
 import { Dashboard } from "./pages/Dashboard";
 import { POS } from "./pages/POS";
 import { Inventory } from "./pages/Inventory";
@@ -14,9 +15,13 @@ import { Team } from "./pages/Team";
 export const router = createBrowserRouter([
   {
     path: "/",
+    Component: LandingPage,
+  },
+  {
+    path: "/",
     Component: Layout,
     children: [
-      { index: true, Component: Dashboard },
+      { path: "dashboard", Component: Dashboard },
       { path: "pos", Component: POS },
       { path: "inventory", Component: Inventory },
       { path: "cashbook", Component: Cashbook },

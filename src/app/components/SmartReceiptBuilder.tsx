@@ -41,8 +41,6 @@ const INVENTORY = [
   { id:"P015", name:"Mchuzi Mix",           nameShort:"Mchuzi Mix", category:"Spices",    price:2500,  stock:18, vat:false, barcode:"6001000015" },
 ];
 
-const CATEGORIES = ["All", ...Array.from(new Set(INVENTORY.map(p => p.category)))];
-
 const PAYMENT_METHODS = [
   { id:"mpesa",    label:"M-Pesa",       icon:"📱", color:"#22c55e", requiresClickPesa: true },
   { id:"halopesa", label:"Halopesa",     icon:"📞", color:"#f59e0b", requiresClickPesa: true },
@@ -151,12 +149,16 @@ export default function SmartReceiptBuilder({
   currentUser = { name:"Juma Bakari", role:"cashier" },
   businessName = "Duka la Mwanga",
   tin = "123-456-789-T",
-  theme = "dark"
+  theme = "dark",
+  inventory = INVENTORY,
+  onCompleteSale
 }: {
   currentUser?: { name: string; role: string };
   businessName?: string;
   tin?: string;
   theme?: "dark" | "light";
+  inventory?: any[];
+  onCompleteSale?: (saleData: any) => Promise<boolean>;
 }) {
   const [search, setSearch]       = useState("");
   const [category, setCategory]   = useState("All");
@@ -167,9 +169,24 @@ export default function SmartReceiptBuilder({
   const [view, setView]           = useState<"build" | "receipt" | "done">("build");
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
   const [showClickPesa, setShowClickPesa] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const filteredProducts = INVENTORY.filter(p => {
+  // Transform inventory to match expected format
+  const transformedInventory = inventory.map(p => ({
+    id: p.id,
+    name: p.name,
+    nameShort: p.name.length > 20 ? p.name.substring(0, 20) + '...' : p.name,
+    category: p.category,
+    price: p.price,
+    stock: p.stock,
+    vat: false, // Can be added to product schema later
+    barcode: p.sku || p.id,
+  }));
+
+  const CATEGORIES = ["All", ...Array.from(new Set(transformedInventory.map(p => p.category)))];
+
+  const filteredProducts = transformedInventory.filter(p => {
     const matchSearch = search === "" || p.name.toLowerCase().includes(search.toLowerCase()) || p.barcode.includes(search);
     const matchCat    = category === "All" || p.category === category;
     return matchSearch && matchCat;
@@ -177,7 +194,7 @@ export default function SmartReceiptBuilder({
 
   const cartItem = (id: string) => cart.find(c => c.id === id);
 
-  const addToCart = (product: typeof INVENTORY[0]) => {
+  const addToCart = (product: typeof transformedInventory[0]) => {
     if (product.stock === 0) return;
     setCart(prev => {
       const existing = prev.find(c => c.id === product.id);
@@ -229,6 +246,21 @@ export default function SmartReceiptBuilder({
     setView("receipt");
     if (PAYMENT_METHODS.find(p => p.id === payMethod)?.requiresClickPesa) {
       setShowClickPesa(true);
+    }
+  };
+
+  const confirmPayment = async () => {
+    if (!receiptData || !onCompleteSale) {
+      setView("done");
+      return;
+    }
+
+    setIsProcessing(true);
+    const success = await onCompleteSale(receiptData);
+    setIsProcessing(false);
+
+    if (success) {
+      setView("done");
     }
   };
 
@@ -318,7 +350,7 @@ export default function SmartReceiptBuilder({
           </div>
 
           <div style={{ display:"flex", gap:8, marginTop:14 }}>
-            <button className="charge-btn" onClick={() => setView("done")}>
+            <button className="charge-btn" onClick={confirmPayment} disabled={isProcessing}>
               ✓ Confirm Payment
             </button>
           </div>
