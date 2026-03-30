@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Send, Phone, AlertCircle } from "lucide-react";
+import { getProfile } from "../hooks/useBusinessProfile";
 
 // ─── DebtFollowUpQueue ────────────────────────────────────────────────────────
 // Proactive debt collection workflow with credit scoring + WhatsApp reminders
@@ -96,7 +97,16 @@ interface DebtFollowUpQueueProps {
   theme?: "dark" | "light";
 }
 
+function buildWhatsAppLink(phone: string, customerName: string, debt: number, businessName: string): string {
+  const firstName = customerName.split(" ")[0];
+  const fmtDebt = "TSh " + Number(debt).toLocaleString("en-TZ");
+  const msg = `Habari ${firstName}! Unakumbusha kulipa deni lako la ${fmtDebt} kwa ${businessName}. Tafadhali lipa ukiweza. Asante sana! 🙏\n\nHi ${firstName}! A reminder to pay your outstanding balance of ${fmtDebt} at ${businessName}. Please pay at your earliest convenience. Thank you!`;
+  const cleanPhone = phone.replace(/[\s\-()]/g, "");
+  return `https://wa.me/${cleanPhone.startsWith("+") ? cleanPhone.slice(1) : cleanPhone}?text=${encodeURIComponent(msg)}`;
+}
+
 export default function DebtFollowUpQueue({ customers = SAMPLE_CUSTOMERS, theme = "dark" }: DebtFollowUpQueueProps) {
+  const businessProfile = getProfile();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [filter, setFilter] = useState("All");
   const [sort, setSort] = useState("Highest Debt");
@@ -252,12 +262,26 @@ export default function DebtFollowUpQueue({ customers = SAMPLE_CUSTOMERS, theme 
 
                     {/* Actions */}
                     <div className="dq-actions">
-                      <button className="dq-action-btn wa">
-                        💬 WhatsApp Reminder
-                      </button>
-                      <button className="dq-action-btn">
+                      {c.debt > 0 && (
+                        <a
+                          href={buildWhatsAppLink(c.phone, c.name, c.debt, businessProfile.businessName || "our shop")}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="dq-action-btn wa"
+                          style={{ textDecoration: "none" }}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          💬 WhatsApp Reminder
+                        </a>
+                      )}
+                      <a
+                        href={`tel:${c.phone.replace(/\s/g, "")}`}
+                        className="dq-action-btn"
+                        style={{ textDecoration: "none" }}
+                        onClick={e => e.stopPropagation()}
+                      >
                         📞 Call
-                      </button>
+                      </a>
                       {c.debt > 0 && (
                         <button className="dq-action-btn primary">
                           💵 Record Payment
@@ -272,7 +296,7 @@ export default function DebtFollowUpQueue({ customers = SAMPLE_CUSTOMERS, theme 
                         padding: "10px 12px", fontSize: 12, color: "var(--t2)",
                         fontStyle: "italic", lineHeight: 1.5
                       }}>
-                        💬 "Habari {c.name.split(" ")[0]}, kumbuka deni lako la {fmt(c.debt)} kwa Duka letu.
+                        💬 "Habari {c.name.split(" ")[0]}, kumbuka deni lako la {fmt(c.debt)} kwa {businessProfile.businessName || "duka letu"}.
                         Tafadhali lipa ukiweza. Asante sana! 🙏"
                       </div>
                     )}

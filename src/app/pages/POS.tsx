@@ -3,17 +3,18 @@ import SmartReceiptBuilder from '../components/SmartReceiptBuilder';
 import { useProducts, useUpdateStock, useCreateTransaction } from '../hooks/useData';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { getProfile } from '../hooks/useBusinessProfile';
 
 export function POS() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  
-  // Fetch products and mutations
+
   const { data: products = [], isLoading } = useProducts();
   const updateStock = useUpdateStock();
   const createTransaction = useCreateTransaction();
   const queryClient = useQueryClient();
 
-  // Detect theme changes
+  const profile = getProfile();
+
   useEffect(() => {
     const checkTheme = () => {
       setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
@@ -26,15 +27,13 @@ export function POS() {
 
   const handleCompleteSale = async (saleData: any) => {
     try {
-      // Update stock for each item in the cart
       for (const item of saleData.items) {
-        await updateStock.mutateAsync({ 
-          id: item.id, 
-          stock: item.stock - item.qty 
+        await updateStock.mutateAsync({
+          id: item.id,
+          stock: item.stock - item.qty
         });
       }
 
-      // Create transaction record
       await createTransaction.mutateAsync({
         type: 'income',
         description: saleData.items.map((item: any) => `${item.qty}× ${item.name}`).join(', '),
@@ -44,15 +43,14 @@ export function POS() {
         time: new Date().toLocaleTimeString('en-TZ', { hour: '2-digit', minute: '2-digit' }),
       });
 
-      toast.success('Sale completed successfully! 🎉');
-      
-      // Refetch all data
+      toast.success('Sale completed! 🎉');
+
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      
+
       return true;
-    } catch (error) {
-      toast.error(`Sale failed: ${error.message}`);
+    } catch (error: any) {
+      toast.error(`Sale failed: ${error?.message || 'Unknown error'}`);
       return false;
     }
   };
@@ -70,10 +68,13 @@ export function POS() {
 
   return (
     <div className="p-4 lg:p-6">
-      <SmartReceiptBuilder 
-        currentUser={{ name: "Juma Bakari", role: "owner" }}
-        businessName="Duka la Mwanga"
-        tin="123-456-789-T"
+      <SmartReceiptBuilder
+        currentUser={{
+          name: profile.ownerName || "Staff",
+          role: "owner"
+        }}
+        businessName={profile.businessName || "My Business"}
+        tin={profile.tin || ""}
         theme={theme}
         inventory={products}
         onCompleteSale={handleCompleteSale}

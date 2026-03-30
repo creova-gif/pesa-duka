@@ -236,13 +236,21 @@ interface Message {
   time: string;
 }
 
-const INITIAL_MESSAGES: Message[] = [
-  {
+function buildInitialMessages(owner: string, shopData: typeof SAMPLE_SHOP): Message[] {
+  const hasData = shopData.weekRevenue > 0;
+  if (hasData) {
+    return [{
+      role: "akili",
+      content: `Habari ${owner}! Nimekagua duka lako wiki hii. Jumla ya mauzo ni TSh ${Math.round(shopData.weekRevenue / 1000)}K na unafanya faida ya ${Math.round((shopData.weekProfit / Math.max(shopData.weekRevenue, 1)) * 100)}%. ${shopData.stockoutsThisWeek > 0 ? `Bidhaa ${shopData.stockoutsThisWeek} zinakaribia kuisha — angalia hisa sasa. ⚠️` : "Hisa zako ziko vizuri. ✓"}\n\nHi ${owner}! I've been watching your shop this week. Total revenue is TSh ${Math.round(shopData.weekRevenue / 1000)}K with a ${Math.round((shopData.weekProfit / Math.max(shopData.weekRevenue, 1)) * 100)}% profit margin. ${shopData.stockoutsThisWeek > 0 ? `${shopData.stockoutsThisWeek} products are running low — check your inventory now. ⚠️` : "Your stock levels look good. ✓"}`,
+      time: "Just now",
+    }];
+  }
+  return [{
     role: "akili",
-    content: "Habari Amina! Nimekagua duka lako leo. Kuna kitu kimoja muhimu sana unachohitaji kujua — Unga wako utaisha Jumamosi asubuhi tena. Hii ni mara ya 3 mfululizo. 📦\n\nHi Amina! I've been watching your shop. There's one thing you urgently need to know — your Unga will run out Saturday morning again. Third week in a row.",
+    content: `Habari ${owner}! Mimi ni Akili, mshauri wako wa biashara. Ninatazamia kuona data yako ya kweli — fanya mauzo ya kwanza kupitia POS ili nikusaidie na maarifa halisi! 🚀\n\nHi ${owner}! I'm Akili, your business advisor. I'm waiting to see your real data — make your first sale through the POS so I can give you real insights! 🚀`,
     time: "Just now",
-  },
-];
+  }];
+}
 
 const QUICK_PROMPTS_EN = [
   "Why is Monday always slow?",
@@ -265,7 +273,7 @@ const QUICK_PROMPTS_SW = [
 export default function AkiliYaBiashara({ shopData = SAMPLE_SHOP, theme = "dark" }: { shopData?: typeof SAMPLE_SHOP; theme?: "dark" | "light" }) {
   const [tab, setTab] = useState<"insights" | "chat" | "predict">("insights");
   const [lang, setLang] = useState<"both" | "sw" | "en">("both");
-  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>(() => buildInitialMessages(shopData.owner, shopData));
   const [inputVal, setInputVal] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [expandedInsight, setExpandedInsight] = useState<number | null>(null);

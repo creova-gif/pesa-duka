@@ -26,7 +26,7 @@ const SAMPLE_EFD_DAY = {
   traConfirmCode: "TRA-CONF-20260314-8821",
 };
 
-export function EFDZReport({ theme = "dark", data = SAMPLE_EFD_DAY }) {
+export function EFDZReport({ theme = "dark", data = SAMPLE_EFD_DAY }: { theme?: "dark" | "light"; data?: typeof SAMPLE_EFD_DAY }) {
   const [generating, setGenerating] = useState(false);
   const [sent, setSent] = useState(data.transmitted);
 
@@ -125,6 +125,16 @@ export function EFDZReport({ theme = "dark", data = SAMPLE_EFD_DAY }) {
           </button>
         </div>
 
+        {data.tin === "NOT SET" && (
+          <div style={{ marginTop: 10, background: "rgba(239,68,68,.06)", border: "1px solid rgba(239,68,68,.2)", borderRadius: 10, padding: "10px 13px", fontSize: 11, color: "#ef4444", lineHeight: 1.5, fontWeight: 600 }}>
+            ⚠️ TIN number not configured. Go to Settings → Business Profile to add your TIN before transmitting to TRA.
+          </div>
+        )}
+        {data.totalReceipts === 0 && (
+          <div style={{ marginTop: 10, background: "rgba(245,158,11,.06)", border: "1px solid rgba(245,158,11,.2)", borderRadius: 10, padding: "10px 13px", fontSize: 11, color: "#f59e0b", lineHeight: 1.5 }}>
+            📊 No sales recorded today yet. Complete sales through the POS module — they will appear here automatically.
+          </div>
+        )}
         <div style={{ marginTop: 12, background: "rgba(59,130,246,.06)", border: "1px solid rgba(59,130,246,.2)", borderRadius: 10, padding: "10px 13px", fontSize: 11, color: "var(--t2)", lineHeight: 1.5 }}>
           💡 TRA requires Z-Reports to be transmitted daily before midnight. Failure = penalty up to TZS 4M.
           This app transmits automatically at 11:30pm if not done manually.

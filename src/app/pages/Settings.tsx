@@ -1,31 +1,29 @@
 import { useState, useRef } from "react";
-import { Upload, Trash2, Save, CheckCircle, Settings as SettingsIcon, AlertTriangle } from "lucide-react";
+import { Upload, Trash2, Save, CheckCircle, AlertTriangle } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useBusinessProfile } from "../hooks/useBusinessProfile";
 
 export function Settings() {
   const { theme, setTheme } = useTheme();
+  const { profile, saveAll } = useBusinessProfile();
   const fileRef = useRef<HTMLInputElement>(null);
-  const [logo, setLogo] = useState<string | null>(null);
-  const [lang, setLang] = useState<"en" | "sw">("en");
-  const [printer, setPrinter] = useState<"none" | "bluetooth" | "wifi">("none");
   const [saved, setSaved] = useState(false);
-  const [toggles, setToggles] = useState({
-    smsReceipts: true,
-    whatsappReceipts: false,
-    lowStockAlerts: true,
-    paymentReminders: true,
-  });
+
+  const [logo, setLogo] = useState<string | null>(profile.logo);
+  const [lang, setLang] = useState<"en" | "sw">(profile.lang);
+  const [printer, setPrinter] = useState<"none" | "bluetooth" | "wifi">(profile.printer);
+  const [toggles, setToggles] = useState(profile.toggles);
   const [form, setForm] = useState({
-    businessName: "Duka la Mwanga",
-    ownerName: "Amina Hassan",
-    phone: "+255 712 345 678",
-    email: "amina@dukalamwanga.co.tz",
-    tin: "123-456-789",
-    address: "Kariakoo Market, Block C, Dar es Salaam",
-    city: "Dar es Salaam",
-    region: "Dar es Salaam",
-    receiptFooter: "Asante kwa ununuzi wako! / Thank you for your purchase!",
-    currency: "TZS",
+    businessName: profile.businessName || "",
+    ownerName: profile.ownerName || "",
+    phone: profile.phone || "",
+    email: profile.email || "",
+    tin: profile.tin || "",
+    address: profile.address || "",
+    city: profile.city || "Dar es Salaam",
+    region: profile.region || "Dar es Salaam",
+    receiptFooter: profile.receiptFooter || "Asante kwa ununuzi wako! / Thank you for your purchase!",
+    currency: profile.currency || "TZS",
   });
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +32,15 @@ export function Settings() {
   };
 
   const handleSave = () => {
+    saveAll({
+      ...profile,
+      ...form,
+      logo,
+      lang,
+      printer,
+      toggles,
+      onboarded: true,
+    });
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
@@ -43,7 +50,6 @@ export function Settings() {
 
   return (
     <div className="p-4 md:p-8">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-xl md:text-2xl font-semibold">
@@ -61,7 +67,6 @@ export function Settings() {
         </button>
       </div>
 
-      {/* Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Business Profile */}
         <div className="bg-card border border-border rounded-2xl p-6">
@@ -69,10 +74,11 @@ export function Settings() {
             Business Profile
           </div>
 
-          {/* Avatar */}
           <div className="flex items-center gap-5 mb-5">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-3xl font-extrabold text-white overflow-hidden border-2 border-border">
-              {logo ? <img src={logo} alt="logo" className="w-full h-full object-cover" /> : form.businessName[0]}
+              {logo
+                ? <img src={logo} alt="logo" className="w-full h-full object-cover" />
+                : (form.businessName[0] || "?")}
             </div>
             <div className="flex flex-col gap-2">
               <button
@@ -93,7 +99,6 @@ export function Settings() {
             </div>
           </div>
 
-          {/* Form Fields */}
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Business Name</label>
@@ -101,6 +106,7 @@ export function Settings() {
                 className="w-full bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
                 value={form.businessName}
                 onChange={(e) => setForm({ ...form, businessName: e.target.value })}
+                placeholder="Enter your business name"
               />
             </div>
             <div>
@@ -109,6 +115,7 @@ export function Settings() {
                 className="w-full bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
                 value={form.ownerName}
                 onChange={(e) => setForm({ ...form, ownerName: e.target.value })}
+                placeholder="Your full name"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -118,6 +125,7 @@ export function Settings() {
                   className="w-full bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  placeholder="+255 7XX XXX XXX"
                 />
               </div>
               <div>
@@ -126,6 +134,7 @@ export function Settings() {
                   className="w-full bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="email@example.com"
                 />
               </div>
             </div>
@@ -135,7 +144,7 @@ export function Settings() {
                 className="w-full bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
                 value={form.tin}
                 onChange={(e) => setForm({ ...form, tin: e.target.value })}
-                placeholder="Tax Identification Number"
+                placeholder="Tax Identification Number (e.g. 123-456-789-T)"
               />
             </div>
             <div>
@@ -144,15 +153,17 @@ export function Settings() {
                 className="w-full bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
                 value={form.address}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
+                placeholder="Street, Market, Area"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5">City</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1.5">City / Town</label>
                 <input
                   className="w-full bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
                   value={form.city}
                   onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  placeholder="e.g. Kariakoo"
                 />
               </div>
               <div>
@@ -162,7 +173,7 @@ export function Settings() {
                   value={form.region}
                   onChange={(e) => setForm({ ...form, region: e.target.value })}
                 >
-                  {["Dar es Salaam", "Mwanza", "Arusha", "Mbeya", "Dodoma"].map(r => (
+                  {["Dar es Salaam", "Mwanza", "Arusha", "Mbeya", "Dodoma", "Tanga", "Morogoro", "Zanzibar", "Tabora", "Kigoma", "Moshi", "Iringa"].map(r => (
                     <option key={r}>{r}</option>
                   ))}
                 </select>
@@ -183,17 +194,13 @@ export function Settings() {
               <div className="flex bg-input border border-border rounded-lg overflow-hidden">
                 <button
                   onClick={() => setLang("en")}
-                  className={`flex-1 py-2.5 text-sm font-bold transition-all ${
-                    lang === "en" ? "bg-primary text-white" : "bg-transparent text-muted-foreground"
-                  }`}
+                  className={`flex-1 py-2.5 text-sm font-bold transition-all ${lang === "en" ? "bg-primary text-white" : "bg-transparent text-muted-foreground"}`}
                 >
                   🇬🇧 English
                 </button>
                 <button
                   onClick={() => setLang("sw")}
-                  className={`flex-1 py-2.5 text-sm font-bold transition-all ${
-                    lang === "sw" ? "bg-primary text-white" : "bg-transparent text-muted-foreground"
-                  }`}
+                  className={`flex-1 py-2.5 text-sm font-bold transition-all ${lang === "sw" ? "bg-primary text-white" : "bg-transparent text-muted-foreground"}`}
                 >
                   🇹🇿 Kiswahili
                 </button>
@@ -228,14 +235,10 @@ export function Settings() {
                   </div>
                   <button
                     onClick={() => toggleSwitch(key)}
-                    className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${
-                      toggles[key] ? "bg-primary" : "bg-border"
-                    }`}
+                    className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${toggles[key] ? "bg-primary" : "bg-border"}`}
                   >
                     <div
-                      className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        toggles[key] ? "translate-x-5" : "translate-x-0.5"
-                      }`}
+                      className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${toggles[key] ? "translate-x-5" : "translate-x-0.5"}`}
                     />
                   </button>
                 </div>
@@ -259,8 +262,10 @@ export function Settings() {
           </div>
 
           <div className="bg-input border border-dashed border-border rounded-lg p-4 text-sm leading-relaxed text-muted-foreground font-mono mt-3">
-            <div className="text-base font-bold text-foreground text-center mb-1">{form.businessName}</div>
-            <div className="text-center text-xs">{form.address}</div>
+            <div className="text-base font-bold text-foreground text-center mb-1">
+              {form.businessName || "Your Business Name"}
+            </div>
+            <div className="text-center text-xs">{form.address || form.city}</div>
             <div className="text-center text-xs">{form.phone}</div>
             {form.tin && <div className="text-center text-xs">TIN: {form.tin}</div>}
             <hr className="border-t border-dashed border-border my-2" />
@@ -290,20 +295,14 @@ export function Settings() {
             <div
               key={p.id}
               onClick={() => setPrinter(p.id)}
-              className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer mb-2 transition-all ${
-                printer === p.id
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/50"
-              }`}
+              className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer mb-2 transition-all ${printer === p.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
             >
               <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center text-lg">{p.icon}</div>
               <div className="flex-1">
                 <div className="text-sm font-semibold">{p.name}</div>
                 <div className="text-xs text-muted-foreground">{p.desc}</div>
               </div>
-              <div className={`w-4.5 h-4.5 rounded-full border-2 flex items-center justify-center ${
-                printer === p.id ? "border-primary" : "border-border"
-              }`}>
+              <div className={`w-4.5 h-4.5 rounded-full border-2 flex items-center justify-center ${printer === p.id ? "border-primary" : "border-border"}`}>
                 {printer === p.id && <div className="w-2 h-2 bg-primary rounded-full" />}
               </div>
             </div>
@@ -322,30 +321,34 @@ export function Settings() {
           </div>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <div className="text-base font-bold">Free Plan</div>
-              <div className="text-sm text-muted-foreground">TSh 0/month</div>
+              <div className="text-base font-bold capitalize">{profile.tier === "free" ? "Free Plan" : profile.tier === "growth" ? "Growth Plan" : "Business Plan"}</div>
+              <div className="text-sm text-muted-foreground">
+                {profile.tier === "free" ? "TSh 0/month" : profile.tier === "growth" ? "TSh 30,000/month" : "TSh 75,000/month"}
+              </div>
             </div>
             <span className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/30 rounded-full px-3 py-1 text-xs font-bold">
-              ⚡ FREE
+              {profile.tier === "free" ? "⚡ FREE" : profile.tier === "growth" ? "🚀 GROWTH" : "💼 BUSINESS"}
             </span>
           </div>
-          {[
-            { label: "Products", used: 18, max: 100 },
-            { label: "Users", used: 1, max: 1 },
-          ].map(({ label, used, max }) => (
-            <div key={label} className="mb-3.5">
-              <div className="flex justify-between text-xs mb-1.5">
-                <span className="text-muted-foreground font-semibold">{label}</span>
-                <span className="font-bold">{used} / {max}</span>
-              </div>
-              <div className="h-1.5 bg-border rounded-full overflow-hidden">
-                <div className="h-full bg-primary rounded-full" style={{ width: `${(used/max)*100}%` }} />
+          {profile.tier === "free" && (
+            <div className="space-y-3 mb-4">
+              <div className="text-xs text-muted-foreground font-semibold mb-2">Free tier includes: POS, Inventory, Cashbook, 1 user</div>
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-xs text-muted-foreground">
+                <div className="font-bold text-primary mb-1">🚀 Upgrade to Growth — TSh 30,000/mo</div>
+                <div>Unlocks: Akili AI Advisor, Staff Management, SMS Reminders, Credit Scoring, Mobile Money Ledger</div>
               </div>
             </div>
-          ))}
-          <button className="w-full bg-primary hover:bg-primary/90 text-white border-none rounded-lg py-2.5 text-sm font-bold flex items-center justify-center gap-2 mt-2 transition-colors">
-            ✨ Upgrade to Pro — TSh 30,000/mo
-          </button>
+          )}
+          {profile.tier === "free" && (
+            <button
+              onClick={() => {
+                window.open("https://wa.me/255700000000?text=Ninataka%20kupgrade%20CREOVA%20kwa%20Growth%20Plan", "_blank");
+              }}
+              className="w-full bg-primary hover:bg-primary/90 text-white border-none rounded-lg py-2.5 text-sm font-bold flex items-center justify-center gap-2 mt-2 transition-colors"
+            >
+              ✨ Upgrade to Growth — TSh 30,000/mo
+            </button>
+          )}
         </div>
 
         {/* Danger Zone */}
@@ -355,14 +358,22 @@ export function Settings() {
           </div>
           <div className="border border-red-500/30 rounded-xl p-4 bg-red-500/5">
             <div className="text-sm font-bold text-red-500 mb-2 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" /> Delete Account
+              <AlertTriangle className="w-4 h-4" /> Reset App Data
             </div>
             <div className="text-xs text-muted-foreground mb-3">
-              Permanently delete your business data, products, and transaction history.
-              This action cannot be undone.
+              This will clear your local settings and show the setup wizard again.
+              Your transaction data on the server will not be affected.
             </div>
-            <button className="bg-transparent border border-red-500/40 text-red-500 hover:bg-red-500/10 rounded-lg px-4 py-2 text-sm font-semibold transition-colors">
-              Delete Account
+            <button
+              onClick={() => {
+                if (window.confirm("Clear all local settings? This cannot be undone.")) {
+                  localStorage.removeItem("creova_business_profile");
+                  window.location.reload();
+                }
+              }}
+              className="bg-transparent border border-red-500/40 text-red-500 hover:bg-red-500/10 rounded-lg px-4 py-2 text-sm font-semibold transition-colors"
+            >
+              Reset Local Settings
             </button>
           </div>
         </div>
@@ -371,23 +382,13 @@ export function Settings() {
       {/* Sticky Save Bar */}
       <div className="sticky bottom-6 bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-3 mt-6 shadow-lg">
         <span className="text-xs text-muted-foreground">
-          {saved ? "✅ Changes saved successfully" : "Unsaved changes will be lost"}
+          {saved ? "✅ Changes saved to this device" : "Changes are saved to this device only"}
         </span>
         <button
           onClick={handleSave}
-          className={`flex items-center gap-2 border-none rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${
-            saved ? "bg-green-500 text-white" : "bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5"
-          }`}
+          className={`flex items-center gap-2 border-none rounded-lg px-6 py-2.5 text-sm font-bold transition-all ${saved ? "bg-green-500 text-white" : "bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5"}`}
         >
-          {saved ? (
-            <>
-              <CheckCircle className="w-4 h-4" /> Saved!
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4" /> Save Changes
-            </>
-          )}
+          {saved ? <><CheckCircle className="w-4 h-4" /> Saved!</> : <><Save className="w-4 h-4" /> Save Changes</>}
         </button>
       </div>
     </div>
