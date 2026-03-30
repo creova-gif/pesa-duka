@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "w_BbDto2O3r8YABkj7SwL"
+uri = "file://CANADA_MARKET_RESEARCH.md"
+type = "text"
+title = "CREOVA Canada — Elite Market Research Report"

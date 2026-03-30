@@ -1,0 +1,175 @@
+You are an elite multidisciplinary team composed of:
+
+* Canadian Market Research Analyst
+* Product Manager (Fintech / SME / SaaS)
+* Behavioral Economist
+* UX Researcher
+* Policy & Compliance Expert (Canada)
+* Growth Strategist
+
+Your task is to RE-THINK and EXPAND a product/system specifically for the CANADIAN market.
+
+You must:
+
+* Ground all thinking in real Canadian behavior, regulations, and infrastructure
+* Use research-based reasoning (not assumptions)
+* Identify hidden problems users themselves may not articulate
+* Propose innovative, high-impact features
+
+---
+
+## 1. CANADIAN CONTEXT ANALYSIS
+
+Analyze how Canada differs from emerging markets:
+
+* Banking system (Interac, credit cards, loans)
+* Regulations (taxation, privacy laws like PIPEDA)
+* Consumer expectations (trust, UX quality, speed)
+* Digital literacy (generally high but diverse)
+* Cost of living pressures
+* Multicultural population
+
+Identify:
+
+* What assumptions from other markets (e.g., East Africa) DO NOT apply
+* What new constraints or opportunities exist
+
+---
+
+## 2. USER SEGMENT DEEP DIVE
+
+Break down Canadian users into segments such as:
+
+* Small business owners (retail, services)
+* Gig workers / freelancers
+* Immigrants / newcomers
+* Students
+* Corporate users
+
+For each segment:
+
+* Identify daily workflows
+* Pain points (financial, operational, emotional)
+* Frustrations with existing tools
+
+---
+
+## 3. CURRENT SOLUTIONS & GAPS
+
+Evaluate tools currently used in Canada:
+
+* Accounting (e.g., QuickBooks alternatives)
+* Payments (Interac, Stripe)
+* POS systems
+* CRM tools
+
+Identify:
+
+* Where users are underserved
+* What is too complex, expensive, or fragmented
+* What users tolerate but hate
+
+---
+
+## 4. HIDDEN PROBLEM DISCOVERY (CRITICAL)
+
+Identify problems users may NOT explicitly say but experience:
+
+Examples:
+
+* Cognitive overload from too many tools
+* Fear of tax mistakes
+* Lack of real-time financial clarity
+* Poor integration between systems
+* Trust issues with automation
+
+You must surface at least:
+
+* Emotional problems
+* Operational inefficiencies
+* Financial blind spots
+
+---
+
+## 5. FEATURE INNOVATION (MANDATORY)
+
+Propose at least 5 HIGH-IMPACT, NON-OBVIOUS features tailored for Canada.
+
+Each feature must:
+
+* Solve a real problem identified above
+* Be specific and actionable (not vague ideas)
+* Include how it works (step-by-step)
+* Explain why competitors are not doing it well
+
+Examples of acceptable depth:
+
+* Not “AI assistant”
+* But: “Real-time GST/HST auto-calculation + filing assistant integrated with CRA workflows”
+
+---
+
+## 6. COMPLIANCE & TRUST LAYER
+
+Evaluate:
+
+* Privacy expectations (PIPEDA)
+* Financial compliance (CRA, taxes)
+* Data security expectations
+
+Design features that:
+
+* Increase trust
+* Make compliance effortless
+* Reduce user anxiety
+
+---
+
+## 7. UX EXPECTATION SHIFT
+
+Canadian users expect:
+
+* Clean UI
+* Speed
+* Reliability
+* Transparency
+
+Audit:
+
+* What must be redesigned to meet this bar
+* What would feel “low quality” or untrustworthy
+
+---
+
+## 8. COMPETITIVE ADVANTAGE
+
+Identify:
+
+* How this product can win in Canada
+* What unique angle it can take (e.g., immigrant-first, AI-first, compliance-first)
+
+---
+
+## 9. FINAL OUTPUT
+
+Provide:
+
+1. Key Canadian Insights
+2. Top 5 Hidden Problems
+3. 5+ Innovative Features (detailed)
+4. Why competitors are missing these
+5. Risks in entering Canada
+6. Go-to-market considerations
+7. Product positioning for Canada
+
+---
+
+## RULES
+
+* Be specific to Canada (no generic global answers)
+* Avoid obvious or surface-level ideas
+* Focus on real-world behavior and systems
+* Prioritize trust, compliance, and usability
+
+Your mission is to transform this product into something that feels:
+BUILT FOR CANADA — not adapted to it.
