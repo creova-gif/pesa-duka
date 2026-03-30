@@ -5,12 +5,13 @@ import FormalizationHub from "../components/FormalizationHub";
 import AkiliYaBiashara from "../components/AkiliYaBiashara";
 import { EFDZReport } from "../components/EFDZReport";
 import MobileMoneyLedger from "../components/MobileMoneyLedgerComponent";
+import PayrollCalculator from "../components/PayrollCalculator";
 import { useTransactions, useProducts } from "../hooks/useData";
 import { getProfile } from "../hooks/useBusinessProfile";
 
 export function BusinessTools() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [activeTab, setActiveTab] = useState<"akili" | "invoices" | "academy" | "formalization" | "efd" | "mobilemoney">("akili");
+  const [activeTab, setActiveTab] = useState<"akili" | "invoices" | "academy" | "formalization" | "efd" | "mobilemoney" | "payroll">("akili");
 
   const { data: transactions = [] } = useTransactions();
   const { data: products = [] } = useProducts();
@@ -119,6 +120,7 @@ export function BusinessTools() {
           { id: "formalization", label: "🏛️ Registration Hub" },
           { id: "efd", label: "📊 EFD Z-Report" },
           { id: "mobilemoney", label: "💰 Mobile Money Ledger" },
+          { id: "payroll", label: "👥 Payroll Calculator" },
         ] as const).map(tab => (
           <button
             key={tab.id}
@@ -140,6 +142,7 @@ export function BusinessTools() {
       {activeTab === "formalization" && <FormalizationHub theme={theme} />}
       {activeTab === "efd" && <EFDZReport theme={theme} data={efdData} />}
       {activeTab === "mobilemoney" && <MobileMoneyLedger theme={theme} />}
+      {activeTab === "payroll" && <PayrollCalculator theme={theme} />}
     </div>
   );
 }

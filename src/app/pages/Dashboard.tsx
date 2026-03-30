@@ -5,6 +5,8 @@ import { useState, useEffect, useMemo } from "react";
 import MorningBriefing from "../components/MorningBriefing";
 import EndOfDayClose from "../components/EndOfDayClose";
 import CreditScoreCard from "../components/CreditScoreCard";
+import VATGuardian from "../components/VATGuardian";
+import TRAComplianceCalendar from "../components/TRAComplianceCalendar";
 import { useTransactions, useProducts } from "../hooks/useData";
 import { getProfile } from "../hooks/useBusinessProfile";
 
@@ -402,6 +404,17 @@ export function Dashboard() {
 
       <div className="mb-6">
         <CreditScoreCard theme={theme} />
+      </div>
+
+      {/* TRA Compliance Section */}
+      <div className="mb-4">
+        <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
+          <span style={{ color: "#E56B0A" }}>📡</span> TRA Compliance Centre
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <VATGuardian theme={theme} />
+          <TRAComplianceCalendar theme={theme} />
+        </div>
       </div>
     </div>
   );

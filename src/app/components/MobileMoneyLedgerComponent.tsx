@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useTransactions } from "../hooks/useData";
 
 const fmt = (n: number) => "TSh " + Number(n).toLocaleString("en-TZ");
 
 // ─── MobileMoneyLedger ────────────────────────────────────────────────────────
-// THE core differentiator from the spec:
-// "Auto-reconcile mobile money transactions from all 4 Tanzanian wallets
-//  (Vodacom M-Pesa, Airtel Money, Mixx by Yas, HaloPesa) into accounting ledgers"
+// Auto-reconcile mobile money transactions from all 4 Tanzanian wallets
+// (Vodacom M-Pesa, Airtel Money, Mixx by Yas, HaloPesa) into accounting ledgers
 
 const WALLET_CONFIG = {
   mpesa:  { name: "M-Pesa",      color: "#22c55e", icon: "📱", provider: "Vodacom", apiKey: "CLICKPESA_MPESA" },
@@ -15,10 +15,18 @@ const WALLET_CONFIG = {
   crdb:   { name: "CRDB Bank",   color: "#7c3aed", icon: "🏦", provider: "CRDB", apiKey: "CLICKPESA_CRDB" },
 };
 
-// Sample transactions as they would arrive from ClickPesa webhooks
+const METHOD_TO_PROVIDER: Record<string, string> = {
+  "M-Pesa": "mpesa",
+  "Airtel Money": "airtel",
+  "Tigo Pesa": "mixx",
+  "HaloPesa": "halo",
+  "CRDB": "crdb",
+};
+
+// Sample transactions shown when no real mobile money transactions exist
 const SAMPLE_TRANSACTIONS = [
-  { id: "CP-001", externalId: "MPE260314-8821", provider: "mpesa", amount: 45000, phone: "+255712334556", reference: "INV-2026-041", timestamp: "2026-03-14T09:14:22Z", status: "completed", reconciled: true, ledgerMatch: "Sales - Duka" },
-  { id: "CP-002", externalId: "AIR260314-3341", provider: "airtel", amount: 8500, phone: "+255754889001", reference: "WALK-IN-001", timestamp: "2026-03-14T09:47:11Z", status: "completed", reconciled: true, ledgerMatch: "Sales - Duka" },
+  { id: "CP-001", externalId: "MPE260314-8821", provider: "mpesa", amount: 45000, phone: "+255712334556", reference: "INV-2026-041", timestamp: "2026-03-14T09:14:22Z", status: "completed", reconciled: true, ledgerMatch: "Sales — Retail" },
+  { id: "CP-002", externalId: "AIR260314-3341", provider: "airtel", amount: 8500, phone: "+255754889001", reference: "WALK-IN-001", timestamp: "2026-03-14T09:47:11Z", status: "completed", reconciled: true, ledgerMatch: "Sales — Retail" },
   { id: "CP-003", externalId: "MPE260314-9102", provider: "mpesa", amount: 22000, phone: "+255699334556", reference: "INV-2026-044", timestamp: "2026-03-14T11:22:08Z", status: "completed", reconciled: false, ledgerMatch: null },
   { id: "CP-004", externalId: "TIG260314-4421", provider: "mixx", amount: 15000, phone: "+255765112334", reference: "RENT-MAR", timestamp: "2026-03-14T12:10:45Z", status: "completed", reconciled: false, ledgerMatch: null },
   { id: "CP-005", externalId: "MPE260314-9998", provider: "mpesa", amount: 3500, phone: "+255713556009", reference: null, timestamp: "2026-03-14T13:44:02Z", status: "completed", reconciled: false, ledgerMatch: null },
@@ -39,10 +47,37 @@ const LEDGER_ACCOUNTS = [
 ];
 
 export default function MobileMoneyLedger({ theme = "dark" }) {
-  const [transactions, setTransactions] = useState(SAMPLE_TRANSACTIONS);
+  const { data: rawTransactions = [] } = useTransactions();
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedLedger, setSelectedLedger] = useState<Record<string, string>>({});
   const [activeWallet, setActiveWallet] = useState<string | null>(null);
+  const [manualReconciled, setManualReconciled] = useState<Record<string, string>>({});
+
+  const realMMTransactions = useMemo(() => {
+    const mobilePaymentMethods = Object.keys(METHOD_TO_PROVIDER);
+    return rawTransactions
+      .filter(t => t.paymentMethod && mobilePaymentMethods.includes(t.paymentMethod))
+      .map((t, i) => ({
+        id: t.id || `real-${i}`,
+        externalId: `${t.paymentMethod?.replace(/ /g, "").slice(0, 3).toUpperCase()}${t.date?.replace(/-/g, "").slice(2, 8)}-${String(i + 1000)}`,
+        provider: METHOD_TO_PROVIDER[t.paymentMethod!] || "mpesa",
+        amount: t.amount,
+        phone: t.phone || t.customer || "+255700000000",
+        reference: t.description || null,
+        timestamp: t.date ? new Date(t.date).toISOString() : new Date().toISOString(),
+        status: "completed" as const,
+        reconciled: !!manualReconciled[t.id || `real-${i}`],
+        ledgerMatch: manualReconciled[t.id || `real-${i}`] || (t.type === "income" ? "Sales — Retail" : "Other Expense"),
+      }));
+  }, [rawTransactions, manualReconciled]);
+
+  const transactions = realMMTransactions.length > 0 ? realMMTransactions : SAMPLE_TRANSACTIONS.map(t => ({
+    ...t,
+    reconciled: t.reconciled || !!manualReconciled[t.id],
+    ledgerMatch: manualReconciled[t.id] || t.ledgerMatch,
+  }));
+
+  const isUsingRealData = realMMTransactions.length > 0;
 
   const unreconciled = transactions.filter(t => !t.reconciled && t.status === "completed");
   const reconciled   = transactions.filter(t => t.reconciled);
@@ -53,19 +88,19 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
   const reconcile = (txnId: string) => {
     const account = selectedLedger[txnId];
     if (!account) return;
-    setTransactions(prev => prev.map(t =>
-      t.id === txnId ? { ...t, reconciled: true, ledgerMatch: account } : t
-    ));
+    setManualReconciled(prev => ({ ...prev, [txnId]: account }));
   };
 
   const autoReconcile = () => {
-    setTransactions(prev => prev.map(t => {
-      if (t.reconciled || t.status === "pending") return t;
+    const updates: Record<string, string> = {};
+    transactions.forEach(t => {
+      if (t.reconciled || t.status === "pending") return;
       const account = t.reference?.startsWith("INV") ? "Sales — Retail" :
                       t.reference?.startsWith("RENT") ? "Rent Expense" :
                       t.reference?.startsWith("STOCK") ? "Stock Purchase" : "Sales — Retail";
-      return { ...t, reconciled: true, ledgerMatch: account };
-    }));
+      updates[t.id] = account;
+    });
+    setManualReconciled(prev => ({ ...prev, ...updates }));
   };
 
   const filtered = transactions.filter(t => {
@@ -126,11 +161,23 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
       <div className={`ml-root ${theme}`}>
         {/* Header */}
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 18, fontWeight: 800, color: "var(--t)" }}>
-            Mobile Money <span style={{ color: "var(--primary)" }}>Ledger</span>
-          </div>
-          <div style={{ fontSize: 11, color: "var(--t2)", marginTop: 2 }}>
-            Auto-reconcile all 4 TZ wallets via ClickPesa · 1% + 0.5% fee
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "var(--t)" }}>
+                Mobile Money <span style={{ color: "var(--primary)" }}>Ledger</span>
+              </div>
+              <div style={{ fontSize: 11, color: "var(--t2)", marginTop: 2 }}>
+                Auto-reconcile all 4 TZ wallets via ClickPesa · 1% + 0.5% fee
+              </div>
+            </div>
+            <div style={{
+              background: isUsingRealData ? "rgba(34,197,94,.1)" : "rgba(245,158,11,.08)",
+              border: `1px solid ${isUsingRealData ? "rgba(34,197,94,.25)" : "rgba(245,158,11,.25)"}`,
+              color: isUsingRealData ? "#22c55e" : "#f59e0b",
+              fontSize: 9, fontWeight: 800, padding: "4px 10px", borderRadius: 20, flexShrink: 0,
+            }}>
+              {isUsingRealData ? `✓ ${realMMTransactions.length} LIVE TXN${realMMTransactions.length !== 1 ? "S" : ""}` : "DEMO DATA"}
+            </div>
           </div>
         </div>
 

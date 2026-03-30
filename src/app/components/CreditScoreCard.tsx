@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useTransactions, useCustomers } from "../hooks/useData";
 
 // ─── CreditScoreCard ─────────────────────────────────────────────────────────
 // Shows owner their business credit score based on transaction history,
@@ -102,8 +103,86 @@ const css = `
 .cs-unlock-btn:hover{background:#ff8c3a}
 `;
 
-export default function CreditScoreCard({ data = DEFAULT_DATA, theme = "dark" }: { data?: typeof DEFAULT_DATA; theme?: "dark" | "light" }) {
+export default function CreditScoreCard({ data: externalData, theme = "dark" }: { data?: typeof DEFAULT_DATA; theme?: "dark" | "light" }) {
   const [openFactor, setOpenFactor] = useState<number | null>(null);
+  const { data: transactions = [] } = useTransactions();
+  const { data: customers = [] } = useCustomers();
+
+  const computedData = useMemo(() => {
+    if (transactions.length === 0) return null;
+
+    const now = new Date();
+    const firstTxDate = transactions.reduce((min, t) => {
+      const d = new Date(t.date);
+      return d < min ? d : min;
+    }, now);
+    const monthsActive = Math.max(1, Math.round((now.getTime() - firstTxDate.getTime()) / (30 * 24 * 60 * 60 * 1000)));
+
+    const incomeTransactions = transactions.filter(t => t.type === "income");
+    const totalTransactions = transactions.length;
+    const avgMonthlySales = incomeTransactions.reduce((s, t) => s + t.amount, 0) / Math.max(1, monthsActive);
+
+    const uniqueCustomers = customers.length || new Set(incomeTransactions.map(t => t.customer).filter(Boolean)).size;
+
+    const recentIncome = incomeTransactions.filter(t => {
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      return new Date(t.date) >= thirtyDaysAgo;
+    });
+    const consistency = recentIncome.length > 0 ? Math.min(100, Math.round((recentIncome.length / 30) * 100) * 3) : 0;
+
+    const creditTransactions = transactions.filter(t => t.paymentMethod === "Credit");
+    const creditAmount = creditTransactions.reduce((s, t) => s + t.amount, 0);
+    const totalIncome = incomeTransactions.reduce((s, t) => s + t.amount, 0);
+    const debtRepaymentRate = creditAmount > 0 ? Math.round(((totalIncome - creditAmount) / totalIncome) * 100) : 80;
+
+    const recordKeepingScore = Math.min(100, Math.round((totalTransactions / Math.max(1, monthsActive)) * 3));
+
+    const score = Math.min(100, Math.max(0,
+      Math.round(
+        (Math.min(100, consistency) * 0.3) +
+        (Math.min(100, debtRepaymentRate) * 0.3) +
+        (Math.min(100, recordKeepingScore) * 0.2) +
+        (Math.min(100, (totalTransactions / 1000) * 100) * 0.1) +
+        (Math.min(100, (uniqueCustomers / 200) * 100) * 0.1)
+      )
+    ));
+
+    const tier: typeof DEFAULT_DATA.tier =
+      score >= 85 ? "Trusted" : score >= 70 ? "Established" : score >= 55 ? "Developing" : "Emerging";
+
+    const eligible = score >= 75;
+    const maxLoanAmount = eligible ? Math.round(avgMonthlySales * 3) : 0;
+
+    return {
+      ...DEFAULT_DATA,
+      score,
+      tier,
+      monthsActive,
+      totalTransactions,
+      avgMonthlySales: Math.round(avgMonthlySales),
+      consistency: Math.min(100, consistency),
+      debtRepaymentRate: Math.min(100, Math.max(0, debtRepaymentRate)),
+      recordKeepingScore: Math.min(100, recordKeepingScore),
+      uniqueCustomers,
+      loanEligibility: {
+        eligible,
+        requiredScore: 75,
+        maxLoanAmount,
+        message: eligible
+          ? `Congratulations! You qualify for up to ${fmt(maxLoanAmount)} in working capital.`
+          : `You need 75+ to unlock working capital. You're ${75 - score} points away.`,
+      },
+      factors: [
+        { label: "Sales consistency", score: Math.min(100, consistency), max: 100, impact: "medium" as const, tip: "Sell every day — even slow days matter. Days with zero sales hurt your score." },
+        { label: "Debt repayment rate", score: Math.min(100, Math.max(0, debtRepaymentRate)), max: 100, impact: "high" as const, tip: "Collect credit from customers faster. High outstanding credit drags your score down." },
+        { label: "Record keeping", score: Math.min(100, recordKeepingScore), max: 100, impact: "low" as const, tip: "Keep recording every sale. Consistent daily records are a key lender requirement." },
+        { label: "Transaction volume", score: Math.min(totalTransactions, 1000), max: 1000, impact: "low" as const, tip: `You have ${totalTransactions} lifetime transactions. Reaching 1,000 is a key lender milestone.` },
+        { label: "Customer base", score: Math.min(uniqueCustomers, 200), max: 200, impact: "medium" as const, tip: "Growing to 200 unique customers strengthens your score significantly." },
+      ],
+    };
+  }, [transactions, customers]);
+
+  const data = externalData || computedData || DEFAULT_DATA;
   const tc = TIER_COLORS[data.tier];
   const circumference = 2 * Math.PI * 40;
   const offset = circumference - (data.score / data.maxScore) * circumference;
