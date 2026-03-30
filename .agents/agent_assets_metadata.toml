@@ -1,8 +1,0 @@
-uploads = []
-generated = []
-
-[[outputs]]
-id = "qAfV62NPh7HH120wMI0R0"
-uri = "file://audit/CREOVA_BRUTAL_AUDIT.md"
-type = "text"
-title = "CREOVA SME OS — Full Brutal Audit"
