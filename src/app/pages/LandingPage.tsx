@@ -1,370 +1,613 @@
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { ArrowRight, ShoppingCart, Package, Wallet, Users, TrendingUp, Smartphone, Check, Zap, Shield, Globe, Star } from "lucide-react";
-import { useState, useEffect } from "react";
+import "../../styles/landing.css";
 
 export function LandingPage() {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const marqueeRef = useRef<HTMLDivElement>(null);
+  const [swahili, setSwahili] = useState(false);
 
-  // Detect theme changes
   useEffect(() => {
-    const checkTheme = () => {
-      setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    if (marqueeRef.current) {
+      marqueeRef.current.innerHTML += marqueeRef.current.innerHTML;
+    }
+
+    const reveals = document.querySelectorAll<HTMLElement>(".landing-root .reveal");
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("visible");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+    );
+    reveals.forEach((el) => io.observe(el));
+
+    const navEl = document.getElementById("landing-nav");
+    const handleScroll = () => {
+      if (navEl) {
+        navEl.style.borderBottomColor =
+          window.scrollY > 60 ? "rgba(139,128,112,.2)" : "rgba(139,128,112,.12)";
+      }
     };
-    checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    const countUps = document.querySelectorAll<HTMLElement>(".landing-root .metric-num");
+    const countIO = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            const el = e.target as HTMLElement;
+            const text = el.textContent || "";
+            if (text.includes("TSh") || text.includes("Custom")) return;
+            const num = parseFloat(text.replace(/[^0-9.]/g, ""));
+            const suffix = text.replace(/[0-9.,]/g, "").trim();
+            let start = 0;
+            const dur = 1800;
+            const stepMs = 16;
+            const inc = num / (dur / stepMs);
+            const timer = setInterval(() => {
+              start += inc;
+              if (start >= num) {
+                start = num;
+                clearInterval(timer);
+              }
+              el.textContent = Number.isInteger(num)
+                ? Math.round(start) + suffix
+                : start.toFixed(0) + suffix;
+            }, stepMs);
+            countIO.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+    countUps.forEach((el) => countIO.observe(el));
+
+    return () => {
+      io.disconnect();
+      countIO.disconnect();
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
-  const features = [
-    {
-      icon: ShoppingCart,
-      title: "Smart POS System",
-      description: "Lightning-fast sales with barcode scanning, mobile money integration (M-Pesa, Tigo, Airtel, Halopesa), and instant receipts.",
-      highlight: "Process sales in under 10 seconds"
-    },
-    {
-      icon: Package,
-      title: "Real-Time Inventory",
-      description: "Never run out of stock again. Automatic alerts, supplier management, and instant stock updates with every sale.",
-      highlight: "Live stock tracking across all products"
-    },
-    {
-      icon: Wallet,
-      title: "Complete Cashbook",
-      description: "Track every shilling. Automated expense recording, mobile money reconciliation, and daily profit calculations.",
-      highlight: "Auto-sync with 4 mobile money wallets"
-    },
-    {
-      icon: Users,
-      title: "Customer Management",
-      description: "Manage credit sales, track payment history, loyalty rewards, and automated debt follow-ups via SMS.",
-      highlight: "Built-in credit scoring system"
-    },
-    {
-      icon: TrendingUp,
-      title: "Business Intelligence",
-      description: "Weekly AI reports, profit trends, best-selling products, and actionable insights to grow your revenue.",
-      highlight: "AI-powered business advisor"
-    },
-    {
-      icon: Shield,
-      title: "TRA Compliance",
-      description: "EFD Z-Report generator for Tanzania Revenue Authority. Stay compliant with automatic fiscal reporting.",
-      highlight: "100% TRA compliant"
-    }
-  ];
-
-  const benefits = [
-    "✓ Works offline - No internet? No problem",
-    "✓ Mobile-first design - Use on any device",
-    "✓ Swahili & English support",
-    "✓ Free forever for pilot users",
-    "✓ Live ClickPesa integration",
-    "✓ Daily business training & tips"
-  ];
-
-  const testimonials = [
-    {
-      name: "Amina Hassan",
-      business: "Kariakoo Hardware Store",
-      quote: "CREOVA helped me track my inventory properly for the first time. I discovered I was losing TSh 200,000 per month to stock errors!",
-      rating: 5
-    },
-    {
-      name: "Juma Mwakasege",
-      business: "Mwenge Agro Supplies",
-      quote: "The mobile money integration is a game changer. No more manual reconciliation. Everything syncs automatically!",
-      rating: 5
-    },
-    {
-      name: "Fatuma Abdallah",
-      business: "Sinza Pharmacy",
-      quote: "My customers love the loyalty system. Sales are up 35% since we started using CREOVA.",
-      rating: 5
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">C</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-primary">CREOVA</h1>
-                <p className="text-xs text-muted-foreground">Akili Ya Biashara Yako</p>
-              </div>
-            </div>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
-            >
-              Launch App
-            </button>
-          </div>
+    <div className="landing-root">
+      {/* ══ NAV ══ */}
+      <nav id="landing-nav">
+        <div className="nav-logo">CREOVA <span>SME OS</span></div>
+        <div className="nav-links">
+          <a href="#features">Features</a>
+          <a href="#how">How it Works</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#demo">Demo</a>
         </div>
-      </header>
+        <div className="nav-cta">
+          <button className="nav-lang" onClick={() => setSwahili(!swahili)}>
+            {swahili ? "🇬🇧 English" : "🇹🇿 Swahili"}
+          </button>
+          <a href="#pricing" className="btn-nav">Start Free →</a>
+        </div>
+      </nav>
 
-      {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-br from-primary/5 via-background to-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <Zap className="w-4 h-4" />
-              <span>Now Live in Dar es Salaam - Kariakoo Pilot Market</span>
+      {/* ══ HERO ══ */}
+      <section className="hero" id="hero">
+        <div className="hero-container">
+          <div className="hero-left">
+            <div className="hero-eyebrow">
+              <span></span> Live in Dar es Salaam · Kenya launching Q3 2025
             </div>
-            
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              The Complete Business Management System for{" "}
-              <span className="text-primary">Tanzania</span>
+            <h1>
+              Your duka.<br />
+              Running<br />
+              <em>itself.</em>
             </h1>
-            
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Built specifically for retail dukas, agro-dealers, and small pharmacies. 
-              Manage sales, inventory, cashbook, and customers - all in one powerful platform.
+            <p className="hero-sub">
+              The first <strong>Swahili-first business OS</strong> for East African shop owners.
+              Mobile money reconciliation, TRA compliance, and an AI advisor who knows your shop better than you do.
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="px-8 py-4 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-primary/25"
-              >
-                Start Free Trial
-                <ArrowRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-card border border-border text-foreground rounded-lg hover:border-primary transition-colors font-semibold text-lg"
-              >
-                See Features
-              </button>
+            <div className="hero-actions">
+              <a href="#pricing" className="btn-primary btn-large">
+                Anza Bure — Start Free <span className="arrow">→</span>
+              </a>
+              <a href="#demo" className="btn-ghost">
+                ▶ See it in action
+              </a>
             </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="text-3xl font-bold text-primary mb-1">500+</div>
-                <div className="text-sm text-muted-foreground">Active Businesses</div>
+            <div className="hero-proof">
+              <div className="proof-avatars">
+                <div className="proof-avatar">AM</div>
+                <div className="proof-avatar" style={{ background: "#3b82f6" }}>JB</div>
+                <div className="proof-avatar" style={{ background: "#22c55e" }}>FA</div>
+                <div className="proof-avatar" style={{ background: "#a855f7" }}>HM</div>
+                <div className="proof-avatar" style={{ background: "#f59e0b" }}>+</div>
               </div>
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="text-3xl font-bold text-primary mb-1">TSh 2.5B+</div>
-                <div className="text-sm text-muted-foreground">Sales Processed</div>
-              </div>
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="text-3xl font-bold text-primary mb-1">50K+</div>
-                <div className="text-sm text-muted-foreground">Daily Transactions</div>
-              </div>
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="text-3xl font-bold text-primary mb-1">99.9%</div>
-                <div className="text-sm text-muted-foreground">Uptime</div>
+              <div className="proof-text">
+                Trusted by <strong>847 shop owners</strong> in Dar es Salaam
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">Everything Your Business Needs</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              7 powerful modules designed specifically for Tanzanian SMEs
-            </p>
-          </div>
+          <div className="hero-visual">
+            <div className="float-card fc1">
+              <div className="float-card-label">Today's Revenue</div>
+              <div className="float-card-value">TSh 312,800</div>
+              <div className="float-card-sub">↑ 16% vs last week</div>
+            </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-card border border-border rounded-xl p-6 hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/10 group"
-              >
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all">
-                  <feature.icon className="w-6 h-6 text-primary group-hover:text-white" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground mb-3">{feature.description}</p>
-                <div className="inline-flex items-center gap-2 text-sm text-primary font-medium">
-                  <Check className="w-4 h-4" />
-                  <span>{feature.highlight}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/5 via-background to-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                  Built for Tanzania, By Tanzanians
-                </h2>
-                <p className="text-lg text-muted-foreground mb-8">
-                  We understand the unique challenges of running a business in East Africa. 
-                  CREOVA is designed to work seamlessly with local payment systems, comply with TRA regulations, 
-                  and function perfectly even with unreliable internet.
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">{benefit.replace('✓ ', '')}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="bg-card border border-border rounded-xl p-8 shadow-xl">
-                <h3 className="text-2xl font-bold mb-6 text-center">Why Choose CREOVA?</h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Smartphone className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">Mobile Money Integration</h4>
-                      <p className="text-sm text-muted-foreground">Auto-sync M-Pesa, Tigo, Airtel, Halopesa transactions</p>
-                    </div>
+            <div className="hero-phone">
+              <div className="phone-screen">
+                <div className="phone-header">
+                  <div>
+                    <div className="phone-greeting">Habari za asubuhi,</div>
+                    <div className="phone-name">Amina ✦</div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">Works Offline</h4>
-                      <p className="text-sm text-muted-foreground">Continue selling even when internet is down</p>
-                    </div>
+                  <div className="phone-score">68 / 100 ★</div>
+                </div>
+                <div className="phone-akili">
+                  <div className="akili-label">🧠 Akili ya Biashara</div>
+                  <div className="akili-msg"><strong>Unga will run out Saturday morning</strong> — 3rd week in a row. Order today. You're losing TSh 28K/week.</div>
+                </div>
+                <div className="phone-stat-row">
+                  <div className="phone-stat">
+                    <div className="phone-stat-l">Profit</div>
+                    <div className="phone-stat-v green">76%</div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Shield className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">TRA Compliant</h4>
-                      <p className="text-sm text-muted-foreground">Automatic EFD Z-Reports for tax compliance</p>
-                    </div>
+                  <div className="phone-stat">
+                    <div className="phone-stat-l">Owed</div>
+                    <div className="phone-stat-v" style={{ color: "#ef4444" }}>189K</div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">AI Business Advisor</h4>
-                      <p className="text-sm text-muted-foreground">Get smart recommendations to grow your revenue</p>
-                    </div>
+                  <div className="phone-stat">
+                    <div className="phone-stat-l">Score</div>
+                    <div className="phone-stat-v orange">68</div>
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div className="float-card fc2">
+              <div className="float-card-label">Pending Action</div>
+              <div className="float-card-value" style={{ fontSize: "15px", lineHeight: "1.3" }}>M-Pesa auto-reconciled</div>
+              <div className="float-card-sub warn">34 txns · TSh 312,800</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">Trusted by Dar es Salaam Businesses</h2>
-            <p className="text-xl text-muted-foreground">See what shop owners are saying about CREOVA</p>
-          </div>
+      {/* ══ TRUST STRIP ══ */}
+      <div className="trust-strip">
+        <div className="marquee" ref={marqueeRef}>
+          <div className="marquee-item">✦ TRA EFD Certified <div className="marquee-dot"></div></div>
+          <div className="marquee-item">✦ ClickPesa Integrated <div className="marquee-dot"></div></div>
+          <div className="marquee-item">✦ M-Pesa · Airtel · Mixx · HaloPesa <div className="marquee-dot"></div></div>
+          <div className="marquee-item">✦ Swahili First <div className="marquee-dot"></div></div>
+          <div className="marquee-item">✦ Offline Capable <div className="marquee-dot"></div></div>
+          <div className="marquee-item">✦ PDPA 2022 Compliant <div className="marquee-dot"></div></div>
+          <div className="marquee-item">✦ 847 Active Shops <div className="marquee-dot"></div></div>
+          <div className="marquee-item">✦ BRELA + TIN Onboarding <div className="marquee-dot"></div></div>
+        </div>
+      </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-card border border-border rounded-xl p-6 hover:border-primary transition-all hover:shadow-lg"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground mb-4 italic">"{testimonial.quote}"</p>
-                <div className="border-t border-border pt-4">
-                  <div className="font-semibold">{testimonial.name}</div>
-                  <div className="text-sm text-muted-foreground">{testimonial.business}</div>
-                </div>
-              </div>
-            ))}
+      {/* ══ PARTNERS ══ */}
+      <div className="partners">
+        <div className="container">
+          <p className="partners-label">Integrated with the platforms you already use</p>
+          <div className="logos-row">
+            <div className="logo-item">ClickPesa</div>
+            <div className="logo-item">Vodacom M-Pesa</div>
+            <div className="logo-item">Airtel Money</div>
+            <div className="logo-item">Africa's Talking</div>
+            <div className="logo-item">CRDB Bank</div>
+            <div className="logo-item">NMB Biashara</div>
+            <div className="logo-item">TRA e-Filing</div>
+          </div>
+        </div>
+      </div>
+
+      {/* ══ PAIN ══ */}
+      <section className="pain" id="problem">
+        <div className="container">
+          <div className="section-label" style={{ color: "rgba(229,107,10,.7)" }}>The Problem</div>
+          <h2>Most dukas run on<br /><em>notebooks and prayer.</em></h2>
+          <p className="lead reveal" style={{ color: "rgba(250,248,245,.45)", marginTop: "16px" }}>
+            17 million MSMEs across East Africa. 85% still tracking sales in paper. Losing money they don't even know they're losing.
+          </p>
+          <div className="pain-grid">
+            <div className="pain-card reveal">
+              <div className="pain-stat">3</div>
+              <div className="pain-stat-label">stockouts per week on average</div>
+              <div className="pain-icon">📦</div>
+              <h3>Running out when customers arrive</h3>
+              <p>No system tells you when to reorder. You discover the gap when a customer walks out empty-handed.</p>
+            </div>
+            <div className="pain-card reveal reveal-delay-2">
+              <div className="pain-stat">$5.2T</div>
+              <div className="pain-stat-label">SME finance gap in Sub-Saharan Africa</div>
+              <div className="pain-icon">🏦</div>
+              <h3>Banks can't see you, so they won't lend to you</h3>
+              <p>No financial records means no credit score means no loan means no growth. The informal trap.</p>
+            </div>
+            <div className="pain-card reveal reveal-delay-3">
+              <div className="pain-stat">TSh 4M</div>
+              <div className="pain-stat-label">Maximum TRA penalty for EFD non-compliance</div>
+              <div className="pain-icon">🏛️</div>
+              <h3>Compliance is a minefield you don't have a map for</h3>
+              <p>EFD receipts. VAT returns. PAYE. SDL. Missing a filing costs more than a month of profit.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 via-background to-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
-              Ready to Transform Your Business?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Join 500+ businesses in Dar es Salaam using CREOVA to increase profits and save time.
-            </p>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="px-10 py-5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-semibold text-xl flex items-center justify-center gap-3 mx-auto shadow-2xl shadow-primary/30"
-            >
-              Start Free Trial - No Credit Card Required
-              <ArrowRight className="w-6 h-6" />
-            </button>
-            <p className="text-sm text-muted-foreground mt-4">
-              🎉 Free forever for Kariakoo pilot users • Set up in under 5 minutes
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-card py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+      {/* ══ SOLUTION ══ */}
+      <section className="solution" id="solution">
+        <div className="container">
+          <div className="solution-grid">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">C</span>
-                </div>
-                <span className="text-xl font-bold text-primary">CREOVA</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Akili Ya Biashara Yako - Smart Business Management for Tanzania
+              <div className="section-label reveal">The Solution</div>
+              <h2 className="reveal">Same duka.<br /><em>Different story.</em></h2>
+              <p className="lead reveal reveal-delay-1">
+                CREOVA SME OS watches your business 24/7 — then tells you exactly what to do, in Swahili, in plain language.
+              </p>
+              <p style={{ fontSize: "15px", color: "var(--muted)", marginTop: "16px", lineHeight: "1.7" }} className="reveal reveal-delay-2">
+                Not another dashboard you have to stare at. An operating system that talks to you like a trusted business advisor — and handles the tax paperwork while you're at it.
               </p>
             </div>
+            <div className="reveal reveal-delay-2">
+              <div className="before-after">
+                <div className="ba-col ba-before">
+                  <div className="ba-label">Before CREOVA</div>
+                  <div className="ba-item"><div className="ba-dot">✗</div><div>Paper notebook, pencil, eraser</div></div>
+                  <div className="ba-item"><div className="ba-dot">✗</div><div>No idea which products are profitable</div></div>
+                  <div className="ba-item"><div className="ba-dot">✗</div><div>Chase debt manually, awkward calls</div></div>
+                  <div className="ba-item"><div className="ba-dot">✗</div><div>TRA visit = panic, scramble, fine</div></div>
+                  <div className="ba-item"><div className="ba-dot">✗</div><div>Bank says no — no records</div></div>
+                </div>
+                <div className="ba-divider"><div className="ba-divider-circle">→</div></div>
+                <div className="ba-col ba-after">
+                  <div className="ba-label">After CREOVA</div>
+                  <div className="ba-item"><div className="ba-dot">✓</div><div>Tap, receipt done, auto-logged</div></div>
+                  <div className="ba-item"><div className="ba-dot">✓</div><div>Akili tells you your best products daily</div></div>
+                  <div className="ba-item"><div className="ba-dot">✓</div><div>WhatsApp reminder sent automatically</div></div>
+                  <div className="ba-item"><div className="ba-dot">✓</div><div>EFD Z-Report transmitted at 11:30pm</div></div>
+                  <div className="ba-item"><div className="ba-dot">✓</div><div>Loan package ready in one tap</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ FEATURES ══ */}
+      <section className="features" id="features">
+        <div className="container">
+          <div className="section-label reveal">Core Features</div>
+          <h2 className="reveal">Built for how<br /><em>East Africa actually works.</em></h2>
+          <div className="features-grid">
+            <div className="feature-card reveal">
+              <div className="feature-icon-wrap">📱</div>
+              <h3>Mobile Money Ledger</h3>
+              <p>Every M-Pesa, Airtel, Mixx, and HaloPesa payment auto-reconciles into your cashbook via ClickPesa. No more manual matching.</p>
+              <span className="feature-tag">All 4 TZ wallets →</span>
+            </div>
+            <div className="feature-card reveal reveal-delay-1">
+              <div className="feature-icon-wrap">🧾</div>
+              <h3>TRA EFD Compliance</h3>
+              <p>Generate fiscal receipts, transmit daily Z-reports to TRA, file VAT returns — all from your phone. Never fear a TRA visit again.</p>
+              <span className="feature-tag">EFD Certified →</span>
+            </div>
+            <div className="feature-card reveal reveal-delay-2">
+              <div className="feature-icon-wrap">🧠</div>
+              <h3>Akili ya Biashara</h3>
+              <p>An AI advisor who speaks Swahili, knows your shop data, and tells you exactly what to fix — before problems become losses.</p>
+              <span className="feature-tag">The selling point →</span>
+            </div>
+            <div className="feature-card reveal reveal-delay-1">
+              <div className="feature-icon-wrap">🛒</div>
+              <h3>Smart Receipt Builder</h3>
+              <p>Tap items from your inventory — receipt auto-builds with correct prices, VAT, and the customer's change. No typing. Ever.</p>
+              <span className="feature-tag">2-tap sales →</span>
+            </div>
+            <div className="feature-card reveal reveal-delay-2">
+              <div className="feature-icon-wrap">💳</div>
+              <h3>Credit Score → Loan</h3>
+              <p>Transaction history builds your credit score. When you hit the threshold, a lender-ready loan package compiles in one tap.</p>
+              <span className="feature-tag">CRDB · NMB · SIDO →</span>
+            </div>
+            <div className="feature-card reveal reveal-delay-3">
+              <div className="feature-icon-wrap">📟</div>
+              <h3>USSD Mode</h3>
+              <p>No smartphone? No internet? Dial *150*00# — record sales, check stock, and send debt reminders from any feature phone.</p>
+              <span className="feature-tag">Works on any phone →</span>
+            </div>
+          </div>
+
+          {/* Akili Callout */}
+          <div className="akili-callout reveal">
+            <div className="akili-left">
+              <div className="akili-eyebrow">🧠 AI-Powered</div>
+              <h2>Meet <em>Akili.</em></h2>
+              <p className="lead">
+                Your shop's business advisor. Watches your data 24/7. Speaks Swahili. Tells you what competitors' apps only show you in charts.
+              </p>
+              <a href="#pricing" className="btn-primary">Try Akili Free →</a>
+            </div>
+            <div className="akili-right">
+              <div className="chat-bubble chat-akili">
+                <strong>Habari Amina! 👋</strong> Unga wako utaisha Jumamosi asubuhi — hii ni mara ya 3 mfululizo. Agiza leo Ijumaa.
+                <div className="chat-time">Akili · 07:14</div>
+              </div>
+              <div className="chat-bubble chat-user">
+                Nini kingine ninachohitaji kujua leo?
+                <div className="chat-time">You · 07:16</div>
+              </div>
+              <div className="chat-bubble chat-akili">
+                Fatuma Salim anakudai <strong>TSh 34,500</strong> — siku 14 zimepita. Tuma ukumbusho WhatsApp sasa asubuhi. Uwezekano wa kulipwa ni mara mbili zaidi kuliko jioni.
+                <div className="chat-time">Akili · 07:16</div>
+              </div>
+              <div className="chat-bubble chat-akili">
+                Na: uko <strong>2% mbali</strong> na mkopo wa Pesapal. Waambie wateja wawili waliope kwa M-Pesa wiki hii.
+                <div className="chat-time">Akili · 07:17</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ HOW IT WORKS ══ */}
+      <section className="how" id="how">
+        <div className="container">
+          <div className="section-label reveal">How It Works</div>
+          <h2 className="reveal">From notebook to <em>business intelligence</em><br />in four steps.</h2>
+          <div className="steps">
+            <div className="step reveal">
+              <div className="step-num">1</div>
+              <h3>Register your business</h3>
+              <p>NIDA → TIN → BRELA in-app. We guide every step. Takes 15 minutes, not 15 trips.</p>
+            </div>
+            <div className="step reveal reveal-delay-1">
+              <div className="step-num">2</div>
+              <h3>Add your products</h3>
+              <p>Tap to add inventory once. Every sale deducts automatically. Stock alerts fire before you run out.</p>
+            </div>
+            <div className="step reveal reveal-delay-2">
+              <div className="step-num">3</div>
+              <h3>Sell and get paid</h3>
+              <p>Any payment — M-Pesa, cash, or split — generates a TRA-compliant EFD receipt instantly.</p>
+            </div>
+            <div className="step reveal reveal-delay-3">
+              <div className="step-num">4</div>
+              <h3>Akili runs your finances</h3>
+              <p>AI reconciles mobile money, files tax returns, chases debts, and tells you what to do tomorrow.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ TESTIMONIALS ══ */}
+      <section className="testimonials" id="testimonials">
+        <div className="container">
+          <div className="section-label reveal">From Shop Owners</div>
+          <h2 className="reveal">They didn't believe it.<br />Until <em>it worked.</em></h2>
+          <div className="testi-grid">
+            <div className="testi-card reveal">
+              <div className="stars">★★★★★</div>
+              <div className="testi-quote">"Nilikuwa naomba TRA wasinikute. Sasa wananikuta na kila kitu tayari. Akili ananisaidia zaidi ya mtu yeyote."</div>
+              <div style={{ fontSize: "13px", color: "var(--muted)", marginTop: "-8px", fontStyle: "normal" }}>"I used to pray TRA wouldn't find me. Now they find everything ready. Akili helps me more than anyone."</div>
+              <div className="testi-author">
+                <div className="testi-avatar">AM</div>
+                <div>
+                  <div className="testi-name">Amina Mkanga</div>
+                  <div className="testi-role">Duka owner · Kariakoo, Dar es Salaam</div>
+                </div>
+              </div>
+            </div>
+            <div className="testi-card reveal reveal-delay-1">
+              <div className="stars">★★★★★</div>
+              <div className="testi-quote">"I applied for a CRDB loan with the package CREOVA generated for me. Approved in 2 weeks. That would have taken months before."</div>
+              <div className="testi-author">
+                <div className="testi-avatar" style={{ background: "#3b82f6" }}>JB</div>
+                <div>
+                  <div className="testi-name">Juma Bakari</div>
+                  <div className="testi-role">Agro-dealer · Kinondoni, Dar es Salaam</div>
+                </div>
+              </div>
+            </div>
+            <div className="testi-card reveal reveal-delay-2">
+              <div className="stars">★★★★★</div>
+              <div className="testi-quote">"My staff used to 'forget' to record sales. Now every sale on the system is tracked to their name. I can see exactly what's happening."</div>
+              <div className="testi-author">
+                <div className="testi-avatar" style={{ background: "#22c55e" }}>FA</div>
+                <div>
+                  <div className="testi-name">Fatuma Ali</div>
+                  <div className="testi-role">Pharmacy owner · Ilala, Dar es Salaam</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ METRICS ══ */}
+      <section className="metrics">
+        <div className="container">
+          <div className="metrics-grid">
+            <div className="metric reveal">
+              <div className="metric-num">847</div>
+              <div className="metric-label">Active shops in Dar es Salaam</div>
+            </div>
+            <div className="metric reveal reveal-delay-1">
+              <div className="metric-num">TSh 1.28B</div>
+              <div className="metric-label">Revenue processed monthly</div>
+            </div>
+            <div className="metric reveal reveal-delay-2">
+              <div className="metric-num">98%</div>
+              <div className="metric-label">EFD compliance rate</div>
+            </div>
+            <div className="metric reveal reveal-delay-3">
+              <div className="metric-num">68%</div>
+              <div className="metric-label">Shops now formally registered</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ COMPLIANCE ══ */}
+      <section style={{ padding: "60px 0", background: "var(--warm)" }}>
+        <div className="container">
+          <div className="compliance reveal">
             <div>
-              <h4 className="font-semibold mb-3">Product</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">Features</a></li>
-                <li><a href="#" className="hover:text-primary">Pricing</a></li>
-                <li><a href="#" className="hover:text-primary">Mobile App</a></li>
+              <div className="section-label" style={{ color: "rgba(255,255,255,.5)" }}>Regulatory</div>
+              <h2>Built for <em>Tanzania.</em><br />Ready for Kenya.</h2>
+              <p className="lead">The only SME platform with native TRA EFD compliance, BRELA onboarding, and KRA eTIMS for Kenya — in one product, at $3/month.</p>
+            </div>
+            <div className="compliance-logos">
+              <div className="comp-badge">TRA EFD ✓</div>
+              <div className="comp-badge">BRELA ORS ✓</div>
+              <div className="comp-badge">KRA eTIMS ✓</div>
+              <div className="comp-badge">PDPA 2022 ✓</div>
+              <div className="comp-badge">TAN-QR ✓</div>
+              <div className="comp-badge">BoT Sandbox ✓</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ PRICING ══ */}
+      <section className="pricing" id="pricing">
+        <div className="container">
+          <div className="section-label reveal">Pricing</div>
+          <h2 className="reveal">Less than a cup of tea.<br /><em>Every day.</em></h2>
+          <p className="lead reveal reveal-delay-1">Start free. Upgrade when your business grows. Cancel anytime. No contracts, no tricks.</p>
+          <div className="pricing-grid">
+            <div className="pricing-card reveal">
+              <div className="pricing-tier">Free — Bure Kabisa</div>
+              <div className="pricing-price">TSh 0 <span>/month</span></div>
+              <div className="pricing-desc">For shop owners just getting started. No credit card required.</div>
+              <ul className="pricing-features">
+                <li>POS with EFD receipts</li>
+                <li>Inventory tracking</li>
+                <li>Basic cashbook</li>
+                <li>BRELA registration guide</li>
+                <li>TAN-QR payment display</li>
+                <li>25 invoices/month</li>
+              </ul>
+              <button className="btn-pricing btn-pricing-outline" onClick={() => navigate("/dashboard")}>Start Free →</button>
+            </div>
+            <div className="pricing-card featured reveal reveal-delay-1">
+              <div className="featured-badge">Most Popular</div>
+              <div className="pricing-tier" style={{ color: "rgba(250,248,245,.4)" }}>Growth — Ukuaji</div>
+              <div className="pricing-price" style={{ color: "#FAF8F5" }}>TSh 7,500 <span style={{ color: "rgba(250,248,245,.4)" }}>/month</span></div>
+              <div className="pricing-desc" style={{ color: "rgba(250,248,245,.5)" }}>For shops ready to go formal. Under TSh 250/day.</div>
+              <ul className="pricing-features">
+                <li>Everything in Free</li>
+                <li>All 4 mobile money wallets</li>
+                <li>Auto-reconciliation</li>
+                <li>Akili AI insights feed</li>
+                <li>EFD Z-Reports</li>
+                <li>Staff management + tracking</li>
+                <li>USSD feature phone mode</li>
+                <li>Unlimited invoices</li>
+                <li>WhatsApp debt reminders</li>
+              </ul>
+              <button className="btn-pricing btn-pricing-solid" onClick={() => navigate("/dashboard")}>Get Growth →</button>
+            </div>
+            <div className="pricing-card reveal reveal-delay-2">
+              <div className="pricing-tier">Business — Biashara</div>
+              <div className="pricing-price">TSh 30,000 <span>/month</span></div>
+              <div className="pricing-desc">For formal, growing SMEs with multiple staff.</div>
+              <ul className="pricing-features">
+                <li>Everything in Growth</li>
+                <li>Full Akili AI chat + predictions</li>
+                <li>VAT + SDL + PAYE + WHT dashboard</li>
+                <li>Credit score + loan package</li>
+                <li>Kenya KRA eTIMS</li>
+                <li>Government data dashboard</li>
+                <li>Multi-location (3 shops)</li>
+                <li>5 user accounts</li>
+              </ul>
+              <button className="btn-pricing btn-pricing-outline" onClick={() => navigate("/dashboard")}>Get Business →</button>
+            </div>
+            <div className="pricing-card reveal reveal-delay-3">
+              <div className="pricing-tier">Enterprise</div>
+              <div className="pricing-price">Custom <span></span></div>
+              <div className="pricing-desc">For chains, NGOs, and development programs.</div>
+              <ul className="pricing-features">
+                <li>Everything in Business</li>
+                <li>API access</li>
+                <li>White-label option</li>
+                <li>Dedicated support</li>
+                <li>Government data exports</li>
+                <li>Custom integrations</li>
+              </ul>
+              <button className="btn-pricing btn-pricing-outline">Contact Us →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ FINAL CTA ══ */}
+      <section className="final-cta" id="demo">
+        <div className="container-narrow">
+          <h2 className="reveal">Stop guessing.<br /><em>Start knowing.</em></h2>
+          <p className="lead reveal reveal-delay-1">
+            847 duka owners in Dar es Salaam are already using CREOVA. The ones who start today will be applying for loans while others are still counting change.
+          </p>
+          <div className="final-cta-actions reveal reveal-delay-2">
+            <a href="#pricing" className="btn-primary btn-large">Anza Bure — Start Free <span className="arrow">→</span></a>
+            <a href="mailto:hello@creova.co.tz" className="btn-ghost btn-large">Book a Demo</a>
+          </div>
+          <p className="pricing-note reveal reveal-delay-3">No credit card. No commitment. Cancel anytime. · Hakuna hatari.</p>
+        </div>
+      </section>
+
+      {/* ══ FOOTER ══ */}
+      <footer>
+        <div className="container">
+          <div className="footer-grid">
+            <div>
+              <div className="footer-brand">CREOVA <span>SME OS</span></div>
+              <div className="footer-tagline">The first Swahili-first financial operating system for East African shop owners. Built in Dar es Salaam. For everyone.</div>
+            </div>
+            <div>
+              <div className="footer-heading">Product</div>
+              <ul className="footer-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#how">How it Works</a></li>
+                <li><a href="#demo">Demo</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-3">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">Help Center</a></li>
-                <li><a href="#" className="hover:text-primary">WhatsApp: +255 XXX XXX XXX</a></li>
-                <li><a href="#" className="hover:text-primary">Video Tutorials</a></li>
+              <div className="footer-heading">Company</div>
+              <ul className="footer-links">
+                <li><a href="#">About CREOVA</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Press</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-3">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-primary">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-primary">TRA Compliance</a></li>
+              <div className="footer-heading">Support</div>
+              <ul className="footer-links">
+                <li><a href="#">Help Centre</a></li>
+                <li><a href="mailto:hello@creova.co.tz">Contact Us</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">PDPA Statement</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2026 CREOVA. Built with ❤️ for Tanzanian businesses. Kariakoo Pilot Market.</p>
+          <div className="footer-bottom">
+            <div className="footer-legal">© 2025 CREOVA Ltd · Dar es Salaam, Tanzania · BRELA Registered</div>
+            <div className="footer-socials">
+              <a href="#" className="social-icon">𝕏</a>
+              <a href="#" className="social-icon">in</a>
+              <a href="#" className="social-icon">ig</a>
+              <a href="#" className="social-icon">yt</a>
+            </div>
           </div>
         </div>
       </footer>

@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CREOVA SME OS — The Business Brain for East Africa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — CREOVA SME OS
+   Creative Direction: African Futurism × Editorial Precision
+   Dominant: Deep earth tones + electric orange
+   Typography: Fraunces (serif display) + DM Sans (body)
+   Mood: Confident, warm, trustworthy, alive
+═══════════════════════════════════════════════ */
+:root{
+  --brand:#E56B0A;
+  --brand-light:#FF8C3A;
+  --brand-dim:rgba(229,107,10,.12);
+  --ink:#0D0B09;
+  --paper:#FAF8F5;
+  --warm:#F5F0E8;
+  --sand:#E8E0D0;
+  --muted:#8A8070;
+  --green:#1A6B3A;
+  --green-light:#D4EDDA;
+  --cream:#FFF9F0;
+
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'DM Mono',monospace;
+
+  --radius:14px;
+  --radius-lg:24px;
+  --radius-pill:999px;
+
+  --section-pad:120px 0;
+  --container:1200px;
+  --gap:32px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--warm)}
+::-webkit-scrollbar-thumb{background:var(--brand);border-radius:2px}
+
+/* ── Container ── */
+.container{max-width:var(--container);margin:0 auto;padding:0 24px}
+.container-narrow{max-width:800px;margin:0 auto;padding:0 24px}
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:18px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(250,248,245,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(139,128,112,.12);
+  transition:all .3s;
+}
+.nav-logo{
+  font-family:var(--font-display);
+  font-size:22px;font-weight:700;
+  color:var(--ink);
+  letter-spacing:-.5px;
+}
+.nav-logo span{color:var(--brand)}
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-links a{
+  font-size:14px;font-weight:500;color:var(--muted);
+  text-decoration:none;transition:color .2s;letter-spacing:.01em;
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{
+  display:flex;align-items:center;gap:12px;
+}
+.btn-nav{
+  background:var(--ink);color:#fff;
+  border:none;border-radius:var(--radius-pill);
+  padding:10px 22px;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:var(--font-body);
+  transition:all .2s;letter-spacing:.01em;
+  text-decoration:none;display:inline-block;
+}
+.btn-nav:hover{background:var(--brand);transform:translateY(-1px)}
+.nav-lang{
+  font-size:12px;font-weight:600;color:var(--muted);
+  background:var(--warm);border-radius:var(--radius-pill);
+  padding:6px 12px;cursor:pointer;border:none;font-family:var(--font-body);
+}
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+.hero{
+  min-height:100vh;
+  padding:140px 0 80px;
+  background:var(--ink);
+  position:relative;overflow:hidden;
+}
+/* African textile pattern overlay */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(45deg,transparent,transparent 30px,rgba(229,107,10,.03) 30px,rgba(229,107,10,.03) 31px),
+    repeating-linear-gradient(-45deg,transparent,transparent 30px,rgba(229,107,10,.03) 30px,rgba(229,107,10,.03) 31px);
+  pointer-events:none;
+}
+/* Warm glow */
+.hero::after{
+  content:'';position:absolute;
+  width:800px;height:800px;
+  right:-200px;top:-200px;
+  background:radial-gradient(ellipse,rgba(229,107,10,.15),transparent 70%);
+  pointer-events:none;
+}
+.hero-container{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:60px;align-items:center;
+  max-width:var(--container);margin:0 auto;padding:0 40px;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(229,107,10,.15);border:1px solid rgba(229,107,10,.3);
+  border-radius:var(--radius-pill);padding:6px 16px;
+  font-size:13px;font-weight:600;color:var(--brand-light);
+  letter-spacing:.05em;text-transform:uppercase;
+  margin-bottom:28px;
+}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--brand-light);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+.hero h1{
+  font-family:var(--font-display);
+  font-size:clamp(44px,6vw,78px);
+  font-weight:900;line-height:1.0;
+  color:#FAF8F5;
+  letter-spacing:-2px;
+  margin-bottom:24px;
+}
+.hero h1 em{
+  color:var(--brand);font-style:italic;
+  display:block;
+}
+.hero-sub{
+  font-size:18px;line-height:1.6;
+  color:rgba(250,248,245,.55);
+  margin-bottom:40px;max-width:480px;
+}
+.hero-sub strong{color:rgba(250,248,245,.85);font-weight:500}
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:48px}
+.btn-primary{
+  background:var(--brand);color:#fff;
+  border:none;border-radius:var(--radius-pill);
+  padding:16px 32px;font-size:15px;font-weight:600;
+  cursor:pointer;font-family:var(--font-body);
+  transition:all .25s;letter-spacing:.01em;
+  text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primary:hover{background:var(--brand-light);transform:translateY(-2px)}
+.btn-primary .arrow{transition:transform .2s}
+.btn-primary:hover .arrow{transform:translateX(4px)}
+.btn-ghost{
+  background:transparent;color:rgba(250,248,245,.7);
+  border:1px solid rgba(250,248,245,.2);border-radius:var(--radius-pill);
+  padding:16px 28px;font-size:15px;font-weight:500;
+  cursor:pointer;font-family:var(--font-body);
+  transition:all .25s;letter-spacing:.01em;
+  text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-ghost:hover{border-color:rgba(250,248,245,.5);color:#FAF8F5}
+.hero-proof{display:flex;align-items:center;gap:20px}
+.proof-avatars{display:flex}
+.proof-avatar{
+  width:32px;height:32px;border-radius:50%;
+  border:2px solid var(--ink);
+  background:var(--brand);
+  color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin-left:-8px;font-family:var(--font-display);
+}
+.proof-text{font-size:13px;color:rgba(250,248,245,.5)}
+.proof-text strong{color:rgba(250,248,245,.8)}
+
+/* Hero visual — simulated phone */
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center}
+.hero-phone{
+  width:300px;
+  background:linear-gradient(160deg,#1a1812,#0f0d0b);
+  border-radius:40px;padding:16px;
+  border:1px solid rgba(255,255,255,.08);
+  position:relative;z-index:2;
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.phone-screen{background:#0D0B09;border-radius:28px;overflow:hidden}
+.phone-header{
+  background:#1a1812;padding:14px 16px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.phone-greeting{font-size:10px;color:rgba(250,248,245,.4);margin-bottom:2px}
+.phone-name{font-size:13px;font-weight:700;color:#FAF8F5;font-family:var(--font-display)}
+.phone-score{
+  background:rgba(229,107,10,.15);border:1px solid rgba(229,107,10,.25);
+  border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700;color:var(--brand-light);
+}
+.phone-akili{background:#160e2a;padding:12px 14px;margin:10px;border-radius:14px;border:1px solid rgba(124,58,237,.2)}
+.akili-label{font-size:9px;font-weight:700;color:rgba(168,85,247,.7);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.akili-msg{font-size:11px;line-height:1.5;color:rgba(250,248,245,.7)}
+.akili-msg strong{color:#FAF8F5}
+.phone-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:0 10px 10px}
+.phone-stat{background:#1a1812;border-radius:10px;padding:9px}
+.phone-stat-l{font-size:8px;color:rgba(250,248,245,.35);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.phone-stat-v{font-size:12px;font-weight:800;color:#FAF8F5;font-family:var(--font-display)}
+.phone-stat-v.green{color:#22c55e}
+.phone-stat-v.orange{color:var(--brand)}
+
+/* Floating cards around phone */
+.float-card{
+  position:absolute;background:#FAF8F5;border-radius:14px;
+  padding:12px 16px;box-shadow:0 8px 40px rgba(0,0,0,.35);
+  animation:float 4s ease-in-out infinite;font-family:var(--font-body);
+}
+.fc1{left:-80px;top:80px;animation-delay:-.8s;width:160px}
+.fc2{right:-70px;bottom:120px;animation-delay:-.4s;width:150px}
+.float-card-label{font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px}
+.float-card-value{font-size:18px;font-weight:700;color:var(--ink);font-family:var(--font-display)}
+.float-card-sub{font-size:11px;color:var(--green);font-weight:600;margin-top:2px}
+.float-card-sub.warn{color:#D97706}
+
+/* ══════════════════════════════════════
+   MARQUEE / TRUST STRIP
+══════════════════════════════════════ */
+.trust-strip{
+  background:var(--brand);padding:14px 0;overflow:hidden;
+}
+.marquee{display:flex;gap:48px;animation:marquee 20s linear infinite;white-space:nowrap}
+.marquee-item{
+  font-size:13px;font-weight:600;color:#fff;
+  display:flex;align-items:center;gap:8px;
+  opacity:.85;flex-shrink:0;
+}
+.marquee-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.4)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ══════════════════════════════════════
+   SHARED SECTION STYLES
+══════════════════════════════════════ */
+section{padding:var(--section-pad)}
+.section-label{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--brand);margin-bottom:18px;
+}
+.section-label::before{content:'';display:block;width:24px;height:1.5px;background:var(--brand)}
+h2{
+  font-family:var(--font-display);
+  font-size:clamp(34px,4.5vw,58px);
+  font-weight:900;line-height:1.05;
+  letter-spacing:-1.5px;color:var(--ink);
+  margin-bottom:20px;
+}
+h2 em{color:var(--brand);font-style:italic}
+h3{
+  font-family:var(--font-display);
+  font-size:24px;font-weight:700;
+  line-height:1.2;letter-spacing:-.5px;
+  margin-bottom:10px;
+}
+.lead{font-size:18px;line-height:1.65;color:var(--muted);max-width:600px}
+
+/* ══════════════════════════════════════
+   LOGOS / PARTNERS
+══════════════════════════════════════ */
+.partners{
+  padding:60px 0;
+  background:var(--warm);
+  border-top:1px solid var(--sand);border-bottom:1px solid var(--sand);
+}
+.partners-label{
+  text-align:center;font-size:13px;font-weight:600;
+  color:var(--muted);letter-spacing:.05em;text-transform:uppercase;
+  margin-bottom:32px;
+}
+.logos-row{
+  display:flex;align-items:center;justify-content:center;
+  gap:48px;flex-wrap:wrap;
+}
+.logo-item{
+  font-family:var(--font-display);
+  font-size:15px;font-weight:700;
+  color:var(--muted);letter-spacing:-.5px;
+  opacity:.6;transition:opacity .2s;
+  cursor:default;
+}
+.logo-item:hover{opacity:1}
+
+/* ══════════════════════════════════════
+   PAIN SECTION — THE STORY
+══════════════════════════════════════ */
+.pain{background:var(--ink);padding:100px 0}
+.pain h2{color:#FAF8F5}
+.pain h2 em{color:var(--brand)}
+.pain-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:rgba(255,255,255,.08);border-radius:var(--radius-lg);overflow:hidden;
+  margin-top:60px;
+}
+.pain-card{
+  background:#1a1812;padding:36px 28px;
+  position:relative;overflow:hidden;
+}
+.pain-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(229,107,10,.05),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.pain-card:hover::before{opacity:1}
+.pain-icon{font-size:28px;margin-bottom:20px;display:block}
+.pain-card h3{font-family:var(--font-display);color:#FAF8F5;font-size:20px;letter-spacing:-.3px;margin-bottom:10px}
+.pain-card p{font-size:15px;color:rgba(250,248,245,.45);line-height:1.6}
+.pain-stat{
+  font-family:var(--font-display);
+  font-size:40px;font-weight:900;
+  color:var(--brand);margin-bottom:4px;letter-spacing:-2px;
+}
+.pain-stat-label{font-size:13px;color:rgba(250,248,245,.35);margin-bottom:24px}
+
+/* ══════════════════════════════════════
+   SOLUTION — THE TURN
+══════════════════════════════════════ */
+.solution{background:var(--paper)}
+.solution-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.before-after{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:center;
+  background:var(--warm);border-radius:var(--radius-lg);overflow:hidden;
+  border:1px solid var(--sand);margin-top:40px;
+}
+.ba-col{padding:28px}
+.ba-label{
+  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:16px;padding:4px 12px;border-radius:var(--radius-pill);
+  display:inline-block;
+}
+.ba-before .ba-label{background:rgba(239,68,68,.1);color:#ef4444}
+.ba-after .ba-label{background:rgba(26,107,58,.1);color:var(--green)}
+.ba-divider{
+  width:1px;background:var(--sand);display:flex;
+  align-items:center;justify-content:center;
+}
+.ba-divider-circle{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--brand);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:800;font-family:var(--font-display);
+  flex-shrink:0;
+}
+.ba-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;font-size:14px;line-height:1.5}
+.ba-item:last-child{margin-bottom:0}
+.ba-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:800}
+.ba-before .ba-dot{background:#ef4444}
+.ba-after .ba-dot{background:var(--green)}
+
+/* ══════════════════════════════════════
+   FEATURES
+══════════════════════════════════════ */
+.features{background:var(--warm)}
+.features-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;
+}
+.feature-card{
+  background:var(--paper);border-radius:var(--radius-lg);padding:32px;
+  border:1px solid var(--sand);
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.feature-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:var(--brand);transform:scaleX(0);transition:transform .3s;
+}
+.feature-card:hover{border-color:var(--brand);transform:translateY(-4px)}
+.feature-card:hover::after{transform:scaleX(1)}
+.feature-icon-wrap{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--brand-dim);display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-bottom:20px;
+}
+.feature-card h3{font-size:18px;margin-bottom:10px;letter-spacing:-.3px}
+.feature-card p{font-size:14px;color:var(--muted);line-height:1.6}
+.feature-tag{
+  display:inline-block;margin-top:16px;
+  font-size:11px;font-weight:700;color:var(--brand);
+  letter-spacing:.05em;text-transform:uppercase;
+}
+
+/* ══════════════════════════════════════
+   AKILI — HERO FEATURE CALLOUT
+══════════════════════════════════════ */
+.akili-callout{
+  background:var(--ink);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  display:grid;grid-template-columns:1fr 1fr;
+  margin:60px 0 0;
+  border:1px solid rgba(124,58,237,.2);
+}
+.akili-left{padding:56px 48px;position:relative}
+.akili-left::before{
+  content:'🧠';font-size:120px;
+  position:absolute;right:-20px;top:20px;
+  opacity:.06;
+}
+.akili-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);
+  border-radius:var(--radius-pill);padding:5px 14px;
+  font-size:12px;font-weight:700;color:#a78bfa;
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:20px;
+}
+.akili-left h2{color:#FAF8F5;margin-bottom:16px}
+.akili-left .lead{color:rgba(250,248,245,.5)}
+.akili-left .btn-primary{margin-top:32px}
+.akili-right{
+  background:#0f0a1a;padding:36px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.chat-bubble{
+  padding:14px 18px;border-radius:14px;font-size:13px;line-height:1.55;max-width:85%;
+}
+.chat-akili{
+  background:#1e1433;color:#e0d7fa;
+  border-radius:4px 14px 14px 14px;align-self:flex-start;
+  border:1px solid rgba(124,58,237,.2);
+}
+.chat-akili strong{color:#c4b5fd}
+.chat-user{
+  background:rgba(229,107,10,.15);color:rgba(250,248,245,.8);
+  border-radius:14px 14px 4px 14px;align-self:flex-end;
+  border:1px solid rgba(229,107,10,.2);
+}
+.chat-time{font-size:10px;opacity:.4;margin-top:4px}
+
+/* ══════════════════════════════════════
+   HOW IT WORKS
+══════════════════════════════════════ */
+.how{background:var(--paper)}
+.steps{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  position:relative;margin-top:60px;
+}
+.steps::before{
+  content:'';position:absolute;
+  top:32px;left:calc(12.5%);right:calc(12.5%);height:1px;
+  background:linear-gradient(90deg,transparent,var(--sand) 20%,var(--sand) 80%,transparent);
+}
+.step{text-align:center;padding:0 20px;position:relative}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--paper);border:1.5px solid var(--sand);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:22px;font-weight:900;
+  color:var(--brand);margin:0 auto 24px;
+  position:relative;z-index:1;
+  transition:all .3s;
+}
+.step:hover .step-num{background:var(--brand);color:#fff;border-color:var(--brand)}
+.step h3{font-size:17px;margin-bottom:8px;letter-spacing:-.2px}
+.step p{font-size:14px;color:var(--muted);line-height:1.55}
+
+/* ══════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════ */
+.testimonials{background:var(--warm)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px}
+.testi-card{
+  background:var(--paper);border-radius:var(--radius-lg);padding:32px;
+  border:1px solid var(--sand);
+  display:flex;flex-direction:column;gap:20px;
+}
+.stars{color:var(--brand);font-size:15px;letter-spacing:2px}
+.testi-quote{font-size:16px;line-height:1.65;color:var(--ink);font-family:var(--font-display);font-style:italic;font-weight:300}
+.testi-author{display:flex;align-items:center;gap:12px;padding-top:16px;border-top:1px solid var(--sand)}
+.testi-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--brand);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:15px;font-weight:700;flex-shrink:0;
+}
+.testi-name{font-size:14px;font-weight:600;color:var(--ink)}
+.testi-role{font-size:12px;color:var(--muted)}
+
+/* ══════════════════════════════════════
+   METRICS
+══════════════════════════════════════ */
+.metrics{background:var(--brand);padding:80px 0}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.15);border-radius:var(--radius-lg);overflow:hidden}
+.metric{
+  background:var(--brand);padding:48px 32px;text-align:center;
+  transition:background .3s;
+}
+.metric:hover{background:rgba(255,255,255,.1)}
+.metric-num{
+  font-family:var(--font-display);
+  font-size:56px;font-weight:900;line-height:1;
+  color:#fff;letter-spacing:-3px;margin-bottom:8px;
+}
+.metric-label{font-size:15px;color:rgba(255,255,255,.65);font-weight:500}
+
+/* ══════════════════════════════════════
+   PRICING
+══════════════════════════════════════ */
+.pricing{background:var(--paper)}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:60px;align-items:start}
+.pricing-card{
+  background:var(--warm);border-radius:var(--radius-lg);padding:32px;
+  border:1.5px solid var(--sand);transition:all .3s;position:relative;
+}
+.pricing-card:hover{border-color:var(--brand);transform:translateY(-4px)}
+.pricing-card.featured{
+  background:var(--ink);border-color:var(--brand);
+  transform:scale(1.04);
+}
+.pricing-card.featured:hover{transform:scale(1.04) translateY(-4px)}
+.featured-badge{
+  position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+  background:var(--brand);color:#fff;border-radius:var(--radius-pill);
+  padding:4px 16px;font-size:12px;font-weight:700;white-space:nowrap;
+  letter-spacing:.03em;
+}
+.pricing-tier{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.pricing-card.featured .pricing-tier{color:rgba(250,248,245,.4)}
+.pricing-price{
+  font-family:var(--font-display);font-size:40px;font-weight:900;
+  color:var(--ink);letter-spacing:-2px;margin-bottom:4px;
+}
+.pricing-card.featured .pricing-price{color:#FAF8F5}
+.pricing-price span{font-size:16px;font-weight:500;letter-spacing:0}
+.pricing-desc{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.pricing-card.featured .pricing-desc{color:rgba(250,248,245,.5)}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.pricing-features li{
+  font-size:13px;color:var(--ink);display:flex;align-items:flex-start;gap:9px;line-height:1.4;
+}
+.pricing-card.featured .pricing-features li{color:rgba(250,248,245,.75)}
+.pricing-features li::before{
+  content:'✓';font-weight:800;color:var(--green);font-size:12px;flex-shrink:0;margin-top:2px;
+}
+.btn-pricing{
+  width:100%;border-radius:var(--radius-pill);padding:14px;
+  font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body);
+  transition:all .2s;letter-spacing:.01em;border:none;
+}
+.btn-pricing-outline{background:transparent;border:1.5px solid var(--sand);color:var(--ink)}
+.btn-pricing-outline:hover{border-color:var(--brand);color:var(--brand)}
+.btn-pricing-solid{background:var(--brand);color:#fff}
+.btn-pricing-solid:hover{background:var(--brand-light)}
+
+/* ══════════════════════════════════════
+   COMPLIANCE CALLOUT
+══════════════════════════════════════ */
+.compliance{
+  background:var(--green);color:#fff;
+  border-radius:var(--radius-lg);padding:56px 64px;
+  display:flex;align-items:center;justify-content:space-between;gap:48px;
+  margin:80px 0;
+}
+.compliance h2{color:#fff;margin-bottom:12px}
+.compliance h2 em{color:rgba(255,255,255,.6);font-style:italic}
+.compliance .lead{color:rgba(255,255,255,.65);max-width:500px}
+.compliance-logos{display:flex;gap:16px;flex-wrap:wrap;flex-shrink:0}
+.comp-badge{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:10px;padding:10px 18px;
+  font-size:13px;font-weight:700;color:#fff;white-space:nowrap;
+}
+
+/* ══════════════════════════════════════
+   FINAL CTA
+══════════════════════════════════════ */
+.final-cta{
+  background:var(--ink);
+  padding:140px 0;text-align:center;position:relative;overflow:hidden;
+}
+.final-cta::before{
+  content:'';position:absolute;
+  width:600px;height:600px;
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse,rgba(229,107,10,.12),transparent 70%);
+  pointer-events:none;
+}
+.final-cta h2{
+  font-family:var(--font-display);color:#FAF8F5;
+  font-size:clamp(40px,6vw,80px);
+  font-weight:900;letter-spacing:-3px;line-height:1.0;
+  margin-bottom:20px;position:relative;
+}
+.final-cta h2 em{color:var(--brand);font-style:italic}
+.final-cta .lead{color:rgba(250,248,245,.4);margin:0 auto 48px;position:relative}
+.final-cta-actions{display:flex;justify-content:center;gap:14px;position:relative;flex-wrap:wrap}
+.btn-large{padding:20px 44px;font-size:17px}
+.pricing-note{font-size:13px;color:rgba(250,248,245,.3);margin-top:20px;position:relative}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer{
+  background:#080706;
+  padding:64px 0 32px;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:64px;
+}
+.footer-brand{font-family:var(--font-display);font-size:28px;font-weight:900;color:#FAF8F5;letter-spacing:-1px;margin-bottom:14px}
+.footer-brand span{color:var(--brand)}
+.footer-tagline{font-size:14px;color:rgba(250,248,245,.35);line-height:1.6;max-width:280px}
+.footer-heading{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(250,248,245,.3);margin-bottom:18px}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-links a{font-size:14px;color:rgba(250,248,245,.45);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:#FAF8F5}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.06);padding-top:28px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+}
+.footer-legal{font-size:13px;color:rgba(250,248,245,.25)}
+.footer-socials{display:flex;gap:12px}
+.social-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;text-decoration:none;color:rgba(250,248,245,.4);
+  transition:all .2s;border:1px solid rgba(255,255,255,.06);
+}
+.social-icon:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ══════════════════════════════════════
+   SCROLL ANIMATIONS
+══════════════════════════════════════ */
+.reveal{opacity:0;transform:translateY(32px);transition:all .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+.reveal-delay-5{transition-delay:.5s}
+
+/* ══════════════════════════════════════
+   MOBILE
+══════════════════════════════════════ */
+@media(max-width:900px){
+  nav{padding:14px 20px}
+  .nav-links{display:none}
+  .hero-container{grid-template-columns:1fr;padding:0 24px;gap:48px}
+  .hero-visual{justify-content:center}
+  .hero-phone{width:260px}
+  .fc1,.fc2{display:none}
+  .pain-grid{grid-template-columns:1fr}
+  .solution-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .akili-callout{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr;gap:32px}
+  .steps::before{display:none}
+  .testi-grid{grid-template-columns:1fr}
+  .metrics-grid{grid-template-columns:1fr 1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .pricing-card.featured{transform:none}
+  .compliance{flex-direction:column;padding:40px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .logos-row{gap:24px}
+}
+@media(max-width:600px){
+  :root{--section-pad:80px 0}
+  .features-grid{grid-template-columns:1fr}
+  .metrics-grid{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr}
+  .before-after{grid-template-columns:1fr}
+  .ba-divider{display:none}
+  .footer-grid{grid-template-columns:1fr}
+  h2{letter-spacing:-.5px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <div class="nav-logo">CREOVA <span>SME OS</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#demo">Demo</a>
+  </div>
+  <div class="nav-cta">
+    <button class="nav-lang">🇹🇿 Swahili</button>
+    <a href="#pricing" class="btn-nav">Start Free →</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="hero">
+  <div class="hero-container">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <span></span> Live in Dar es Salaam · Kenya launching Q3 2025
+      </div>
+      <h1>
+        Your duka.<br>
+        Running<br>
+        <em>itself.</em>
+      </h1>
+      <p class="hero-sub">
+        The first <strong>Swahili-first business OS</strong> for East African shop owners. 
+        Mobile money reconciliation, TRA compliance, and an AI advisor who knows your shop better than you do.
+      </p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn-primary btn-large">
+          Anza Bure — Start Free <span class="arrow">→</span>
+        </a>
+        <a href="#demo" class="btn-ghost">
+          ▶ See it in action
+        </a>
+      </div>
+      <div class="hero-proof">
+        <div class="proof-avatars">
+          <div class="proof-avatar">AM</div>
+          <div class="proof-avatar" style="background:#3b82f6">JB</div>
+          <div class="proof-avatar" style="background:#22c55e">FA</div>
+          <div class="proof-avatar" style="background:#a855f7">HM</div>
+          <div class="proof-avatar" style="background:#f59e0b">+</div>
+        </div>
+        <div class="proof-text">
+          Trusted by <strong>847 shop owners</strong> in Dar es Salaam
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <!-- Floating card left -->
+      <div class="float-card fc1">
+        <div class="float-card-label">Today's Revenue</div>
+        <div class="float-card-value">TSh 312,800</div>
+        <div class="float-card-sub">↑ 16% vs last week</div>
+      </div>
+
+      <!-- Phone -->
+      <div class="hero-phone">
+        <div class="phone-screen">
+          <div class="phone-header">
+            <div>
+              <div class="phone-greeting">Habari za asubuhi,</div>
+              <div class="phone-name">Amina ✦</div>
+            </div>
+            <div class="phone-score">68 / 100 ★</div>
+          </div>
+          <div class="phone-akili">
+            <div class="akili-label">🧠 Akili ya Biashara</div>
+            <div class="akili-msg"><strong>Unga will run out Saturday morning</strong> — 3rd week in a row. Order today. You're losing TSh 28K/week.</div>
+          </div>
+          <div class="phone-stat-row">
+            <div class="phone-stat">
+              <div class="phone-stat-l">Profit</div>
+              <div class="phone-stat-v green">76%</div>
+            </div>
+            <div class="phone-stat">
+              <div class="phone-stat-l">Owed</div>
+              <div class="phone-stat-v" style="color:#ef4444">189K</div>
+            </div>
+            <div class="phone-stat">
+              <div class="phone-stat-l">Score</div>
+              <div class="phone-stat-v orange">68</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating card right -->
+      <div class="float-card fc2">
+        <div class="float-card-label">Pending Action</div>
+        <div class="float-card-value" style="font-size:15px;line-height:1.3">M-Pesa auto-reconciled</div>
+        <div class="float-card-sub warn">34 txns · TSh 312,800</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TRUST STRIP ══ -->
+<div class="trust-strip">
+  <div class="marquee" id="marquee">
+    <div class="marquee-item">✦ TRA EFD Certified <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ ClickPesa Integrated <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ M-Pesa · Airtel · Mixx · HaloPesa <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ Swahili First <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ Offline Capable <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ PDPA 2022 Compliant <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ 847 Active Shops <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ BRELA + TIN Onboarding <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ TRA EFD Certified <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ ClickPesa Integrated <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ M-Pesa · Airtel · Mixx · HaloPesa <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ Swahili First <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ Offline Capable <div class="marquee-dot"></div></div>
+    <div class="marquee-item">✦ PDPA 2022 Compliant <div class="marquee-dot"></div></div>
+  </div>
+</div>
+
+<!-- ══ PARTNERS ══ -->
+<div class="partners">
+  <div class="container">
+    <p class="partners-label">Integrated with the platforms you already use</p>
+    <div class="logos-row">
+      <div class="logo-item">ClickPesa</div>
+      <div class="logo-item">Vodacom M-Pesa</div>
+      <div class="logo-item">Airtel Money</div>
+      <div class="logo-item">Africa's Talking</div>
+      <div class="logo-item">CRDB Bank</div>
+      <div class="logo-item">NMB Biashara</div>
+      <div class="logo-item">TRA e-Filing</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAIN ══ -->
+<section class="pain" id="problem">
+  <div class="container">
+    <div class="section-label" style="color:rgba(229,107,10,.7)">The Problem</div>
+    <h2>Most dukas run on<br><em>notebooks and prayer.</em></h2>
+    <p class="lead reveal" style="color:rgba(250,248,245,.45);margin-top:16px">
+      17 million MSMEs across East Africa. 85% still tracking sales in paper. Losing money they don't even know they're losing.
+    </p>
+    <div class="pain-grid">
+      <div class="pain-card reveal">
+        <div class="pain-stat">3</div>
+        <div class="pain-stat-label">stockouts per week on average</div>
+        <div class="pain-icon">📦</div>
+        <h3>Running out when customers arrive</h3>
+        <p>No system tells you when to reorder. You discover the gap when a customer walks out empty-handed.</p>
+      </div>
+      <div class="pain-card reveal reveal-delay-2">
+        <div class="pain-stat">$5.2T</div>
+        <div class="pain-stat-label">SME finance gap in Sub-Saharan Africa</div>
+        <div class="pain-icon">🏦</div>
+        <h3>Banks can't see you, so they won't lend to you</h3>
+        <p>No financial records means no credit score means no loan means no growth. The informal trap.</p>
+      </div>
+      <div class="pain-card reveal reveal-delay-3">
+        <div class="pain-stat">TSh 4M</div>
+        <div class="pain-stat-label">Maximum TRA penalty for EFD non-compliance</div>
+        <div class="pain-icon">🏛️</div>
+        <h3>Compliance is a minefield you don't have a map for</h3>
+        <p>EFD receipts. VAT returns. PAYE. SDL. Missing a filing costs more than a month of profit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SOLUTION ══ -->
+<section class="solution" id="solution">
+  <div class="container">
+    <div class="solution-grid">
+      <div>
+        <div class="section-label reveal">The Solution</div>
+        <h2 class="reveal">Same duka.<br><em>Different story.</em></h2>
+        <p class="lead reveal reveal-delay-1">
+          CREOVA SME OS watches your business 24/7 — then tells you exactly what to do, in Swahili, in plain language.
+        </p>
+        <p style="font-size:15px;color:var(--muted);margin-top:16px;line-height:1.7" class="reveal reveal-delay-2">
+          Not another dashboard you have to stare at. An operating system that talks to you like a trusted business advisor — and handles the tax paperwork while you're at it.
+        </p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="before-after">
+          <div class="ba-col ba-before">
+            <div class="ba-label">Before CREOVA</div>
+            <div class="ba-item"><div class="ba-dot">✗</div><div>Paper notebook, pencil, eraser</div></div>
+            <div class="ba-item"><div class="ba-dot">✗</div><div>No idea which products are profitable</div></div>
+            <div class="ba-item"><div class="ba-dot">✗</div><div>Chase debt manually, awkward calls</div></div>
+            <div class="ba-item"><div class="ba-dot">✗</div><div>TRA visit = panic, scramble, fine</div></div>
+            <div class="ba-item"><div class="ba-dot">✗</div><div>Bank says no — no records</div></div>
+          </div>
+          <div class="ba-divider"><div class="ba-divider-circle">→</div></div>
+          <div class="ba-col ba-after">
+            <div class="ba-label">After CREOVA</div>
+            <div class="ba-item"><div class="ba-dot">✓</div><div>Tap, receipt done, auto-logged</div></div>
+            <div class="ba-item"><div class="ba-dot">✓</div><div>Akili tells you your best products daily</div></div>
+            <div class="ba-item"><div class="ba-dot">✓</div><div>WhatsApp reminder sent automatically</div></div>
+            <div class="ba-item"><div class="ba-dot">✓</div><div>EFD Z-Report transmitted at 11:30pm</div></div>
+            <div class="ba-item"><div class="ba-dot">✓</div><div>Loan package ready in one tap</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ══ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-label reveal">Core Features</div>
+    <h2 class="reveal">Built for how<br><em>East Africa actually works.</em></h2>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon-wrap">📱</div>
+        <h3>Mobile Money Ledger</h3>
+        <p>Every M-Pesa, Airtel, Mixx, and HaloPesa payment auto-reconciles into your cashbook via ClickPesa. No more manual matching.</p>
+        <span class="feature-tag">All 4 TZ wallets →</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon-wrap">🧾</div>
+        <h3>TRA EFD Compliance</h3>
+        <p>Generate fiscal receipts, transmit daily Z-reports to TRA, file VAT returns — all from your phone. Never fear a TRA visit again.</p>
+        <span class="feature-tag">EFD Certified →</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon-wrap">🧠</div>
+        <h3>Akili ya Biashara</h3>
+        <p>An AI advisor who speaks Swahili, knows your shop data, and tells you exactly what to fix — before problems become losses.</p>
+        <span class="feature-tag">The selling point →</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon-wrap">🛒</div>
+        <h3>Smart Receipt Builder</h3>
+        <p>Tap items from your inventory — receipt auto-builds with correct prices, VAT, and the customer's change. No typing. Ever.</p>
+        <span class="feature-tag">2-tap sales →</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon-wrap">💳</div>
+        <h3>Credit Score → Loan</h3>
+        <p>Transaction history builds your credit score. When you hit the threshold, a lender-ready loan package compiles in one tap.</p>
+        <span class="feature-tag">CRDB · NMB · SIDO →</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon-wrap">📟</div>
+        <h3>USSD Mode</h3>
+        <p>No smartphone? No internet? Dial *150*00# — record sales, check stock, and send debt reminders from any feature phone.</p>
+        <span class="feature-tag">Works on any phone →</span>
+      </div>
+    </div>
+
+    <!-- Akili Callout -->
+    <div class="akili-callout reveal">
+      <div class="akili-left">
+        <div class="akili-eyebrow">🧠 AI-Powered</div>
+        <h2>Meet <em>Akili.</em></h2>
+        <p class="lead">
+          Your shop's business advisor. Watches your data 24/7. Speaks Swahili. Tells you what competitors' apps only show you in charts.
+        </p>
+        <a href="#pricing" class="btn-primary">Try Akili Free →</a>
+      </div>
+      <div class="akili-right">
+        <div class="chat-bubble chat-akili">
+          <strong>Habari Amina! 👋</strong> Unga wako utaisha Jumamosi asubuhi — hii ni mara ya 3 mfululizo. Agiza leo Ijumaa.
+          <div class="chat-time">Akili · 07:14</div>
+        </div>
+        <div class="chat-bubble chat-user">
+          Nini kingine ninachohitaji kujua leo?
+          <div class="chat-time">You · 07:16</div>
+        </div>
+        <div class="chat-bubble chat-akili">
+          Fatuma Salim anakudai <strong>TSh 34,500</strong> — siku 14 zimepita. Tuma ukumbusho WhatsApp sasa asubuhi. Uwezekano wa kulipwa ni mara mbili zaidi kuliko jioni.
+          <div class="chat-time">Akili · 07:16</div>
+        </div>
+        <div class="chat-bubble chat-akili">
+          Na: uko <strong>2% mbali</strong> na mkopo wa Pesapal. Waambie wateja wawili waliope kwa M-Pesa wiki hii.
+          <div class="chat-time">Akili · 07:17</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-label reveal">How It Works</div>
+    <h2 class="reveal">From notebook to <em>business intelligence</em><br>in four steps.</h2>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>Register your business</h3>
+        <p>NIDA → TIN → BRELA in-app. We guide every step. Takes 15 minutes, not 15 trips.</p>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">2</div>
+        <h3>Add your products</h3>
+        <p>Tap to add inventory once. Every sale deducts automatically. Stock alerts fire before you run out.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">3</div>
+        <h3>Sell and get paid</h3>
+        <p>Any payment — M-Pesa, cash, or split — generates a TRA-compliant EFD receipt instantly.</p>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">4</div>
+        <h3>Akili runs your finances</h3>
+        <p>AI reconciles mobile money, files tax returns, chases debts, and tells you what to do tomorrow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-label reveal">From Shop Owners</div>
+    <h2 class="reveal">They didn't believe it.<br>Until <em>it worked.</em></h2>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="stars">★★★★★</div>
+        <div class="testi-quote">"Nilikuwa naomba TRA wasinikute. Sasa wananikuta na kila kitu tayari. Akili ananisaidia zaidi ya mtu yeyote."</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:-8px;font-style:normal">"I used to pray TRA wouldn't find me. Now they find everything ready. Akili helps me more than anyone."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">AM</div>
+          <div>
+            <div class="testi-name">Amina Mkanga</div>
+            <div class="testi-role">Duka owner · Kariakoo, Dar es Salaam</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal reveal-delay-1">
+        <div class="stars">★★★★★</div>
+        <div class="testi-quote">"I applied for a CRDB loan with the package CREOVA generated for me. Approved in 2 weeks. That would have taken months before."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#3b82f6">JB</div>
+          <div>
+            <div class="testi-name">Juma Bakari</div>
+            <div class="testi-role">Agro-dealer · Kinondoni, Dar es Salaam</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal reveal-delay-2">
+        <div class="stars">★★★★★</div>
+        <div class="testi-quote">"My staff used to 'forget' to record sales. Now every sale on the system is tracked to their name. I can see exactly what's happening."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#22c55e">FA</div>
+          <div>
+            <div class="testi-name">Fatuma Ali</div>
+            <div class="testi-role">Pharmacy owner · Ilala, Dar es Salaam</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ METRICS ══ -->
+<section class="metrics">
+  <div class="container">
+    <div class="metrics-grid">
+      <div class="metric reveal">
+        <div class="metric-num">847</div>
+        <div class="metric-label">Active shops in Dar es Salaam</div>
+      </div>
+      <div class="metric reveal reveal-delay-1">
+        <div class="metric-num">TSh 1.28B</div>
+        <div class="metric-label">Revenue processed monthly</div>
+      </div>
+      <div class="metric reveal reveal-delay-2">
+        <div class="metric-num">98%</div>
+        <div class="metric-label">EFD compliance rate</div>
+      </div>
+      <div class="metric reveal reveal-delay-3">
+        <div class="metric-num">68%</div>
+        <div class="metric-label">Shops now formally registered</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPLIANCE ══ -->
+<section style="padding:60px 0;background:var(--warm)">
+  <div class="container">
+    <div class="compliance reveal">
+      <div>
+        <div class="section-label" style="color:rgba(255,255,255,.5)">Regulatory</div>
+        <h2>Built for <em>Tanzania.</em><br>Ready for Kenya.</h2>
+        <p class="lead">The only SME platform with native TRA EFD compliance, BRELA onboarding, and KRA eTIMS for Kenya — in one product, at $3/month.</p>
+      </div>
+      <div class="compliance-logos">
+        <div class="comp-badge">TRA EFD ✓</div>
+        <div class="comp-badge">BRELA ORS ✓</div>
+        <div class="comp-badge">KRA eTIMS ✓</div>
+        <div class="comp-badge">PDPA 2022 ✓</div>
+        <div class="comp-badge">TAN-QR ✓</div>
+        <div class="comp-badge">BoT Sandbox ✓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRICING ══ -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-label reveal">Pricing</div>
+    <h2 class="reveal">Less than a cup of tea.<br><em>Every day.</em></h2>
+    <p class="lead reveal reveal-delay-1">Start free. Upgrade when your business grows. Cancel anytime. No contracts, no tricks.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <div class="pricing-tier">Free — Bure Kabisa</div>
+        <div class="pricing-price">TSh 0 <span>/month</span></div>
+        <div class="pricing-desc">For shop owners just getting started. No credit card required.</div>
+        <ul class="pricing-features">
+          <li>POS with EFD receipts</li>
+          <li>Inventory tracking</li>
+          <li>Basic cashbook</li>
+          <li>BRELA registration guide</li>
+          <li>TAN-QR payment display</li>
+          <li>25 invoices/month</li>
+        </ul>
+        <button class="btn-pricing btn-pricing-outline">Start Free →</button>
+      </div>
+      <div class="pricing-card featured reveal reveal-delay-1">
+        <div class="featured-badge">Most Popular</div>
+        <div class="pricing-tier" style="color:rgba(250,248,245,.4)">Growth — Ukuaji</div>
+        <div class="pricing-price" style="color:#FAF8F5">TSh 7,500 <span style="color:rgba(250,248,245,.4)">/month</span></div>
+        <div class="pricing-desc">For shops ready to go formal. Under TSh 250/day.</div>
+        <ul class="pricing-features">
+          <li>Everything in Free</li>
+          <li>All 4 mobile money wallets</li>
+          <li>Auto-reconciliation</li>
+          <li>Akili AI insights feed</li>
+          <li>EFD Z-Reports</li>
+          <li>Staff management + tracking</li>
+          <li>USSD feature phone mode</li>
+          <li>Unlimited invoices</li>
+          <li>WhatsApp debt reminders</li>
+        </ul>
+        <button class="btn-pricing btn-pricing-solid">Get Growth →</button>
+      </div>
+      <div class="pricing-card reveal reveal-delay-2">
+        <div class="pricing-tier">Business — Biashara</div>
+        <div class="pricing-price">TSh 30,000 <span>/month</span></div>
+        <div class="pricing-desc">For formal, growing SMEs with multiple staff.</div>
+        <ul class="pricing-features">
+          <li>Everything in Growth</li>
+          <li>Full Akili AI chat + predictions</li>
+          <li>VAT + SDL + PAYE + WHT dashboard</li>
+          <li>Credit score + loan package</li>
+          <li>Kenya KRA eTIMS</li>
+          <li>Government data dashboard</li>
+          <li>Multi-location (3 shops)</li>
+          <li>5 user accounts</li>
+        </ul>
+        <button class="btn-pricing btn-pricing-outline">Get Business →</button>
+      </div>
+      <div class="pricing-card reveal reveal-delay-3">
+        <div class="pricing-tier">Enterprise</div>
+        <div class="pricing-price">Custom <span></span></div>
+        <div class="pricing-desc">For chains, NGOs, and development programs.</div>
+        <ul class="pricing-features">
+          <li>Everything in Business</li>
+          <li>API access</li>
+          <li>White-label option</li>
+          <li>Dedicated support</li>
+          <li>Government data exports</li>
+          <li>Custom integrations</li>
+        </ul>
+        <button class="btn-pricing btn-pricing-outline">Contact Us →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FINAL CTA ══ -->
+<section class="final-cta" id="demo">
+  <div class="container-narrow">
+    <h2 class="reveal">Stop guessing.<br><em>Start knowing.</em></h2>
+    <p class="lead reveal reveal-delay-1">
+      847 duka owners in Dar es Salaam are already using CREOVA. The ones who start today will be applying for loans while others are still counting change.
+    </p>
+    <div class="final-cta-actions reveal reveal-delay-2">
+      <a href="#pricing" class="btn-primary btn-large">Anza Bure — Start Free <span class="arrow">→</span></a>
+      <a href="mailto:hello@creova.co.tz" class="btn-ghost btn-large">Book a Demo</a>
+    </div>
+    <p class="pricing-note reveal reveal-delay-3">No credit card. No commitment. Cancel anytime. · Hakuna hatari.</p>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">CREOVA <span>SME OS</span></div>
+        <div class="footer-tagline">The first Swahili-first financial operating system for East African shop owners. Built in Dar es Salaam. For everyone.</div>
+      </div>
+      <div>
+        <div class="footer-heading">Product</div>
+        <ul class="footer-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#how">How it Works</a></li>
+          <li><a href="#demo">Demo</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">About CREOVA</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Support</div>
+        <ul class="footer-links">
+          <li><a href="#">Help Centre</a></li>
+          <li><a href="mailto:hello@creova.co.tz">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">PDPA Statement</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">© 2025 CREOVA Ltd · Dar es Salaam, Tanzania · BRELA Registered</div>
+      <div class="footer-socials">
+        <a href="#" class="social-icon">𝕏</a>
+        <a href="#" class="social-icon">in</a>
+        <a href="#" class="social-icon">ig</a>
+        <a href="#" class="social-icon">yt</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Scroll animations ── */
+const reveals=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}});
+},{threshold:.12,rootMargin:'0px 0px -60px 0px'});
+reveals.forEach(el=>io.observe(el));
+
+/* ── Nav scroll ── */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  if(window.scrollY>60){nav.style.borderBottomColor='rgba(139,128,112,.2)'}
+  else{nav.style.borderBottomColor='rgba(139,128,112,.12)'}
+},{passive:true});
+
+/* ── Marquee duplicate for seamless loop ── */
+const mq=document.getElementById('marquee');
+mq.innerHTML+=mq.innerHTML;
+
+/* ── Language toggle ── */
+const langBtn=document.querySelector('.nav-lang');
+let sw=false;
+langBtn.addEventListener('click',()=>{
+  sw=!sw;
+  langBtn.textContent=sw?'🇬🇧 English':'🇹🇿 Swahili';
+});
+
+/* ── Smooth CTA highlight on load ── */
+setTimeout(()=>{
+  const hero=document.querySelector('.hero h1');
+  if(hero)hero.style.opacity='1';
+},100);
+
+/* ── Count-up animation for metrics ── */
+const countUps=document.querySelectorAll('.metric-num');
+const countIO=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      const text=el.textContent;
+      if(text.includes('TSh')||text.includes('Custom'))return;
+      const num=parseFloat(text.replace(/[^0-9.]/g,''));
+      const suffix=text.replace(/[0-9.,]/g,'').trim();
+      let start=0;const dur=1800;const step=16;
+      const inc=num/(dur/step);
+      const timer=setInterval(()=>{
+        start+=inc;
+        if(start>=num){start=num;clearInterval(timer);}
+        el.textContent=Number.isInteger(num)?Math.round(start)+suffix:(start.toFixed(0))+suffix;
+      },step);
+      countIO.unobserve(el);
+    }
+  });
+},{threshold:.5});
+countUps.forEach(el=>countIO.observe(el));
+</script>
+</body>
+</html>
