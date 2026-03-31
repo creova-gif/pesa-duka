@@ -78,7 +78,7 @@ export function LandingPage() {
     <div className="landing-root">
       {/* ══ NAV ══ */}
       <nav id="landing-nav">
-        <div className="nav-logo">CREOVA <span>SME OS</span></div>
+        <div className="nav-logo">PESA <span>DUKA</span></div>
         <div className="nav-links">
           <a href="#features">Features</a>
           <a href="#how">How it Works</a>
@@ -249,7 +249,7 @@ export function LandingPage() {
               <div className="section-label reveal">The Solution</div>
               <h2 className="reveal">Same duka.<br /><em>Different story.</em></h2>
               <p className="lead reveal reveal-delay-1">
-                CREOVA SME OS watches your business 24/7 — then tells you exactly what to do, in Swahili, in plain language.
+                PESA DUKA watches your business 24/7 — then tells you exactly what to do, in Swahili, in plain language.
               </p>
               <p style={{ fontSize: "15px", color: "var(--muted)", marginTop: "16px", lineHeight: "1.7" }} className="reveal reveal-delay-2">
                 Not another dashboard you have to stare at. An operating system that talks to you like a trusted business advisor — and handles the tax paperwork while you're at it.
@@ -568,7 +568,7 @@ export function LandingPage() {
         <div className="container">
           <div className="footer-grid">
             <div>
-              <div className="footer-brand">CREOVA <span>SME OS</span></div>
+              <div className="footer-brand">PESA <span>DUKA</span></div>
               <div className="footer-tagline">The first Swahili-first financial operating system for East African shop owners. Built in Dar es Salaam. For everyone.</div>
             </div>
             <div>
