@@ -48,9 +48,9 @@ export function Layout() {
         </button>
         <div className="flex items-center gap-2 ml-4">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-lg">D</span>
+            <span className="text-white font-bold text-lg">P</span>
           </div>
-          <span className="font-bold text-lg">DUKA</span>
+          <span className="font-bold text-lg">PESA DUKA</span>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <OfflineStatusPill status={connectionStatus} queuedCount={0} />
@@ -71,9 +71,9 @@ export function Layout() {
         <div className="hidden lg:flex h-16 items-center px-4 border-b border-border">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-lg">C</span>
+              <span className="text-white font-bold text-lg">P</span>
             </div>
-            <span className="font-bold text-lg">CREOVA SME</span>
+            <span className="font-bold text-lg">PESA DUKA</span>
           </Link>
         </div>
 

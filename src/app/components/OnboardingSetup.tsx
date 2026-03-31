@@ -75,9 +75,9 @@ export default function OnboardingSetup({ onComplete }: Props) {
         {/* Header */}
         <div className="bg-primary p-6 text-white">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold">C</div>
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold">P</div>
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider opacity-80">CREOVA SME OS</div>
+              <div className="text-xs font-bold uppercase tracking-wider opacity-80">PESA DUKA</div>
               <div className="text-base font-bold">Business Setup</div>
             </div>
           </div>
