@@ -44,6 +44,15 @@ const SAMPLE_SHOP = {
   monthsActive: 5,
   creditScore: 68,
   stockoutsThisWeek: 3,
+  dayStats: [
+    { dayIndex: 0, avg: 134000, count: 4 }, // Sun
+    { dayIndex: 1, avg: 108000, count: 4 }, // Mon
+    { dayIndex: 2, avg: 151000, count: 4 }, // Tue
+    { dayIndex: 3, avg: 165000, count: 4 }, // Wed
+    { dayIndex: 4, avg: 172000, count: 4 }, // Thu
+    { dayIndex: 5, avg: 198000, count: 4 }, // Fri
+    { dayIndex: 6, avg: 291000, count: 4 }, // Sat
+  ],
 };
 
 interface Insight {
@@ -172,15 +181,53 @@ interface Prediction {
   note: string;
 }
 
-const PREDICTIONS: Prediction[] = [
-  { day: "Jumatano", dayEn: "Wednesday", predicted: 165000, confidence: 87, note: "Kawaida ya wiki hii" },
-  { day: "Alhamisi", dayEn: "Thursday", predicted: 172000, confidence: 82, note: "Kidogo juu ya wastani" },
-  { day: "Ijumaa", dayEn: "Friday", predicted: 198000, confidence: 79, note: "Mwisho wa wiki — wateja wengi" },
-  { day: "Jumamosi", dayEn: "Saturday", predicted: 291000, confidence: 91, note: "Siku yako bora — kuwa tayari" },
-  { day: "Jumapili", dayEn: "Sunday", predicted: 134000, confidence: 74, note: "Kidogo — pumzika kidogo" },
-  { day: "Jumatatu", dayEn: "Monday", predicted: 108000, confidence: 85, note: "Siku yako ngumu zaidi" },
-  { day: "Jumanne", dayEn: "Tuesday", predicted: 151000, confidence: 80, note: "Wastani wa kawaida" },
+const DAY_META = [
+  { sw: "Jumapili",  en: "Sunday",    multiplier: 0.73 },
+  { sw: "Jumatatu",  en: "Monday",    multiplier: 0.59 },
+  { sw: "Jumanne",   en: "Tuesday",   multiplier: 0.82 },
+  { sw: "Jumatano",  en: "Wednesday", multiplier: 0.90 },
+  { sw: "Alhamisi",  en: "Thursday",  multiplier: 0.94 },
+  { sw: "Ijumaa",    en: "Friday",    multiplier: 1.08 },
+  { sw: "Jumamosi",  en: "Saturday",  multiplier: 1.59 },
 ];
+
+function generatePredictions(shopData: typeof SAMPLE_SHOP): Prediction[] {
+  const today = new Date().getDay();
+  const avgDaily = shopData.avgDailySales || 150000;
+  const hasRealData = shopData.dayStats?.some(d => d.count > 0);
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const dayIndex = (today + 1 + i) % 7;
+    const meta = DAY_META[dayIndex];
+    const dayStat = shopData.dayStats?.find(d => d.dayIndex === dayIndex);
+
+    // Use real avg if we have ≥2 data points, else use multiplier on overall average
+    const predicted = dayStat && dayStat.count >= 2
+      ? Math.round(dayStat.avg * (1 + (Math.random() * 0.1 - 0.05))) // tiny variance
+      : Math.round(avgDaily * meta.multiplier);
+
+    // Confidence scales with data richness (more samples → higher confidence)
+    const sampleConfidence = dayStat ? Math.min(95, 55 + dayStat.count * 8) : 55;
+
+    const isHigh = dayIndex === 6; // Saturday
+    const isLow = dayIndex === 1;  // Monday
+    const noteEn = isHigh ? "Your best day — stock up and be ready"
+      : isLow ? "Slowest day — use it for stock planning"
+      : predicted > avgDaily ? "Above your average — good day incoming"
+      : "Near your typical average";
+    const noteSw = isHigh ? "Siku yako bora — kuwa tayari"
+      : isLow ? "Siku ngumu — panga hisa"
+      : predicted > avgDaily ? "Juu ya wastani wako"
+      : "Karibu na wastani wako";
+
+    return {
+      day: meta.sw, dayEn: meta.en,
+      predicted,
+      confidence: sampleConfidence,
+      note: hasRealData ? noteSw : noteSw + " (mfano)",
+    };
+  });
+}
 
 const css = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -360,7 +407,8 @@ export default function AkiliYaBiashara({ shopData = SAMPLE_SHOP, theme = "dark"
     }, 1800);
   };
 
-  const maxPred = Math.max(...PREDICTIONS.map(p => p.predicted));
+  const predictions = generatePredictions(shopData);
+  const maxPred = Math.max(...predictions.map(p => p.predicted));
 
   return (
     <>
@@ -552,7 +600,7 @@ export default function AkiliYaBiashara({ shopData = SAMPLE_SHOP, theme = "dark"
                 ? "Hizi ni utabiri wa mauzo yako kulingana na miaka 5 ya takwimu za soko na historia yako ya wiki 20."
                 : "These predictions are based on 5 years of Dar es Salaam market patterns combined with your 20-week sales history."}
             </div>
-            {PREDICTIONS.map(pred => {
+            {predictions.map(pred => {
               const pct = Math.round((pred.predicted / maxPred) * 100);
               const barColor = pred.predicted >= 250000 ? "#22c55e" : pred.predicted >= 160000 ? BRAND : pred.predicted >= 130000 ? "#f59e0b" : "#ef4444";
               return (
@@ -585,10 +633,13 @@ export default function AkiliYaBiashara({ shopData = SAMPLE_SHOP, theme = "dark"
               </div>
               <div style={{ textAlign: "right" }}>
                 <div style={{ fontSize: 18, fontWeight: 800, color: "#22c55e" }}>
-                  {fmt(PREDICTIONS.reduce((s, p) => s + p.predicted, 0))}
+                  {fmt(predictions.reduce((s, p) => s + p.predicted, 0))}
                 </div>
                 <div style={{ fontSize: 10, color: "#22c55e", marginTop: 2 }}>
-                  +TSh 87,000 vs this week
+                  {(() => {
+                    const diff = predictions.reduce((s, p) => s + p.predicted, 0) - (shopData.weekRevenue || 0);
+                    return diff >= 0 ? `+${fmt(diff)} vs this week` : `${fmt(Math.abs(diff))} below this week`;
+                  })()}
                 </div>
               </div>
             </div>

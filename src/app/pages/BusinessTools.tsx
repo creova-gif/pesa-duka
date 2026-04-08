@@ -39,6 +39,19 @@ export function BusinessTools() {
 
     const lowStockProducts = products.filter(p => p.stock < 10);
 
+    // Day-of-week revenue breakdown (0=Sun, 1=Mon, ..., 6=Sat)
+    const dayTotals: Record<number, number[]> = {};
+    transactions.filter(t => t.type === "income").forEach(t => {
+      const d = new Date(t.date).getDay();
+      if (!dayTotals[d]) dayTotals[d] = [];
+      dayTotals[d].push(t.amount);
+    });
+    const dayStats = [0, 1, 2, 3, 4, 5, 6].map(d => ({
+      dayIndex: d,
+      avg: dayTotals[d] ? Math.round(dayTotals[d].reduce((s, v) => s + v, 0) / dayTotals[d].length) : 0,
+      count: (dayTotals[d] || []).length,
+    }));
+
     const paymentCounts: Record<string, number> = {};
     transactions.forEach(t => {
       if (t.type === "income" && t.paymentMethod) {
@@ -73,6 +86,7 @@ export function BusinessTools() {
       monthsActive: 1,
       creditScore: Math.min(100, Math.max(0, 50 + (weekRevenue > 100000 ? 10 : 0) + (weekTransactions > 50 ? 10 : 0))),
       stockoutsThisWeek: lowStockProducts.length,
+      dayStats,
     };
   }, [transactions, products, profile]);
 

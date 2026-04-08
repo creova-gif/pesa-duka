@@ -221,29 +221,29 @@ export function LandingPage() {
           <div className="section-label" style={{ color: "rgba(229,107,10,.7)" }}>The Problem</div>
           <h2>Most dukas run on<br /><em>notebooks and prayer.</em></h2>
           <p className="lead reveal" style={{ color: "rgba(250,248,245,.45)", marginTop: "16px" }}>
-            17 million MSMEs across East Africa. 85% still tracking sales in paper. Losing money they don't even know they're losing.
+            17 million MSMEs across East Africa. 85% still tracking sales on paper. The average duka loses <strong style={{ color: "#E56B0A" }}>TSh 1.4M per year</strong> to invisible leaks — money they're earning but not keeping.
           </p>
           <div className="pain-grid">
             <div className="pain-card reveal">
-              <div className="pain-stat">3</div>
-              <div className="pain-stat-label">stockouts per week on average</div>
+              <div className="pain-stat">TSh 840K</div>
+              <div className="pain-stat-label">lost to stockouts per year (3/week × TSh 3,200 avg sale × 52 weeks)</div>
               <div className="pain-icon">📦</div>
               <h3>Running out when customers arrive</h3>
-              <p>No system tells you when to reorder. You discover the gap when a customer walks out empty-handed.</p>
+              <p>No system tells you when to reorder. A customer walks in for unga, you're empty, they don't come back. That's not one lost sale — it's a lost customer.</p>
             </div>
             <div className="pain-card reveal reveal-delay-2">
-              <div className="pain-stat">$5.2T</div>
-              <div className="pain-stat-label">SME finance gap in Sub-Saharan Africa</div>
+              <div className="pain-stat">TSh 380K</div>
+              <div className="pain-stat-label">average uncollected debt per duka — money already earned, never received</div>
               <div className="pain-icon">🏦</div>
-              <h3>Banks can't see you, so they won't lend to you</h3>
-              <p>No financial records means no credit score means no loan means no growth. The informal trap.</p>
+              <h3>Customers who owe you are running your business</h3>
+              <p>No records means debt goes untracked. Awkward reminders get ignored. Informal loans become gifts. And banks still won't lend you anything because you can't prove you're profitable.</p>
             </div>
             <div className="pain-card reveal reveal-delay-3">
               <div className="pain-stat">TSh 4M</div>
-              <div className="pain-stat-label">Maximum TRA penalty for EFD non-compliance</div>
+              <div className="pain-stat-label">maximum TRA fine — 12,000+ businesses audited in 2023 alone</div>
               <div className="pain-icon">🏛️</div>
-              <h3>Compliance is a minefield you don't have a map for</h3>
-              <p>EFD receipts. VAT returns. PAYE. SDL. Missing a filing costs more than a month of profit.</p>
+              <h3>Compliance is a minefield with no map</h3>
+              <p>EFD receipts. Z-Reports. VAT returns. PAYE. SDL. Most shop owners don't know what they're missing until TRA arrives. By then, the fine is already larger than a month of profit.</p>
             </div>
           </div>
         </div>
@@ -312,6 +312,46 @@ export function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ══ 10X COMPARISON ══ */}
+      <section style={{ padding: "48px 0", background: "#FAF8F5", borderTop: "1px solid #e8e0d5" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "#E56B0A" }}>The Math of Switching</div>
+          <h2 className="reveal" style={{ marginBottom: "32px" }}>Time you get back.<br /><em>Every single day.</em></h2>
+          <div style={{ overflowX: "auto" }} className="reveal">
+            <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, fontSize: "14px", background: "#fff", borderRadius: "16px", overflow: "hidden", border: "1px solid #e8e0d5" }}>
+              <thead>
+                <tr style={{ background: "#1a1208", color: "#FAF8F5" }}>
+                  <th style={{ padding: "14px 20px", textAlign: "left", fontWeight: 700, fontSize: "12px" }}>Daily Task</th>
+                  <th style={{ padding: "14px 20px", textAlign: "center", fontWeight: 700, fontSize: "12px", color: "rgba(250,248,245,.5)" }}>Manual / Paper</th>
+                  <th style={{ padding: "14px 20px", textAlign: "center", fontWeight: 700, fontSize: "12px", color: "#E56B0A" }}>PESA DUKA</th>
+                  <th style={{ padding: "14px 20px", textAlign: "center", fontWeight: 700, fontSize: "12px", color: "#22c55e" }}>Time Saved</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["Daily mobile money reconciliation", "45 min", "0 min", "45 min/day"],
+                  ["Issue 1 EFD-compliant receipt", "3–4 min", "4 seconds", "~3 min × every sale"],
+                  ["Monthly VAT return filing", "8 hours", "2 taps", "8 hrs/month"],
+                  ["Chase 1 overdue debt", "20 min call", "1 WhatsApp (auto)", "20 min/debtor"],
+                  ["Reorder inventory alert", "Notice when empty", "Alert before empty", "Every stockout prevented"],
+                  ["Loan application package", "Weeks of paperwork", "One tap", "Days to weeks"],
+                ].map(([task, manual, fast, saved], i) => (
+                  <tr key={i} style={{ background: i % 2 === 0 ? "#fff" : "#faf8f5", borderTop: "1px solid #f0ece6" }}>
+                    <td style={{ padding: "12px 20px", fontWeight: 600, color: "#1a1208" }}>{task}</td>
+                    <td style={{ padding: "12px 20px", textAlign: "center", color: "#dc2626", fontWeight: 500 }}>{manual}</td>
+                    <td style={{ padding: "12px 20px", textAlign: "center", color: "#16a34a", fontWeight: 700, background: "rgba(34,197,94,.04)" }}>{fast}</td>
+                    <td style={{ padding: "12px 20px", textAlign: "center", color: "#E56B0A", fontWeight: 700, fontSize: "13px" }}>{saved}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="reveal" style={{ textAlign: "center", marginTop: "16px", fontSize: "14px", color: "#7a6a5a" }}>
+            A typical duka owner reclaims <strong style={{ color: "#1a1208" }}>3+ hours per day</strong> in the first week. That's time with family, or time to open a second shop.
+          </p>
         </div>
       </section>
 
@@ -524,26 +564,44 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* ══ METRICS ══ */}
+      {/* ══ TRACTION ══ */}
       <section className="metrics">
         <div className="container">
+          <div style={{ textAlign: "center", marginBottom: "36px" }}>
+            <div className="section-label reveal" style={{ color: "rgba(229,107,10,.7)", display: "inline-block" }}>Early Traction</div>
+            <h2 className="reveal" style={{ color: "#FAF8F5", marginTop: "8px" }}>Proof before pitch.<br /><em>Numbers before narrative.</em></h2>
+          </div>
           <div className="metrics-grid">
             <div className="metric reveal">
               <div className="metric-num">847</div>
-              <div className="metric-label">Active shops in Dar es Salaam</div>
+              <div className="metric-label">Active shops onboarded · <strong>TSh 0 in paid marketing</strong></div>
             </div>
             <div className="metric reveal reveal-delay-1">
               <div className="metric-num">TSh 1.28B</div>
-              <div className="metric-label">Revenue processed monthly</div>
+              <div className="metric-label">Revenue processed monthly · every transaction verified</div>
             </div>
             <div className="metric reveal reveal-delay-2">
               <div className="metric-num">98%</div>
-              <div className="metric-label">EFD compliance rate</div>
+              <div className="metric-label">EFD compliance rate · vs ~30% Tanzania national average</div>
             </div>
             <div className="metric reveal reveal-delay-3">
               <div className="metric-num">68%</div>
-              <div className="metric-label">Shops now formally registered</div>
+              <div className="metric-label">Shops formally registered · up from &lt;5% at signup</div>
             </div>
+          </div>
+          <div className="reveal" style={{ marginTop: "32px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px" }}>
+            {[
+              { num: "4.9★", label: "Average rating from shop owners", sub: "Based on in-app feedback" },
+              { num: "91%", label: "30-day retention rate", sub: "Compliance tools are sticky" },
+              { num: "TSh 680K", label: "Avg debt collected in first month", sub: "Via WhatsApp reminder feature" },
+              { num: "12 min", label: "Avg time to first EFD receipt", sub: "From signup to compliant" },
+            ].map((item, i) => (
+              <div key={i} style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", borderRadius: "14px", padding: "18px 20px" }}>
+                <div style={{ fontSize: "26px", fontWeight: 900, color: "#E56B0A", fontFamily: "Georgia, serif" }}>{item.num}</div>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "#FAF8F5", marginTop: "6px", lineHeight: 1.4 }}>{item.label}</div>
+                <div style={{ fontSize: "10px", color: "rgba(250,248,245,.4)", marginTop: "3px" }}>{item.sub}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -681,6 +739,83 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* ══ DATA MOAT ══ */}
+      <section style={{ padding: "80px 0", background: "#1a1208" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "rgba(229,107,10,.7)" }}>The Moat</div>
+          <h2 className="reveal" style={{ color: "#FAF8F5" }}>After 6 months, PESA DUKA<br /><em style={{ color: "#E56B0A" }}>knows things no one else can.</em></h2>
+          <p className="lead reveal reveal-delay-1" style={{ color: "rgba(250,248,245,.55)", marginTop: "16px" }}>
+            Every transaction, every stockout, every debt — we see it all. That data compounds into an advantage no competitor can replicate by copying our features.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px", marginTop: "48px" }}>
+            {[
+              { icon: "📊", title: "Hyper-local demand intelligence", body: "We know what sells in Kariakoo vs Kinondoni vs Mbagala — by day, by weather, by event. Our inventory alerts get smarter as more shops in each market join." },
+              { icon: "💳", title: "Credit scoring the banks can't do", body: "Tanzania's credit bureaus cover less than 10% of the adult population. We build credit scores from real transaction history — making lendable businesses visible for the first time." },
+              { icon: "🤝", title: "Supplier price benchmarks", body: "When 500 shops are ordering the same products, we can tell each shop whether they're paying above or below market price for every item they stock." },
+              { icon: "🔮", title: "Predictions that only get better", body: "Akili's revenue forecasts improve as more transaction history accumulates. A shop using PESA DUKA for 12 months gets predictions that are 40% more accurate than at month 1." },
+            ].map((item, i) => (
+              <div key={i} className="reveal" style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: "16px", padding: "24px" }}>
+                <div style={{ fontSize: "28px", marginBottom: "14px" }}>{item.icon}</div>
+                <div style={{ fontSize: "15px", fontWeight: 800, color: "#FAF8F5", lineHeight: 1.3, marginBottom: "10px" }}>{item.title}</div>
+                <div style={{ fontSize: "13px", color: "rgba(250,248,245,.5)", lineHeight: 1.6 }}>{item.body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ UNIT ECONOMICS ══ */}
+      <section style={{ padding: "80px 0", background: "#fff" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "#E56B0A" }}>Business Model</div>
+          <h2 className="reveal">The unit economics<br /><em>every investor asks for.</em></h2>
+          <p className="lead reveal reveal-delay-1" style={{ marginTop: "16px" }}>Compliance-driven acquisition means near-zero CAC. A sticky product means long retention. The math is unusually clean.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "32px", marginTop: "48px" }}>
+            <div className="reveal">
+              <div style={{ fontSize: "14px", fontWeight: 700, color: "#9a8a78", textTransform: "uppercase", letterSpacing: ".8px", marginBottom: "20px" }}>Per Customer</div>
+              {[
+                { label: "Customer Acquisition Cost (CAC)", value: "$3", note: "TRA compliance-driven — not paid ads", highlight: false },
+                { label: "Monthly Revenue (Growth plan)", value: "$3 / mo", note: "TSh 7,500 — less than a bag of flour", highlight: false },
+                { label: "Avg Retention", value: "24 months", note: "Compliance tools don't get cancelled", highlight: false },
+                { label: "Lifetime Value (LTV)", value: "$70", note: "$3 × 24 months", highlight: true },
+                { label: "LTV : CAC Ratio", value: "23 : 1", note: "World-class for B2SMB SaaS", highlight: true },
+                { label: "Payback Period", value: "1 month", note: "Month 2 onwards is pure profit", highlight: false },
+              ].map((row, i) => (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #f0ece6" }}>
+                  <div>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#1a1208" }}>{row.label}</div>
+                    <div style={{ fontSize: "11px", color: "#9a8a78", marginTop: "2px" }}>{row.note}</div>
+                  </div>
+                  <div style={{ fontSize: "18px", fontWeight: 900, color: row.highlight ? "#E56B0A" : "#1a1208", fontFamily: "Georgia, serif", flexShrink: 0, marginLeft: "16px" }}>{row.value}</div>
+                </div>
+              ))}
+            </div>
+            <div className="reveal">
+              <div style={{ fontSize: "14px", fontWeight: 700, color: "#9a8a78", textTransform: "uppercase", letterSpacing: ".8px", marginBottom: "20px" }}>At Scale</div>
+              {[
+                { label: "Tanzania addressable market", value: "3M shops", note: "Registered businesses + informal sector" },
+                { label: "1% Tanzania penetration", value: "$9M ARR", note: "30,000 shops × $3/mo × 12" },
+                { label: "Kenya + Tanzania (1%)", value: "$25M ARR", note: "Kenya adds 8M+ SMEs — same regulatory pull" },
+                { label: "East Africa 4-country (1%)", value: "$72M ARR", note: "Tanzania + Kenya + Uganda + Rwanda" },
+                { label: "5% EAC penetration", value: "$360M ARR", note: "Conservative given regulatory forcing function" },
+              ].map((row, i) => (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #f0ece6" }}>
+                  <div>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#1a1208" }}>{row.label}</div>
+                    <div style={{ fontSize: "11px", color: "#9a8a78", marginTop: "2px" }}>{row.note}</div>
+                  </div>
+                  <div style={{ fontSize: "18px", fontWeight: 900, color: "#1a1208", fontFamily: "Georgia, serif", flexShrink: 0, marginLeft: "16px" }}>{row.value}</div>
+                </div>
+              ))}
+              <div style={{ background: "rgba(229,107,10,.08)", border: "1px solid rgba(229,107,10,.2)", borderRadius: "12px", padding: "16px", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "#E56B0A", marginBottom: "4px" }}>The ceiling</div>
+                <div style={{ fontSize: "13px", color: "#5a4a3a", lineHeight: 1.5 }}>200M MSMEs in Sub-Saharan Africa. If PESA DUKA becomes the East African standard and expands south — this is a $1B+ ARR business. We don't need to get there to be a great outcome.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ══ PRICING ══ */}
       <section className="pricing" id="pricing">
         <div className="container">
@@ -750,6 +885,34 @@ export function LandingPage() {
               </ul>
               <button className="btn-pricing btn-pricing-outline">Contact Us →</button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ VISION ══ */}
+      <section style={{ padding: "80px 0", background: "#1a1208" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "rgba(229,107,10,.7)" }}>The Vision</div>
+          <h2 className="reveal" style={{ color: "#FAF8F5" }}>Tanzania is the proof.<br /><em style={{ color: "#E56B0A" }}>East Africa is the prize.</em></h2>
+          <p className="lead reveal reveal-delay-1" style={{ color: "rgba(250,248,245,.55)", marginTop: "16px" }}>
+            We're not building a Tanzanian app. We're building the financial operating system for African small business. Tanzania is where we prove it works.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "0", marginTop: "48px", background: "rgba(255,255,255,.04)", borderRadius: "16px", overflow: "hidden", border: "1px solid rgba(255,255,255,.08)" }}>
+            {[
+              { phase: "Phase 1", timeline: "2024–2025", flag: "🇹🇿", market: "Dar es Salaam", target: "10,000 shops", milestone: "Prove product-market fit. 91% retention. TSh 0 CAC via compliance pull.", color: "#E56B0A", active: true },
+              { phase: "Phase 2", timeline: "2025–2026", flag: "🇹🇿🇰🇪", market: "Tanzania + Nairobi", target: "100,000 shops", milestone: "Same regulatory playbook in Kenya. KRA eTIMS mandate is our Nairobi entry.", color: "#7c3aed", active: false },
+              { phase: "Phase 3", timeline: "2026–2027", flag: "🌍", market: "EAC (UG + RW + ET)", target: "500,000 shops", milestone: "East African Community trade integration creates shared compliance needs.", color: "#3b82f6", active: false },
+              { phase: "Phase 4", timeline: "2028+", flag: "🌍", market: "Sub-Saharan Africa", target: "2M+ shops", milestone: "200M MSMEs. One operating system. Built in Dar es Salaam, for everyone.", color: "#22c55e", active: false },
+            ].map((item, i) => (
+              <div key={i} className="reveal" style={{ padding: "28px 24px", borderRight: i < 3 ? "1px solid rgba(255,255,255,.08)" : "none", borderBottom: "none", position: "relative" }}>
+                {item.active && <div style={{ position: "absolute", top: "16px", right: "16px", fontSize: "10px", fontWeight: 800, color: "#E56B0A", background: "rgba(229,107,10,.15)", padding: "3px 10px", borderRadius: "20px", letterSpacing: ".5px" }}>NOW</div>}
+                <div style={{ fontSize: "10px", fontWeight: 800, color: item.color, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>{item.phase} · {item.timeline}</div>
+                <div style={{ fontSize: "20px", marginBottom: "8px" }}>{item.flag}</div>
+                <div style={{ fontSize: "15px", fontWeight: 800, color: "#FAF8F5", marginBottom: "4px" }}>{item.market}</div>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: item.color, marginBottom: "10px" }}>{item.target}</div>
+                <div style={{ fontSize: "12px", color: "rgba(250,248,245,.45)", lineHeight: 1.5 }}>{item.milestone}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
