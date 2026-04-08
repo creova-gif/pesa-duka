@@ -9,6 +9,8 @@ import VATGuardian from "../components/VATGuardian";
 import TRAComplianceCalendar from "../components/TRAComplianceCalendar";
 import FirstTimeGuide from "../components/FirstTimeGuide";
 import AkiliMiniWidget from "../components/AkiliMiniWidget";
+import { DashboardSkeleton } from "../components/SkeletonLoader";
+import { useCountUp } from "../hooks/useCountUp";
 import { useTransactions, useProducts } from "../hooks/useData";
 import { getProfile } from "../hooks/useBusinessProfile";
 import { toast } from "sonner";
@@ -214,15 +216,10 @@ export function Dashboard() {
     [lowStockProducts]
   );
 
+  const animatedIncome = useCountUp(todayIncome, 900, 200);
+
   if (loadingTransactions || loadingProducts) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
@@ -317,10 +314,12 @@ export function Dashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">
         <StatCard
           title="Today's Sales"
-          value={`TSh ${todayIncome.toLocaleString()}`}
+          value={`TSh ${animatedIncome.toLocaleString()}`}
           icon={DollarSign}
           iconBgColor="bg-primary/10"
           iconColor="text-primary"
+          accentColor="#E56B0A"
+          delay={0}
         />
         <StatCard
           title="Transactions"
@@ -328,6 +327,7 @@ export function Dashboard() {
           icon={ShoppingCart}
           iconBgColor="bg-blue-100 dark:bg-blue-900/30"
           iconColor="text-blue-600 dark:text-blue-400"
+          delay={60}
         />
         <StatCard
           title="Profit Margin"
@@ -335,6 +335,7 @@ export function Dashboard() {
           icon={TrendingUp}
           iconBgColor="bg-green-100 dark:bg-green-900/30"
           iconColor="text-green-600 dark:text-green-400"
+          delay={120}
         />
         <StatCard
           title="Low Stock"
@@ -342,6 +343,7 @@ export function Dashboard() {
           icon={AlertTriangle}
           iconBgColor="bg-red-100 dark:bg-red-900/30"
           iconColor="text-red-600 dark:text-red-400"
+          delay={180}
         />
       </div>
 
@@ -364,7 +366,7 @@ export function Dashboard() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="bg-card rounded-lg p-4 md:p-6 border border-border">
+        <div className="bg-card rounded-xl p-4 md:p-6 border border-border pd-card pd-chart-enter pd-d1">
           <h3 className="text-base md:text-lg font-semibold mb-4">Weekly Sales</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={weeklyData}>
@@ -377,7 +379,7 @@ export function Dashboard() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-card rounded-lg p-4 md:p-6 border border-border">
+        <div className="bg-card rounded-xl p-4 md:p-6 border border-border pd-card pd-chart-enter pd-d2">
           <h3 className="text-base md:text-lg font-semibold mb-4">Payment Methods</h3>
           {paymentMethodData.length === 0 ? (
             <div className="flex items-center justify-center h-[250px] text-muted-foreground text-sm">
@@ -415,7 +417,7 @@ export function Dashboard() {
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Recent Transactions */}
-        <div className="bg-card rounded-lg p-4 md:p-6 border border-border">
+        <div className="bg-card rounded-xl p-4 md:p-6 border border-border pd-fade-up pd-d3">
           <h3 className="text-base md:text-lg font-semibold mb-4">Recent Transactions</h3>
           {recentTransactions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-muted-foreground text-sm">

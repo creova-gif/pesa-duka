@@ -4,6 +4,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import DebtFollowUpQueue from "../components/DebtFollowUpQueue";
 import { LoyaltySystem } from "../components/LoyaltySystem";
+import { CardListSkeleton } from "../components/SkeletonLoader";
 import { useCustomers, useCreateCustomer } from "../hooks/useData";
 import { toast } from "sonner";
 
@@ -73,11 +74,14 @@ export function Customers() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading customers...</p>
+      <div className="p-4 md:p-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="pd-skeleton" style={{ width: "130px", height: "28px", borderRadius: "8px" }} />
+          <div className="pd-skeleton" style={{ width: "140px", height: "36px", borderRadius: "10px" }} />
         </div>
+        <div className="flex gap-2 mb-6">{[0,1,2].map(i => <div key={i} className="pd-skeleton" style={{ width: "100px", height: "36px", borderRadius: "10px" }} />)}</div>
+        <div className="grid grid-cols-3 gap-3 md:gap-6 mb-6">{[0,1,2].map(i => <div key={i} className="bg-card rounded-xl p-4 md:p-6 border border-border"><div className="pd-skeleton mb-2" style={{ width: "80px", height: "12px" }} /><div className="pd-skeleton" style={{ width: "100px", height: "26px" }} /></div>)}</div>
+        <CardListSkeleton rows={6} />
       </div>
     );
   }
@@ -201,10 +205,11 @@ export function Customers() {
                 )}
               </div>
             )}
-            {filteredCustomers.map((customer) => (
+            {filteredCustomers.map((customer, i) => (
               <div
                 key={customer.id}
-                className="bg-card rounded-lg p-4 md:p-6 border border-border hover:border-primary transition-colors cursor-pointer"
+                className="bg-card rounded-xl p-4 md:p-6 border border-border pd-card pd-card-clickable pd-fade-up"
+                style={{ animationDelay: `${i * 40}ms` }}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">

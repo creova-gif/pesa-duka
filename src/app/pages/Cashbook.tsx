@@ -2,6 +2,7 @@ import { useState } from "react";
 import { TrendingUp, TrendingDown, BookOpen, Hash, Plus, ChevronDown, ArrowUpRight, X } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { TransactionSkeleton } from "../components/SkeletonLoader";
 import { useTransactions, useCreateTransaction } from "../hooks/useData";
 import { toast } from "sonner";
 
@@ -75,10 +76,15 @@ export function Cashbook() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading cashbook...</p>
+      <div className="p-4 md:p-8 pd-fade-in">
+        <div className="flex items-center justify-between mb-6">
+          <div className="pd-skeleton" style={{ width: "120px", height: "28px", borderRadius: "8px" }} />
+          <div className="pd-skeleton" style={{ width: "140px", height: "36px", borderRadius: "10px" }} />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">{[0,1,2,3].map(i => <div key={i} className="bg-card rounded-xl p-4 md:p-6 border border-border"><div className="flex justify-between mb-3"><div><div className="pd-skeleton mb-2" style={{ width: "80px", height: "12px" }} /><div className="pd-skeleton" style={{ width: "110px", height: "22px" }} /></div><div className="pd-skeleton" style={{ width: "44px", height: "44px", borderRadius: "10px" }} /></div></div>)}</div>
+        <div className="bg-card rounded-xl border border-border p-4 md:p-6 mb-6"><div className="pd-skeleton mb-4" style={{ width: "200px", height: "36px", borderRadius: "10px" }} /></div>
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
+          <TransactionSkeleton rows={7} />
         </div>
       </div>
     );
@@ -126,7 +132,7 @@ export function Cashbook() {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 md:p-6 border border-border">
+        <div className="bg-card rounded-xl p-4 md:p-6 border border-border pd-stat-card pd-fade-up pd-d1">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs md:text-sm text-muted-foreground mb-1">Total Expenses</p>
@@ -138,7 +144,7 @@ export function Cashbook() {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 md:p-6 border border-border">
+        <div className="bg-card rounded-xl p-4 md:p-6 border border-border pd-stat-card pd-fade-up pd-d2">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs md:text-sm text-muted-foreground mb-1">Net Balance</p>
@@ -152,7 +158,7 @@ export function Cashbook() {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 md:p-6 border border-border">
+        <div className="bg-card rounded-xl p-4 md:p-6 border border-border pd-stat-card pd-fade-up pd-d3">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs md:text-sm text-muted-foreground mb-1">Entries</p>
@@ -234,9 +240,9 @@ export function Cashbook() {
                 year: 'numeric'
               })}
             </h3>
-            <div className="bg-card rounded-lg border border-border divide-y divide-border">
-              {dayTransactions.map((transaction) => (
-                <div key={transaction.id} className="p-3 md:p-4 flex items-center gap-3 md:gap-4">
+            <div className="bg-card rounded-xl border border-border divide-y divide-border">
+              {dayTransactions.map((transaction, i) => (
+                <div key={transaction.id} className="p-3 md:p-4 flex items-center gap-3 md:gap-4 pd-tr pd-fade-up" style={{ animationDelay: `${i * 35}ms` }}>
                   <div
                     className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                       transaction.type === 'income'

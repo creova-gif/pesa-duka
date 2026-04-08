@@ -1,0 +1,310 @@
+/* ═══════════════════════════════════════════════════════════
+   PESA DUKA — Elite Animation & Interaction System
+   Stripe · Notion · Linear · Vercel quality standard
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── KEYFRAMES ────────────────────────────────────────────── */
+
+@keyframes pd-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pd-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pd-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pd-slide-in-right {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pd-slide-in-left {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pd-shimmer {
+  0%   { background-position: -400% 0; }
+  100% { background-position: 400% 0; }
+}
+
+@keyframes pd-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+@keyframes pd-bounce-in {
+  0%   { opacity: 0; transform: scale(0.7); }
+  60%  { opacity: 1; transform: scale(1.05); }
+  80%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pd-number-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pd-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229, 107, 10, 0); }
+  50%       { box-shadow: 0 0 0 4px rgba(229, 107, 10, 0.15); }
+}
+
+/* ── ENTRANCE ANIMATIONS ─────────────────────────────────── */
+
+.pd-fade-up {
+  animation: pd-fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pd-fade-in {
+  animation: pd-fade-in 0.3s ease both;
+}
+
+.pd-scale-in {
+  animation: pd-scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pd-slide-right {
+  animation: pd-slide-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pd-bounce-in {
+  animation: pd-bounce-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Stagger delays */
+.pd-d0  { animation-delay: 0ms; }
+.pd-d1  { animation-delay: 60ms; }
+.pd-d2  { animation-delay: 120ms; }
+.pd-d3  { animation-delay: 180ms; }
+.pd-d4  { animation-delay: 240ms; }
+.pd-d5  { animation-delay: 300ms; }
+.pd-d6  { animation-delay: 360ms; }
+
+/* ── PAGE WRAPPER ─────────────────────────────────────────── */
+
+.pd-page {
+  animation: pd-fade-up 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── CARD INTERACTIONS ────────────────────────────────────── */
+
+.pd-card {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s ease,
+              border-color 0.18s ease;
+}
+
+.pd-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.dark .pd-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.pd-card-clickable {
+  cursor: pointer;
+}
+
+.pd-card-clickable:hover {
+  border-color: rgba(229, 107, 10, 0.3) !important;
+}
+
+.pd-card-clickable:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* Stat card — subtle lift */
+.pd-stat-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pd-stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+}
+
+.dark .pd-stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* ── BUTTON SYSTEM ────────────────────────────────────────── */
+
+.pd-btn {
+  transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
+  user-select: none;
+}
+
+.pd-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(229, 107, 10, 0.25);
+}
+
+.pd-btn:active {
+  transform: scale(0.97) translateY(0);
+  box-shadow: none;
+  opacity: 0.92;
+}
+
+.pd-btn-ghost {
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.pd-btn-ghost:active {
+  transform: scale(0.97);
+}
+
+/* ── INPUT STATES ─────────────────────────────────────────── */
+
+.pd-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.15s ease;
+}
+
+.pd-input:focus {
+  border-color: #E56B0A !important;
+  box-shadow: 0 0 0 3px rgba(229, 107, 10, 0.12) !important;
+  outline: none !important;
+}
+
+/* ── TABLE ────────────────────────────────────────────────── */
+
+.pd-tr {
+  transition: background-color 0.12s ease;
+}
+
+.pd-tr:hover {
+  background-color: hsl(var(--muted) / 0.6);
+}
+
+/* ── SKELETON LOADER ──────────────────────────────────────── */
+
+.pd-skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--accent)) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 400% 100%;
+  animation: pd-shimmer 1.8s ease-in-out infinite;
+  border-radius: 6px;
+  display: block;
+}
+
+/* ── SIDEBAR NAV ITEMS ────────────────────────────────────── */
+
+.pd-nav-link {
+  position: relative;
+  transition: background-color 0.15s ease,
+              color 0.15s ease,
+              transform 0.12s ease;
+}
+
+.pd-nav-link:hover {
+  transform: translateX(2px);
+}
+
+.pd-nav-link.pd-nav-active::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #E56B0A;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── MODAL SYSTEM ─────────────────────────────────────────── */
+
+.pd-modal-backdrop {
+  animation: pd-fade-in 0.2s ease both;
+}
+
+.pd-modal-content {
+  animation: pd-scale-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── NUMBER ANIMATION ─────────────────────────────────────── */
+
+.pd-number {
+  font-variant-numeric: tabular-nums;
+  animation: pd-number-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── SUCCESS CHECK ────────────────────────────────────────── */
+
+.pd-success-ping {
+  animation: pd-glow-pulse 0.6s ease;
+}
+
+/* ── LIVE INDICATOR ───────────────────────────────────────── */
+
+.pd-live-dot {
+  animation: pd-pulse-dot 1.8s ease-in-out infinite;
+}
+
+/* ── SIDEBAR BRAND GRADIENT ───────────────────────────────── */
+
+.pd-brand-gradient {
+  background: linear-gradient(135deg, rgba(229, 107, 10, 0.08) 0%, transparent 60%);
+}
+
+/* ── NOTIFICATION BADGE BOUNCE ────────────────────────────── */
+
+.pd-badge-new {
+  animation: pd-bounce-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── CHART CONTAINER ──────────────────────────────────────── */
+
+.pd-chart-enter {
+  animation: pd-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+/* ── PROGRESS BAR ─────────────────────────────────────────── */
+
+@keyframes pd-progress-fill {
+  from { width: 0%; }
+}
+
+.pd-progress-bar {
+  animation: pd-progress-fill 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── GLOBAL: SMOOTH SCROLLING ─────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── GLOBAL: BETTER SELECTION ─────────────────────────────── */
+
+::selection {
+  background: rgba(229, 107, 10, 0.2);
+  color: inherit;
+}
+
+/* ── GLOBAL: FOCUS VISIBLE ────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid #E56B0A;
+  outline-offset: 2px;
+}
+
+/* ── SIDEBAR UPGRADE BADGE ────────────────────────────────── */
+
+.pd-upgrade-badge {
+  background: linear-gradient(135deg, #E56B0A, #f59e0b);
+  animation: pd-glow-pulse 3s ease-in-out infinite;
+}

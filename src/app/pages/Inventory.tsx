@@ -4,6 +4,7 @@ import { categories } from "../data/mockData";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { StockOrderModal } from "../components/StockOrderModal";
+import { TableSkeleton } from "../components/SkeletonLoader";
 import { useProducts, useUpdateStock, useCreateProduct } from "../hooks/useData";
 import { toast } from "sonner";
 
@@ -77,10 +78,14 @@ export function Inventory() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading inventory...</p>
+      <div className="p-4 md:p-8 pd-fade-in">
+        <div className="flex items-center justify-between mb-6">
+          <div><div className="pd-skeleton mb-2" style={{ width: "120px", height: "28px", borderRadius: "8px" }} /><div className="pd-skeleton" style={{ width: "180px", height: "14px", borderRadius: "6px" }} /></div>
+          <div className="flex gap-2"><div className="pd-skeleton" style={{ width: "120px", height: "36px", borderRadius: "10px" }} /><div className="pd-skeleton" style={{ width: "120px", height: "36px", borderRadius: "10px" }} /></div>
+        </div>
+        <div className="grid grid-cols-3 gap-3 md:gap-6 mb-6">{[0,1,2].map(i => <div key={i} className="bg-card rounded-xl p-4 md:p-6 border border-border"><div className="pd-skeleton mb-2" style={{ width: "80px", height: "12px" }} /><div className="pd-skeleton" style={{ width: "100px", height: "26px" }} /></div>)}</div>
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
+          <table className="w-full"><thead><tr className="border-b border-border bg-muted/50"><th className="p-4"><div className="pd-skeleton" style={{ width: "80px", height: "12px" }} /></th><th className="p-4"><div className="pd-skeleton" style={{ width: "60px", height: "12px" }} /></th><th className="p-4"><div className="pd-skeleton" style={{ width: "50px", height: "12px" }} /></th><th className="p-4 hidden md:table-cell"><div className="pd-skeleton" style={{ width: "50px", height: "12px" }} /></th><th className="p-4"><div className="pd-skeleton" style={{ width: "40px", height: "12px" }} /></th><th className="p-4 hidden lg:table-cell"></th></tr></thead><TableSkeleton rows={8} /></table>
         </div>
       </div>
     );
@@ -208,8 +213,8 @@ export function Inventory() {
                   </td>
                 </tr>
               )}
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="border-b border-border hover:bg-muted/30">
+              {filteredProducts.map((product, i) => (
+                <tr key={product.id} className={`border-b border-border pd-tr pd-fade-up`} style={{ animationDelay: `${i * 30}ms` }}>
                   <td className="p-3 md:p-4">
                     <div>
                       <p className="font-medium text-sm md:text-base">{product.name}</p>

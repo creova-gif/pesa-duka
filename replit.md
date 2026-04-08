@@ -38,6 +38,14 @@ A comprehensive business management platform for Small and Medium Enterprises (S
 - React and react-dom are explicitly installed even though listed as peerDependencies in package.json
 - Vite configured with `allowedHosts: true` and `host: '0.0.0.0'` for Replit compatibility
 
+## Design System (`src/styles/animations.css` + components)
+- **CSS classes**: `pd-page` (route entrance), `pd-fade-up` + `pd-d0`–`pd-d6` (stagger delays), `pd-card` (hover lift), `pd-card-clickable` (orange border hover), `pd-stat-card`, `pd-btn`, `pd-btn-ghost`, `pd-skeleton` (shimmer), `pd-nav-link`, `pd-nav-active`, `pd-chart-enter`, `pd-upgrade-badge`, `pd-brand-gradient`, `pd-number`, `pd-tr` (table row hover)
+- **Skeleton screens**: `DashboardSkeleton`, `TableSkeleton`, `CardListSkeleton`, `TransactionSkeleton` in `SkeletonLoader.tsx` — replacing all loading spinners across every page
+- **Hooks**: `useCountUp(target, duration, delay)` — smooth numeric count-up animation
+- **StatCard**: supports `delay` (stagger), `accentColor` (left border accent), `change` (trend %), `changeLabel`
+- **Layout sidebar**: grouped nav sections (Main Menu / More), active item dot + orange left bar indicator, upgrade-to-Growth badge, user avatar with initials, brand gradient logo header, dark/light mode toggle
+- **Animations applied**: Dashboard stat cards (staggered fade-up + count-up on "Today's Sales"), chart containers (pd-chart-enter), customer cards (pd-card + pd-card-clickable + fade-up stagger), inventory table rows (pd-tr + fade-up stagger), cashbook stat cards (pd-stat-card + stagger), cashbook transaction rows (pd-tr + fade-up stagger)
+
 ## Feature List
 
 ### Core Features
