@@ -1,14 +1,16 @@
 import { DollarSign, ShoppingCart, TrendingUp, AlertTriangle } from "lucide-react";
 import { StatCard } from "../components/StatCard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import MorningBriefing from "../components/MorningBriefing";
 import EndOfDayClose from "../components/EndOfDayClose";
 import CreditScoreCard from "../components/CreditScoreCard";
 import VATGuardian from "../components/VATGuardian";
 import TRAComplianceCalendar from "../components/TRAComplianceCalendar";
+import FirstTimeGuide from "../components/FirstTimeGuide";
 import { useTransactions, useProducts } from "../hooks/useData";
 import { getProfile } from "../hooks/useBusinessProfile";
+import { toast } from "sonner";
 
 function formatLiveDate() {
   return new Date().toLocaleDateString("en-TZ", {
@@ -33,6 +35,8 @@ export function Dashboard() {
   const [showEndOfDay, setShowEndOfDay] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [liveDate, setLiveDate] = useState(formatLiveDate());
+  const isDemoMode = localStorage.getItem("pesa_demo_mode") === "true";
+  const prevTxnCount = useRef<number | null>(null);
 
   const { data: transactions = [], isLoading: loadingTransactions, isError: errorTransactions } = useTransactions();
   const { data: products = [], isLoading: loadingProducts, isError: errorProducts } = useProducts();
@@ -53,6 +57,21 @@ export function Dashboard() {
     const interval = setInterval(() => setLiveDate(formatLiveDate()), 60000);
     return () => clearInterval(interval);
   }, []);
+
+  // WOW moment: celebrate the very first transaction
+  useEffect(() => {
+    if (transactions.length === 0) {
+      prevTxnCount.current = 0;
+      return;
+    }
+    if (prevTxnCount.current === 0 && transactions.length > 0) {
+      toast.success("🎉 Mauzo yako ya kwanza yameandikwa! / First sale recorded!", {
+        description: "Akili imeanza kujifunza duka lako. Bonyeza Business Tools ili upate ushauri.",
+        duration: 8000,
+      });
+    }
+    prevTxnCount.current = transactions.length;
+  }, [transactions.length]);
 
   const now = new Date();
   const todayStr = now.toDateString();
@@ -207,6 +226,24 @@ export function Dashboard() {
         </div>
       </div>
 
+      {isDemoMode && (
+        <div style={{ background: "rgba(124,58,237,.12)", border: "1px solid rgba(124,58,237,.3)", borderRadius: "10px", padding: "10px 16px", marginBottom: "16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "16px" }}>🎭</span>
+            <div>
+              <span style={{ fontSize: "13px", fontWeight: 700, color: "#7c3aed" }}>Demo Mode — </span>
+              <span style={{ fontSize: "12px", color: "hsl(var(--muted-foreground))" }}>You're viewing sample data. This is exactly what real users see after their first week.</span>
+            </div>
+          </div>
+          <button
+            onClick={() => { localStorage.removeItem("pesa_demo_mode"); window.location.reload(); }}
+            style={{ fontSize: "11px", fontWeight: 700, padding: "5px 12px", borderRadius: "8px", border: "1px solid rgba(124,58,237,.4)", background: "transparent", color: "#7c3aed", cursor: "pointer", whiteSpace: "nowrap" }}
+          >
+            Exit Demo
+          </button>
+        </div>
+      )}
+
       {showMorningBriefing && (
         <div className="mb-6">
           <MorningBriefing
@@ -217,6 +254,11 @@ export function Dashboard() {
           />
         </div>
       )}
+
+      <FirstTimeGuide
+        hasTransactions={transactions.length > 0}
+        hasProducts={products.length > 0}
+      />
 
       {showEndOfDay && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">

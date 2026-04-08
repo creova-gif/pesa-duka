@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import "../../styles/landing.css";
 
 export function LandingPage() {
   const navigate = useNavigate();
   const marqueeRef = useRef<HTMLDivElement>(null);
   const [swahili, setSwahili] = useState(false);
+  const [heroEmail, setHeroEmail] = useState("");
+  const [demoLoading, setDemoLoading] = useState(false);
 
   useEffect(() => {
     if (marqueeRef.current) {
@@ -117,13 +120,49 @@ export function LandingPage() {
               The first <strong>Swahili-first business OS</strong> for East African shop owners.
               Mobile money reconciliation, TRA compliance, and an AI advisor who knows your shop better than you do.
             </p>
-            <div className="hero-actions">
-              <a href="#pricing" className="btn-primary btn-large">
-                Anza Leo — Start Today <span className="arrow">→</span>
-              </a>
-              <a href="#demo" className="btn-ghost">
-                ▶ See it in action
-              </a>
+            <div style={{ marginTop: "24px" }}>
+              <div style={{ display: "flex", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={heroEmail}
+                  onChange={e => setHeroEmail(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === "Enter") {
+                      if (!heroEmail.trim() || !heroEmail.includes("@")) { toast.error("Please enter a valid email address"); return; }
+                      localStorage.setItem("lead_email", heroEmail.trim());
+                      navigate("/dashboard");
+                    }
+                  }}
+                  style={{ flex: 1, minWidth: "200px", padding: "13px 16px", borderRadius: "12px", border: "1px solid rgba(255,255,255,.2)", background: "rgba(255,255,255,.08)", color: "#FAF8F5", fontSize: "14px", outline: "none", backdropFilter: "blur(4px)" }}
+                />
+                <button
+                  onClick={() => {
+                    if (!heroEmail.trim() || !heroEmail.includes("@")) { toast.error("Enter a valid email to start your free trial"); return; }
+                    localStorage.setItem("lead_email", heroEmail.trim());
+                    navigate("/dashboard");
+                  }}
+                  className="btn-primary btn-large"
+                  style={{ whiteSpace: "nowrap" }}
+                >
+                  Start Free — 60 Days <span className="arrow">→</span>
+                </button>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                <button
+                  onClick={async () => {
+                    setDemoLoading(true);
+                    localStorage.setItem("pesa_demo_mode", "true");
+                    setTimeout(() => { setDemoLoading(false); navigate("/dashboard"); }, 800);
+                  }}
+                  style={{ background: "none", border: "1px solid rgba(255,255,255,.25)", color: "rgba(250,248,245,.8)", padding: "9px 18px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 700, display: "flex", alignItems: "center", gap: "6px", transition: "all .2s" }}
+                >
+                  {demoLoading ? "⟳ Loading..." : "▶ Try Live Demo"}
+                </button>
+                <div style={{ fontSize: "12px", color: "rgba(250,248,245,.35)" }}>
+                  No credit card · No TIN required · Cancel anytime
+                </div>
+              </div>
             </div>
             <div className="hero-proof">
               <div className="proof-avatars">
@@ -922,13 +961,46 @@ export function LandingPage() {
         <div className="container-narrow">
           <h2 className="reveal">Stop guessing.<br /><em>Start knowing.</em></h2>
           <p className="lead reveal reveal-delay-1">
-            847 duka owners in Dar es Salaam are already using PESA DUKA. The ones who start today will be applying for loans while others are still counting change.
+            847 duka owners in Dar es Salaam are already using PESA DUKA. The ones who start today will be applying for business loans while others are still counting change in a notebook.
           </p>
-          <div className="final-cta-actions reveal reveal-delay-2">
-            <a href="#pricing" className="btn-primary btn-large">Anza Leo — Start Today <span className="arrow">→</span></a>
-            <a href="mailto:hello@pesaduka.co.tz" className="btn-ghost btn-large">Book a Demo</a>
+          <div className="reveal reveal-delay-2" style={{ maxWidth: "480px", margin: "32px auto 0" }}>
+            <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                value={heroEmail}
+                onChange={e => setHeroEmail(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    if (!heroEmail.trim() || !heroEmail.includes("@")) { toast.error("Please enter a valid email address"); return; }
+                    localStorage.setItem("lead_email", heroEmail.trim());
+                    navigate("/dashboard");
+                  }
+                }}
+                style={{ flex: 1, padding: "13px 16px", borderRadius: "12px", border: "1px solid rgba(255,255,255,.2)", background: "rgba(255,255,255,.08)", color: "#FAF8F5", fontSize: "14px", outline: "none" }}
+              />
+              <button
+                onClick={() => {
+                  if (!heroEmail.trim() || !heroEmail.includes("@")) { toast.error("Enter a valid email to start"); return; }
+                  localStorage.setItem("lead_email", heroEmail.trim());
+                  navigate("/dashboard");
+                }}
+                className="btn-primary"
+                style={{ whiteSpace: "nowrap", padding: "13px 20px" }}
+              >
+                Anza Leo →
+              </button>
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
+              <button
+                onClick={() => { setDemoLoading(true); localStorage.setItem("pesa_demo_mode", "true"); setTimeout(() => { setDemoLoading(false); navigate("/dashboard"); }, 600); }}
+                style={{ background: "none", border: "1px solid rgba(255,255,255,.2)", color: "rgba(250,248,245,.7)", padding: "8px 16px", borderRadius: "8px", cursor: "pointer", fontSize: "13px", fontWeight: 600 }}
+              >
+                {demoLoading ? "Loading..." : "▶ Try Live Demo first"}
+              </button>
+            </div>
           </div>
-          <p className="pricing-note reveal reveal-delay-3">No credit card. No commitment. Cancel anytime. · 60-day free trial · Hakuna hatari.</p>
+          <p className="pricing-note reveal reveal-delay-3" style={{ marginTop: "16px" }}>60-day free trial · No credit card · No TIN required · Hakuna hatari.</p>
         </div>
       </section>
 
