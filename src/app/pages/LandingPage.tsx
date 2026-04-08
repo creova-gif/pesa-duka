@@ -89,6 +89,14 @@ export function LandingPage() {
           <button className="nav-lang" onClick={() => setSwahili(!swahili)}>
             {swahili ? "🇬🇧 English" : "🇹🇿 Swahili"}
           </button>
+          <button
+            onClick={() => navigate("/dashboard")}
+            style={{ background: "transparent", border: "1.5px solid #E56B0A", color: "#E56B0A", borderRadius: "8px", padding: "8px 18px", fontSize: "14px", fontWeight: 600, cursor: "pointer", transition: "background 0.15s" }}
+            onMouseEnter={e => (e.currentTarget.style.background = "#E56B0A", e.currentTarget.style.color = "#fff")}
+            onMouseLeave={e => (e.currentTarget.style.background = "transparent", e.currentTarget.style.color = "#E56B0A")}
+          >
+            Dashboard
+          </button>
           <a href="#pricing" className="btn-nav">Start Free →</a>
         </div>
       </nav>
