@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Plus, Minus, Edit, CirclePlus } from "lucide-react";
+import { Search, Plus, Minus, Edit, CirclePlus, X } from "lucide-react";
 import { categories } from "../data/mockData";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
@@ -7,15 +7,46 @@ import { StockOrderModal } from "../components/StockOrderModal";
 import { useProducts, useUpdateStock, useCreateProduct } from "../hooks/useData";
 import { toast } from "sonner";
 
+const PRODUCT_CATEGORIES = ["Food", "Beverages", "Personal Care", "Household", "Electronics", "Stationery", "Other"];
+
+const EMPTY_PRODUCT = { name: "", sku: "", category: "Food", cost: "", price: "", stock: "", unit: "unit" };
+
 export function Inventory() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showStockOrderModal, setShowStockOrderModal] = useState(false);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [productForm, setProductForm] = useState(EMPTY_PRODUCT);
 
   // Fetch products from backend
   const { data: products = [], isLoading, isError } = useProducts();
   const updateStock = useUpdateStock();
+  const createProduct = useCreateProduct();
+
+  const handleAddProduct = () => {
+    if (!productForm.name.trim()) { toast.error("Product name is required"); return; }
+    if (!productForm.sku.trim()) { toast.error("SKU is required"); return; }
+    const cost = parseFloat(productForm.cost);
+    const price = parseFloat(productForm.price);
+    const stock = parseInt(productForm.stock, 10);
+    if (isNaN(cost) || cost < 0) { toast.error("Enter a valid cost price"); return; }
+    if (isNaN(price) || price < 0) { toast.error("Enter a valid selling price"); return; }
+    if (isNaN(stock) || stock < 0) { toast.error("Enter a valid stock quantity"); return; }
+
+    createProduct.mutate(
+      { ...productForm, cost, price, stock },
+      {
+        onSuccess: () => {
+          toast.success(`"${productForm.name}" added to inventory`);
+          setShowAddProduct(false);
+          setProductForm(EMPTY_PRODUCT);
+        },
+        onError: (err: any) => {
+          toast.error(`Failed to add product: ${err?.message || "Unknown error"}`);
+        },
+      }
+    );
+  };
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
@@ -86,7 +117,7 @@ export function Inventory() {
           >
             📦 Order Stock
           </Button>
-          <Button className="bg-primary hover:bg-primary/90 text-white">
+          <Button className="bg-primary hover:bg-primary/90 text-white" onClick={() => setShowAddProduct(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Product
           </Button>
@@ -214,6 +245,62 @@ export function Inventory() {
                 setShowStockOrderModal(false);
               }}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Add Product Modal */}
+      {showAddProduct && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-card rounded-xl border border-border w-full max-w-md shadow-xl">
+            <div className="flex items-center justify-between p-5 border-b border-border">
+              <h2 className="text-lg font-semibold">Add New Product</h2>
+              <button onClick={() => { setShowAddProduct(false); setProductForm(EMPTY_PRODUCT); }} className="text-muted-foreground hover:text-foreground">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Product Name *</label>
+                <Input placeholder="e.g. Azam Boflo Bread" value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">SKU *</label>
+                  <Input placeholder="e.g. AZM-BRD-001" value={productForm.sku} onChange={e => setProductForm(f => ({ ...f, sku: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Category</label>
+                  <select value={productForm.category} onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))} className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
+                    {PRODUCT_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Cost (TSh) *</label>
+                  <Input type="number" min="0" placeholder="0" value={productForm.cost} onChange={e => setProductForm(f => ({ ...f, cost: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Price (TSh) *</label>
+                  <Input type="number" min="0" placeholder="0" value={productForm.price} onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Stock *</label>
+                  <Input type="number" min="0" placeholder="0" value={productForm.stock} onChange={e => setProductForm(f => ({ ...f, stock: e.target.value }))} />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Unit</label>
+                <Input placeholder="e.g. bottle, kg, pack" value={productForm.unit} onChange={e => setProductForm(f => ({ ...f, unit: e.target.value }))} />
+              </div>
+            </div>
+            <div className="flex gap-3 p-5 border-t border-border">
+              <Button variant="outline" className="flex-1" onClick={() => { setShowAddProduct(false); setProductForm(EMPTY_PRODUCT); }}>Cancel</Button>
+              <Button className="flex-1 bg-primary hover:bg-primary/90 text-white" onClick={handleAddProduct} disabled={createProduct.isPending}>
+                {createProduct.isPending ? "Saving…" : "Add Product"}
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
-# Dar SME (CREOVA) - Business Management Platform
+# PESA DUKA - Business Management Platform
 
 ## Project Overview
-A comprehensive business management platform for Small and Medium Enterprises (SMEs) in East Africa (Tanzania). Features POS, inventory management, financial tracking, and compliance tools (M-Pesa, TRA/EFD compliance).
+A comprehensive business management platform for Small and Medium Enterprises (SMEs) in East Africa (Tanzania). Features POS, inventory management, financial tracking, and compliance tools (M-Pesa, TRA/EFD compliance). Branded as "PESA DUKA" throughout.
 
 ## Tech Stack
 - **Frontend**: React 18 + TypeScript

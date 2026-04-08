@@ -1,18 +1,42 @@
-import { Search, Phone, MapPin, CirclePlus } from "lucide-react";
+import { Search, Phone, MapPin, CirclePlus, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import DebtFollowUpQueue from "../components/DebtFollowUpQueue";
 import { LoyaltySystem } from "../components/LoyaltySystem";
-import { useCustomers } from "../hooks/useData";
+import { useCustomers, useCreateCustomer } from "../hooks/useData";
+import { toast } from "sonner";
+
+const EMPTY_CUSTOMER = { name: "", phone: "", location: "" };
 
 export function Customers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "debt" | "loyalty">("all");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const [customerForm, setCustomerForm] = useState(EMPTY_CUSTOMER);
 
   // Fetch customers from backend
   const { data: customers = [], isLoading, isError } = useCustomers();
+  const createCustomer = useCreateCustomer();
+
+  const handleAddCustomer = () => {
+    if (!customerForm.name.trim()) { toast.error("Customer name is required"); return; }
+    if (!customerForm.phone.trim()) { toast.error("Phone number is required"); return; }
+    createCustomer.mutate(
+      { name: customerForm.name.trim(), phone: customerForm.phone.trim(), purchases: 0, owes: 0 },
+      {
+        onSuccess: () => {
+          toast.success(`${customerForm.name} added to customers`);
+          setShowAddCustomer(false);
+          setCustomerForm(EMPTY_CUSTOMER);
+        },
+        onError: (err: any) => {
+          toast.error(`Failed to add customer: ${err?.message || "Unknown error"}`);
+        },
+      }
+    );
+  };
 
   // Detect theme changes
   useEffect(() => {
@@ -77,7 +101,7 @@ export function Customers() {
     <div className="p-4 md:p-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl md:text-2xl font-semibold">Customers</h1>
-        <Button className="bg-primary hover:bg-primary/90 text-white text-sm md:text-base">
+        <Button className="bg-primary hover:bg-primary/90 text-white text-sm md:text-base" onClick={() => setShowAddCustomer(true)}>
           <CirclePlus className="w-4 h-4 mr-2" />
           <span className="hidden sm:inline">Add Customer</span>
           <span className="sm:hidden">Add</span>
@@ -196,6 +220,39 @@ export function Customers() {
             ))}
           </div>
         </>
+      )}
+      {/* Add Customer Modal */}
+      {showAddCustomer && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-card rounded-xl border border-border w-full max-w-sm shadow-xl">
+            <div className="flex items-center justify-between p-5 border-b border-border">
+              <h2 className="text-lg font-semibold">Add New Customer</h2>
+              <button onClick={() => { setShowAddCustomer(false); setCustomerForm(EMPTY_CUSTOMER); }} className="text-muted-foreground hover:text-foreground">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Full Name *</label>
+                <Input placeholder="e.g. Amina Hassan" value={customerForm.name} onChange={e => setCustomerForm(f => ({ ...f, name: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Phone Number *</label>
+                <Input placeholder="e.g. +255 712 345 678" value={customerForm.phone} onChange={e => setCustomerForm(f => ({ ...f, phone: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">Location (optional)</label>
+                <Input placeholder="e.g. Kariakoo, Dar es Salaam" value={customerForm.location} onChange={e => setCustomerForm(f => ({ ...f, location: e.target.value }))} />
+              </div>
+            </div>
+            <div className="flex gap-3 p-5 border-t border-border">
+              <Button variant="outline" className="flex-1" onClick={() => { setShowAddCustomer(false); setCustomerForm(EMPTY_CUSTOMER); }}>Cancel</Button>
+              <Button className="flex-1 bg-primary hover:bg-primary/90 text-white" onClick={handleAddCustomer} disabled={createCustomer.isPending}>
+                {createCustomer.isPending ? "Saving…" : "Add Customer"}
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
