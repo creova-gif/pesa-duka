@@ -391,6 +391,65 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* ══ WHY NOW ══ */}
+      <section style={{ padding: "80px 0", background: "#1a1208", color: "#FAF8F5" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "rgba(229,107,10,.7)" }}>Why Now?</div>
+          <h2 className="reveal" style={{ color: "#FAF8F5" }}>Five things just changed.<br /><em style={{ color: "#E56B0A" }}>All at once.</em></h2>
+          <p className="lead reveal reveal-delay-1" style={{ color: "rgba(250,248,245,.55)", marginTop: "16px" }}>
+            This wasn't buildable 5 years ago. The market wasn't ready. Now five converging forces make this the only moment to move.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", marginTop: "48px" }}>
+            {[
+              {
+                year: "2023",
+                icon: "🏛️",
+                title: "TRA enforcement went from warning to fines",
+                body: "TRA conducted 12,000+ EFD audits in 2023 — up from near zero in 2020. Penalties now reach TSh 4M. Every duka owner now has a deadline, not a suggestion.",
+              },
+              {
+                year: "2022",
+                icon: "📱",
+                title: "All four mobile money APIs opened to developers",
+                body: "M-Pesa, Airtel, Tigo, and HaloPesa all opened developer APIs between 2021–2023. For the first time, a single app can reconcile all four. This was impossible before.",
+              },
+              {
+                year: "2023",
+                icon: "🏢",
+                title: "BRELA launched fully digital registration",
+                body: "BRELA ORS (Online Registration System) went live in 2023. Business registration no longer requires 7 trips to a government office. PESA DUKA automates the whole flow in-app.",
+              },
+              {
+                year: "2024",
+                icon: "🤖",
+                title: "AI in Swahili became affordable",
+                body: "Foundation models made Swahili NLP cost-effective for the first time. Akili, our AI advisor, can now run at under $0.001 per conversation — viable at TSh 7,500/month pricing.",
+              },
+              {
+                year: "2024",
+                icon: "🇰🇪",
+                title: "Kenya mandated KRA eTIMS for all businesses",
+                body: "Kenya's mandatory e-invoicing (eTIMS) rolled out to all businesses in 2024. The same regulatory forcing function that hit Tanzania is now hitting East Africa's largest economy.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="reveal" style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: "16px", padding: "24px", position: "relative", overflow: "hidden" }}>
+                <div style={{ position: "absolute", top: "16px", right: "16px", fontSize: "11px", fontWeight: 800, color: "#E56B0A", background: "rgba(229,107,10,.12)", padding: "3px 10px", borderRadius: "20px", letterSpacing: ".5px" }}>{item.year}</div>
+                <div style={{ fontSize: "28px", marginBottom: "12px" }}>{item.icon}</div>
+                <div style={{ fontSize: "15px", fontWeight: 800, color: "#FAF8F5", lineHeight: 1.3, marginBottom: "10px" }}>{item.title}</div>
+                <div style={{ fontSize: "13px", color: "rgba(250,248,245,.5)", lineHeight: 1.6 }}>{item.body}</div>
+              </div>
+            ))}
+          </div>
+          <div className="reveal" style={{ marginTop: "40px", background: "rgba(229,107,10,.1)", border: "1px solid rgba(229,107,10,.25)", borderRadius: "16px", padding: "24px 28px", display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
+            <div style={{ fontSize: "32px" }}>⏰</div>
+            <div>
+              <div style={{ fontSize: "16px", fontWeight: 800, color: "#FAF8F5" }}>The window is now — and it won't wait.</div>
+              <div style={{ fontSize: "13px", color: "rgba(250,248,245,.55)", marginTop: "4px" }}>Regulatory pressure, infrastructure maturity, and AI cost curves are all hitting the same inflection point. The category is being created in real time.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ══ HOW IT WORKS ══ */}
       <section className="how" id="how">
         <div className="container">
@@ -484,6 +543,74 @@ export function LandingPage() {
             <div className="metric reveal reveal-delay-3">
               <div className="metric-num">68%</div>
               <div className="metric-label">Shops now formally registered</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ GROWTH FLYWHEEL ══ */}
+      <section style={{ padding: "80px 0", background: "#fff" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "#E56B0A" }}>Distribution</div>
+          <h2 className="reveal">We don't buy customers.<br /><em>The law sends them to us.</em></h2>
+          <p className="lead reveal reveal-delay-1" style={{ marginTop: "16px" }}>
+            TRA enforcement is our acquisition engine. Every duka owner facing an EFD audit searches for the fastest path to compliance. That path is PESA DUKA.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px", marginTop: "48px" }}>
+            {[
+              {
+                step: "01",
+                icon: "🏛️",
+                color: "#ef4444",
+                title: "TRA audit forces the decision",
+                body: "A shop owner receives an EFD notice or hears about a neighbor's fine. The pain is acute and the timeline is immediate. They search for a solution today.",
+              },
+              {
+                step: "02",
+                icon: "📲",
+                color: "#E56B0A",
+                title: "PESA DUKA is the easiest path",
+                body: "We're the only app that handles EFD compliance, BRELA registration, and mobile money reconciliation together. Competitors require multiple tools and English literacy.",
+              },
+              {
+                step: "03",
+                icon: "🧾",
+                color: "#7c3aed",
+                title: "Receipts spread the brand",
+                body: "Every EFD receipt generated carries PESA DUKA branding. A busy duka issues 50–200 receipts a day. Customers, suppliers, and other shop owners all see it.",
+              },
+              {
+                step: "04",
+                icon: "👥",
+                color: "#22c55e",
+                title: "Market communities amplify",
+                body: "Dukas cluster in markets. One shop owner adopts, their neighbors ask. WhatsApp market groups discuss it. A single market can generate 30–50 organic sign-ups per month.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="reveal" style={{ background: "#faf8f5", borderRadius: "16px", padding: "28px 24px", border: "1px solid #e8e0d5", position: "relative" }}>
+                <div style={{ fontSize: "11px", fontWeight: 900, color: item.color, letterSpacing: "1px", marginBottom: "12px" }}>STEP {item.step}</div>
+                <div style={{ fontSize: "28px", marginBottom: "12px" }}>{item.icon}</div>
+                <div style={{ fontSize: "15px", fontWeight: 800, color: "#1a1208", lineHeight: 1.3, marginBottom: "10px" }}>{item.title}</div>
+                <div style={{ fontSize: "13px", color: "#7a6a5a", lineHeight: 1.6 }}>{item.body}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Secondary distribution channels */}
+          <div className="reveal" style={{ marginTop: "40px" }}>
+            <div style={{ fontSize: "13px", fontWeight: 700, color: "#9a8a78", textTransform: "uppercase", letterSpacing: ".8px", marginBottom: "16px" }}>Additional channels</div>
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+              {[
+                { label: "Tax agents (wakala wa kodi)", note: "4,000+ licensed in Tanzania — they advise SMEs on compliance daily" },
+                { label: "SIDO & BRELA partnerships", note: "Government agencies actively training SMEs on formalization" },
+                { label: "Mobile money operators", note: "M-Pesa & Airtel exploring PESA DUKA as bundled business offering" },
+                { label: "CRDB & NMB Biashara", note: "Banks refer clients who need financial records for loan applications" },
+              ].map((ch, i) => (
+                <div key={i} style={{ background: "#faf8f5", border: "1px solid #e8e0d5", borderRadius: "12px", padding: "14px 18px", flex: "1", minWidth: "200px" }}>
+                  <div style={{ fontSize: "13px", fontWeight: 700, color: "#1a1208", marginBottom: "4px" }}>{ch.label}</div>
+                  <div style={{ fontSize: "11px", color: "#9a8a78", lineHeight: 1.5 }}>{ch.note}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
