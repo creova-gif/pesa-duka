@@ -197,8 +197,8 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
 
         {/* Fee note */}
         <div className="ml-fee-note">
-          💡 <strong>Revenue model:</strong> ClickPesa charges 1% per transaction. CREOVA adds 0.5–1% margin.
-          Today's inflow of {fmt(totalInflow)} generates approx. {fmt(feeEarned)} in transaction revenue for CREOVA.
+          💡 <strong>Revenue model:</strong> ClickPesa charges 1% per transaction. PESA DUKA adds 0.5–1% margin.
+          Today's inflow of {fmt(totalInflow)} generates approx. {fmt(feeEarned)} in transaction revenue for PESA DUKA.
         </div>
 
         {/* Summary */}

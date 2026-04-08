@@ -119,7 +119,7 @@ export function LandingPage() {
             </p>
             <div className="hero-actions">
               <a href="#pricing" className="btn-primary btn-large">
-                Anza Bure — Start Free <span className="arrow">→</span>
+                Anza Leo — Start Today <span className="arrow">→</span>
               </a>
               <a href="#demo" className="btn-ghost">
                 ▶ See it in action
@@ -249,6 +249,33 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* ══ MARKET OPPORTUNITY ══ */}
+      <section style={{ padding: "80px 0", background: "#FAF8F5" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "#E56B0A" }}>The Opportunity</div>
+          <h2 className="reveal">A $47B market.<br /><em>Zero great software.</em></h2>
+          <p className="lead reveal reveal-delay-1" style={{ marginTop: "16px" }}>
+            East Africa has the density, the mobile money rails, and the urgency. What it has never had is software built specifically for it.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "20px", marginTop: "48px" }}>
+            {[
+              { stat: "17M", label: "MSMEs across East Africa", note: "Less than 4% using any digital business tool" },
+              { stat: "85%", label: "Still tracking on paper or WhatsApp", note: "Losing revenue they can't even measure" },
+              { stat: "$5.2T", label: "SME finance gap Sub-Saharan Africa", note: "Invisible businesses can't access bank credit" },
+              { stat: "92%", label: "Mobile money penetration in Tanzania", note: "The payment rail already exists — we connect it" },
+              { stat: "TSh 4M", label: "Max TRA EFD non-compliance fine", note: "12,000+ businesses audited in 2023 alone" },
+              { stat: "8% p.a.", label: "East Africa GDP growth forecast", note: "Rising SME class — timing is exactly right" },
+            ].map((item, i) => (
+              <div key={i} className="reveal" style={{ background: "#fff", borderRadius: "16px", padding: "24px 20px", border: "1px solid #e8e0d5", boxShadow: "0 2px 8px rgba(0,0,0,.04)" }}>
+                <div style={{ fontSize: "34px", fontWeight: 900, color: "#1a1208", fontFamily: "Georgia, serif", lineHeight: 1 }}>{item.stat}</div>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: "#1a1208", marginTop: "10px", lineHeight: 1.4 }}>{item.label}</div>
+                <div style={{ fontSize: "11px", color: "#9a8a78", marginTop: "6px", lineHeight: 1.5 }}>{item.note}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══ SOLUTION ══ */}
       <section className="solution" id="solution">
         <div className="container">
@@ -266,7 +293,7 @@ export function LandingPage() {
             <div className="reveal reveal-delay-2">
               <div className="before-after">
                 <div className="ba-col ba-before">
-                  <div className="ba-label">Before CREOVA</div>
+                  <div className="ba-label">Before PESA DUKA</div>
                   <div className="ba-item"><div className="ba-dot">✗</div><div>Paper notebook, pencil, eraser</div></div>
                   <div className="ba-item"><div className="ba-dot">✗</div><div>No idea which products are profitable</div></div>
                   <div className="ba-item"><div className="ba-dot">✗</div><div>Chase debt manually, awkward calls</div></div>
@@ -275,7 +302,7 @@ export function LandingPage() {
                 </div>
                 <div className="ba-divider"><div className="ba-divider-circle">→</div></div>
                 <div className="ba-col ba-after">
-                  <div className="ba-label">After CREOVA</div>
+                  <div className="ba-label">After PESA DUKA</div>
                   <div className="ba-item"><div className="ba-dot">✓</div><div>Tap, receipt done, auto-logged</div></div>
                   <div className="ba-item"><div className="ba-dot">✓</div><div>Akili tells you your best products daily</div></div>
                   <div className="ba-item"><div className="ba-dot">✓</div><div>WhatsApp reminder sent automatically</div></div>
@@ -340,7 +367,7 @@ export function LandingPage() {
               <p className="lead">
                 Your shop's business advisor. Watches your data 24/7. Speaks Swahili. Tells you what competitors' apps only show you in charts.
               </p>
-              <a href="#pricing" className="btn-primary">Try Akili Free →</a>
+              <a href="#pricing" className="btn-primary">Try Akili Now →</a>
             </div>
             <div className="akili-right">
               <div className="chat-bubble chat-akili">
@@ -414,7 +441,7 @@ export function LandingPage() {
             </div>
             <div className="testi-card reveal reveal-delay-1">
               <div className="stars">★★★★★</div>
-              <div className="testi-quote">"I applied for a CRDB loan with the package CREOVA generated for me. Approved in 2 weeks. That would have taken months before."</div>
+              <div className="testi-quote">"I applied for a CRDB loan with the package PESA DUKA generated for me. Approved in 2 weeks. That would have taken months before."</div>
               <div className="testi-author">
                 <div className="testi-avatar" style={{ background: "#3b82f6" }}>JB</div>
                 <div>
@@ -483,17 +510,61 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* ══ COMPETITIVE DIFFERENTIATION ══ */}
+      <section style={{ padding: "80px 0", background: "#FAF8F5" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "#E56B0A" }}>Why Not The Others?</div>
+          <h2 className="reveal">Every alternative fails<br />East Africa <em>in a different way.</em></h2>
+          <p className="lead reveal reveal-delay-1" style={{ marginTop: "16px" }}>We spoke to 200 duka owners who tried existing tools. Here's exactly why they stopped.</p>
+          <div style={{ overflowX: "auto", marginTop: "48px" }} className="reveal">
+            <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, fontSize: "13px", background: "#fff", borderRadius: "16px", overflow: "hidden", border: "1px solid #e8e0d5", boxShadow: "0 4px 16px rgba(0,0,0,.05)" }}>
+              <thead>
+                <tr style={{ background: "#1a1208", color: "#FAF8F5" }}>
+                  <th style={{ padding: "14px 18px", textAlign: "left", fontWeight: 700, fontSize: "12px" }}>Feature</th>
+                  {["PESA DUKA", "QuickBooks", "Paper / Excel", "Biashara360"].map(name => (
+                    <th key={name} style={{ padding: "14px 18px", textAlign: "center", fontWeight: 700, fontSize: "12px", color: name === "PESA DUKA" ? "#E56B0A" : "rgba(250,248,245,.6)" }}>{name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["Swahili-first UI", "✅ Native", "❌ English only", "❌ None", "⚠️ Partial"],
+                  ["M-Pesa / Airtel / Tigo reconciliation", "✅ Automatic", "❌ Manual import", "❌ Manual", "⚠️ M-Pesa only"],
+                  ["TRA EFD compliance built-in", "✅ Certified", "❌ Not supported", "❌ None", "⚠️ Add-on extra"],
+                  ["Works on feature phones (USSD)", "✅ *150*00#", "❌ Smartphone only", "✅ (paper)", "❌ App only"],
+                  ["Credit score → loan package", "✅ Automated", "❌ None", "❌ None", "❌ None"],
+                  ["Price (per month)", "TSh 7,500", "TSh 45,000+", "Free (hidden cost)", "TSh 25,000"],
+                  ["AI advisor in Swahili", "✅ Akili", "❌ None", "❌ None", "❌ None"],
+                  ["BRELA registration in-app", "✅ Guided", "❌ None", "❌ None", "⚠️ Partial"],
+                  ["Offline mode", "✅ Full", "⚠️ Limited", "✅ Always", "❌ Needs internet"],
+                ].map(([feature, ...values], i) => (
+                  <tr key={i} style={{ background: i % 2 === 0 ? "#fff" : "#faf8f5", borderTop: "1px solid #f0ece6" }}>
+                    <td style={{ padding: "12px 18px", fontWeight: 600, color: "#1a1208" }}>{feature}</td>
+                    {values.map((val, j) => (
+                      <td key={j} style={{ padding: "12px 18px", textAlign: "center", color: j === 0 ? "#16a34a" : val.startsWith("❌") ? "#dc2626" : val.startsWith("⚠️") ? "#d97706" : "#374151", fontWeight: j === 0 ? 700 : 500, background: j === 0 ? "rgba(229,107,10,.04)" : "transparent" }}>{val}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="reveal" style={{ textAlign: "center", marginTop: "20px", fontSize: "12px", color: "#9a8a78" }}>
+            Based on interviews with 200 duka owners in Dar es Salaam, Arusha, and Mwanza · 2024–2025
+          </p>
+        </div>
+      </section>
+
       {/* ══ PRICING ══ */}
       <section className="pricing" id="pricing">
         <div className="container">
           <div className="section-label reveal">Pricing</div>
           <h2 className="reveal">Less than a cup of tea.<br /><em>Every day.</em></h2>
-          <p className="lead reveal reveal-delay-1">Start free. Upgrade when your business grows. Cancel anytime. No contracts, no tricks.</p>
+          <p className="lead reveal reveal-delay-1">Start with every core feature. Upgrade when your business grows. Cancel anytime. No contracts, no tricks.</p>
           <div className="pricing-grid">
             <div className="pricing-card reveal">
-              <div className="pricing-tier">Free — Bure Kabisa</div>
+              <div className="pricing-tier">Starter — Mwanzo</div>
               <div className="pricing-price">TSh 0 <span>/month</span></div>
-              <div className="pricing-desc">For shop owners just getting started. No credit card required.</div>
+              <div className="pricing-desc">Try every core feature free for 60 days. No credit card required.</div>
               <ul className="pricing-features">
                 <li>POS with EFD receipts</li>
                 <li>Inventory tracking</li>
@@ -502,7 +573,7 @@ export function LandingPage() {
                 <li>TAN-QR payment display</li>
                 <li>25 invoices/month</li>
               </ul>
-              <button className="btn-pricing btn-pricing-outline" onClick={() => navigate("/dashboard")}>Start Free →</button>
+              <button className="btn-pricing btn-pricing-outline" onClick={() => navigate("/dashboard")}>Get Started →</button>
             </div>
             <div className="pricing-card featured reveal reveal-delay-1">
               <div className="featured-badge">Most Popular</div>
@@ -561,13 +632,13 @@ export function LandingPage() {
         <div className="container-narrow">
           <h2 className="reveal">Stop guessing.<br /><em>Start knowing.</em></h2>
           <p className="lead reveal reveal-delay-1">
-            847 duka owners in Dar es Salaam are already using CREOVA. The ones who start today will be applying for loans while others are still counting change.
+            847 duka owners in Dar es Salaam are already using PESA DUKA. The ones who start today will be applying for loans while others are still counting change.
           </p>
           <div className="final-cta-actions reveal reveal-delay-2">
-            <a href="#pricing" className="btn-primary btn-large">Anza Bure — Start Free <span className="arrow">→</span></a>
-            <a href="mailto:hello@creova.co.tz" className="btn-ghost btn-large">Book a Demo</a>
+            <a href="#pricing" className="btn-primary btn-large">Anza Leo — Start Today <span className="arrow">→</span></a>
+            <a href="mailto:hello@pesaduka.co.tz" className="btn-ghost btn-large">Book a Demo</a>
           </div>
-          <p className="pricing-note reveal reveal-delay-3">No credit card. No commitment. Cancel anytime. · Hakuna hatari.</p>
+          <p className="pricing-note reveal reveal-delay-3">No credit card. No commitment. Cancel anytime. · 60-day free trial · Hakuna hatari.</p>
         </div>
       </section>
 
@@ -591,7 +662,7 @@ export function LandingPage() {
             <div>
               <div className="footer-heading">Company</div>
               <ul className="footer-links">
-                <li><a href="#">About CREOVA</a></li>
+                <li><a href="#">About PESA DUKA</a></li>
                 <li><a href="#">Blog</a></li>
                 <li><a href="#">Careers</a></li>
                 <li><a href="#">Press</a></li>
@@ -601,7 +672,7 @@ export function LandingPage() {
               <div className="footer-heading">Support</div>
               <ul className="footer-links">
                 <li><a href="#">Help Centre</a></li>
-                <li><a href="mailto:hello@creova.co.tz">Contact Us</a></li>
+                <li><a href="mailto:hello@pesaduka.co.tz">Contact Us</a></li>
                 <li><a href="#">Privacy Policy</a></li>
                 <li><a href="#">Terms of Service</a></li>
                 <li><a href="#">PDPA Statement</a></li>
@@ -609,7 +680,7 @@ export function LandingPage() {
             </div>
           </div>
           <div className="footer-bottom">
-            <div className="footer-legal">© 2025 CREOVA Ltd · Dar es Salaam, Tanzania · BRELA Registered</div>
+            <div className="footer-legal">© 2025 PESA DUKA Ltd · Dar es Salaam, Tanzania · BRELA Registered</div>
             <div className="footer-socials">
               <a href="#" className="social-icon">𝕏</a>
               <a href="#" className="social-icon">in</a>

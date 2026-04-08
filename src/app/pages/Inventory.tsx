@@ -107,7 +107,7 @@ export function Inventory() {
         <div>
           <h1 className="text-2xl font-semibold">Inventory</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            <span className="font-semibold text-primary">{products.length}</span> of <span className="font-semibold">100</span> products (Free Tier)
+            <span className="font-semibold text-primary">{products.length}</span> products in inventory
           </p>
         </div>
         <div className="flex gap-2">

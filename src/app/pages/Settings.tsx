@@ -342,7 +342,7 @@ export function Settings() {
           {profile.tier === "free" && (
             <button
               onClick={() => {
-                window.open("https://wa.me/255700000000?text=Ninataka%20kupgrade%20CREOVA%20kwa%20Growth%20Plan", "_blank");
+                window.open("https://wa.me/255700000000?text=Ninataka%20kupgrade%20PESA%20DUKA%20kwa%20Growth%20Plan", "_blank");
               }}
               className="w-full bg-primary hover:bg-primary/90 text-white border-none rounded-lg py-2.5 text-sm font-bold flex items-center justify-center gap-2 mt-2 transition-colors"
             >
