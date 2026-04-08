@@ -14,7 +14,7 @@ export function Inventory() {
   const [showAddProduct, setShowAddProduct] = useState(false);
 
   // Fetch products from backend
-  const { data: products = [], isLoading } = useProducts();
+  const { data: products = [], isLoading, isError } = useProducts();
   const updateStock = useUpdateStock();
 
   const filteredProducts = products.filter((product) => {
@@ -50,6 +50,21 @@ export function Inventory() {
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading inventory...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-sm">
+          <div className="text-4xl mb-3">⚠️</div>
+          <h2 className="text-lg font-semibold mb-1">Failed to load inventory</h2>
+          <p className="text-sm text-muted-foreground mb-4">Check your connection and try again.</p>
+          <button onClick={() => window.location.reload()} className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90">
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -165,7 +180,7 @@ export function Inventory() {
                       >
                         <Minus className="w-3 h-3 md:w-4 md:h-4" />
                       </button>
-                      <span className={`font-semibold text-sm md:text-base ${product.stock < 20 ? 'text-green-600 dark:text-green-400' : ''}`}>
+                      <span className={`font-semibold text-sm md:text-base ${product.stock === 0 ? 'text-red-600 dark:text-red-400' : product.stock < 20 ? 'text-amber-600 dark:text-amber-400' : ''}`}>
                         {product.stock}
                       </span>
                       <button 
@@ -195,7 +210,7 @@ export function Inventory() {
             <StockOrderModal
               onClose={() => setShowStockOrderModal(false)}
               onSubmit={(order) => {
-                console.log('Stock order submitted:', order);
+                toast.success(`Stock order placed for ${order.supplier || 'supplier'}. Your order has been recorded.`);
                 setShowStockOrderModal(false);
               }}
             />

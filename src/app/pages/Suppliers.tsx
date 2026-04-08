@@ -8,7 +8,7 @@ export function Suppliers() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch suppliers from backend
-  const { data: suppliers = [], isLoading } = useSuppliers();
+  const { data: suppliers = [], isLoading, isError } = useSuppliers();
 
   const filteredSuppliers = suppliers.filter((supplier) =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -20,6 +20,21 @@ export function Suppliers() {
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading suppliers...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-sm">
+          <div className="text-4xl mb-3">⚠️</div>
+          <h2 className="text-lg font-semibold mb-1">Failed to load suppliers</h2>
+          <p className="text-sm text-muted-foreground mb-4">Check your connection and try again.</p>
+          <button onClick={() => window.location.reload()} className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90">
+            Retry
+          </button>
         </div>
       </div>
     );

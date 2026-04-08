@@ -34,8 +34,8 @@ export function Dashboard() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [liveDate, setLiveDate] = useState(formatLiveDate());
 
-  const { data: transactions = [], isLoading: loadingTransactions } = useTransactions();
-  const { data: products = [], isLoading: loadingProducts } = useProducts();
+  const { data: transactions = [], isLoading: loadingTransactions, isError: errorTransactions } = useTransactions();
+  const { data: products = [], isLoading: loadingProducts, isError: errorProducts } = useProducts();
 
   const profile = getProfile();
 

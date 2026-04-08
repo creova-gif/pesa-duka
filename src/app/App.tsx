@@ -4,9 +4,10 @@ import { router } from "./routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { initializeDatabase } from "./lib/api";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 import { getProfile, saveProfile } from "./hooks/useBusinessProfile";
 import OnboardingSetup from "./components/OnboardingSetup";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import type { BusinessProfile } from "./hooks/useBusinessProfile";
 
 const queryClient = new QueryClient({
@@ -24,7 +25,13 @@ export default function App() {
 
   useEffect(() => {
     initializeDatabase()
-      .catch(() => {})
+      .catch((err) => {
+        console.warn("[PESA DUKA] DB init warning:", err);
+        toast.warning("Could not reach the server. Some data may be unavailable — check your connection.", {
+          duration: 8000,
+          id: "db-init-warn",
+        });
+      })
       .finally(() => {
         setIsInitializing(false);
         const profile = getProfile();
@@ -44,21 +51,23 @@ export default function App() {
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Initializing CREOVA...</p>
+          <p className="text-muted-foreground">Starting PESA DUKA...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="light">
-        <RouterProvider router={router} />
-        <Toaster position="top-right" richColors closeButton />
-        {showOnboarding && (
-          <OnboardingSetup onComplete={handleOnboardingComplete} />
-        )}
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <RouterProvider router={router} />
+          <Toaster position="top-right" richColors closeButton duration={5000} />
+          {showOnboarding && (
+            <OnboardingSetup onComplete={handleOnboardingComplete} />
+          )}
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
