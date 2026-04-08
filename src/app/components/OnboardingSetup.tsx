@@ -218,7 +218,7 @@ export default function OnboardingSetup({ onComplete }: Props) {
               onClick={next}
               className="flex-1 bg-primary hover:bg-primary/90 text-white rounded-lg py-2.5 text-sm font-bold transition-colors"
             >
-              {step === 3 ? "🚀 Start Using CREOVA" : "Continue →"}
+              {step === 3 ? "🚀 Start Using PESA DUKA" : "Continue →"}
             </button>
           </div>
         </div>
