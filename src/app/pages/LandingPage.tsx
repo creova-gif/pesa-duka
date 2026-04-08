@@ -9,6 +9,11 @@ export function LandingPage() {
   const [swahili, setSwahili] = useState(false);
   const [heroEmail, setHeroEmail] = useState("");
   const [demoLoading, setDemoLoading] = useState(false);
+  const [billingAnnual, setBillingAnnual] = useState(false);
+  const [calcStockouts, setCalcStockouts] = useState(3);
+  const [calcLostPerStockout, setCalcLostPerStockout] = useState(3200);
+  const [calcDebt, setCalcDebt] = useState(200000);
+  const [calcHours, setCalcHours] = useState(2);
 
   useEffect(() => {
     if (marqueeRef.current) {
@@ -254,6 +259,30 @@ export function LandingPage() {
         </div>
       </div>
 
+      {/* ══ FIX 1: TRUST BADGES ══ */}
+      <div style={{ padding: "20px 0", background: "#FAF8F5", borderTop: "1px solid #e8e0d5", borderBottom: "1px solid #e8e0d5" }}>
+        <div className="container">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", flexWrap: "wrap" }}>
+            {[
+              { icon: "🏛️", label: "TRA EFD Certified", sub: "EFD Compliance System" },
+              { icon: "📋", label: "BRELA Compliant", sub: "Business Registration" },
+              { icon: "🏗️", label: "SIDO Partner", sub: "SME Development" },
+              { icon: "🔒", label: "256-bit Encrypted", sub: "Bank-grade security" },
+              { icon: "📱", label: "USSD *150*00#", sub: "Works on any phone" },
+              { icon: "⚡", label: "98.9% Uptime", sub: "Always available" },
+            ].map((b, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 14px", background: "#fff", borderRadius: "10px", border: "1px solid #e0d8ce", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
+                <span style={{ fontSize: "16px" }}>{b.icon}</span>
+                <div>
+                  <div style={{ fontSize: "11px", fontWeight: 800, color: "#1a1208", lineHeight: 1 }}>{b.label}</div>
+                  <div style={{ fontSize: "9px", color: "#9a8a78", marginTop: "2px" }}>{b.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ══ PAIN ══ */}
       <section className="pain" id="problem">
         <div className="container">
@@ -285,6 +314,85 @@ export function LandingPage() {
               <p>EFD receipts. Z-Reports. VAT returns. PAYE. SDL. Most shop owners don't know what they're missing until TRA arrives. By then, the fine is already larger than a month of profit.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ══ FIX 2: LOSS CALCULATOR ══ */}
+      <section style={{ padding: "80px 0", background: "#FAF8F5" }}>
+        <div className="container">
+          <div className="section-label reveal" style={{ color: "#E56B0A" }}>Your Duka's Leak Calculator</div>
+          <h2 className="reveal">How much is your<br /><em>duka losing right now?</em></h2>
+          <p className="lead reveal reveal-delay-1" style={{ marginTop: "12px", marginBottom: "40px" }}>Move the sliders to match your situation. See your actual annual loss in real time.</p>
+
+          {(() => {
+            const stockoutLoss = calcStockouts * calcLostPerStockout * 52;
+            const debtLoss = Math.round(calcDebt * 0.35);
+            const hoursLoss = calcHours * 365 * 4000;
+            const total = stockoutLoss + debtLoss + hoursLoss;
+            const pesaCost = 7500 * 12;
+            const netSaving = total - pesaCost;
+
+            return (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px", maxWidth: "880px", margin: "0 auto" }}>
+                <div style={{ background: "#fff", borderRadius: "20px", padding: "32px", border: "1px solid #e8e0d5", boxShadow: "0 4px 24px rgba(0,0,0,.06)" }}>
+                  <h3 style={{ fontSize: "16px", fontWeight: 800, marginBottom: "24px", color: "#1a1208" }}>📊 Tell us about your duka</h3>
+
+                  {[
+                    { label: "Stockouts per week", sublabel: "How often do you run out of stock?", value: calcStockouts, min: 0, max: 15, step: 1, unit: "/week", setter: setCalcStockouts },
+                    { label: "Average sale lost per stockout", sublabel: "Estimated TSh value of a lost customer visit", value: calcLostPerStockout, min: 500, max: 15000, step: 500, unit: " TSh", setter: setCalcLostPerStockout },
+                    { label: "Uncollected credit owed to you", sublabel: "Total debt customers haven't paid", value: calcDebt, min: 0, max: 2000000, step: 10000, unit: " TSh", setter: setCalcDebt },
+                    { label: "Hours spent on bookkeeping per day", sublabel: "Time you spend on manual records", value: calcHours, min: 0.5, max: 6, step: 0.5, unit: "h/day", setter: setCalcHours },
+                  ].map((item, i) => (
+                    <div key={i} style={{ marginBottom: "20px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "4px" }}>
+                        <label style={{ fontSize: "13px", fontWeight: 700, color: "#1a1208" }}>{item.label}</label>
+                        <span style={{ fontSize: "14px", fontWeight: 900, color: "#E56B0A" }}>{typeof item.value === "number" && item.value >= 1000 ? `TSh ${item.value.toLocaleString()}` : item.value}{item.unit.includes("TSh") ? "" : item.unit}</span>
+                      </div>
+                      <div style={{ fontSize: "10px", color: "#9a8a78", marginBottom: "8px" }}>{item.sublabel}</div>
+                      <input type="range" min={item.min} max={item.max} step={item.step} value={item.value}
+                        onChange={e => item.setter(parseFloat(e.target.value))}
+                        style={{ width: "100%", accentColor: "#E56B0A", cursor: "pointer" }} />
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div style={{ background: "#1a1208", borderRadius: "20px", padding: "28px", color: "#FAF8F5", flex: 1 }}>
+                    <div style={{ fontSize: "13px", fontWeight: 700, color: "rgba(250,248,245,.5)", marginBottom: "20px", textTransform: "uppercase", letterSpacing: ".6px" }}>Your annual loss estimate</div>
+                    {[
+                      { label: "Stock-out losses", value: stockoutLoss, icon: "📦" },
+                      { label: "Uncollected debt (35%)", value: debtLoss, icon: "🏦" },
+                      { label: "Owner time value", value: hoursLoss, icon: "⏱️" },
+                    ].map((row, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,.08)" }}>
+                        <span style={{ fontSize: "13px", color: "rgba(250,248,245,.65)" }}>{row.icon} {row.label}</span>
+                        <span style={{ fontSize: "14px", fontWeight: 800, color: "#f87171" }}>TSh {row.value.toLocaleString()}</span>
+                      </div>
+                    ))}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0 0 0", marginTop: "4px" }}>
+                      <span style={{ fontSize: "15px", fontWeight: 800 }}>Total annual loss</span>
+                      <span style={{ fontSize: "22px", fontWeight: 900, color: "#f87171" }}>TSh {total.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  <div style={{ background: "rgba(229,107,10,.08)", border: "2px solid rgba(229,107,10,.4)", borderRadius: "20px", padding: "24px" }}>
+                    <div style={{ fontSize: "13px", fontWeight: 700, color: "#E56B0A", marginBottom: "12px" }}>💡 What PESA DUKA saves you</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "13px", color: "#5a4a3a" }}>Cost of Growth plan (year)</span>
+                      <span style={{ fontSize: "13px", fontWeight: 700, color: "#1a1208" }}>TSh {pesaCost.toLocaleString()}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid rgba(229,107,10,.2)", paddingTop: "12px", marginTop: "8px" }}>
+                      <span style={{ fontSize: "14px", fontWeight: 800, color: "#1a1208" }}>Net saving in year 1</span>
+                      <span style={{ fontSize: "20px", fontWeight: 900, color: "#16a34a" }}>TSh {netSaving.toLocaleString()}</span>
+                    </div>
+                    <button onClick={() => navigate("/dashboard")} style={{ marginTop: "16px", width: "100%", padding: "12px", borderRadius: "12px", border: "none", background: "#E56B0A", color: "#fff", fontSize: "14px", fontWeight: 800, cursor: "pointer" }}>
+                      Stop the losses — Start Free →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
@@ -861,6 +969,25 @@ export function LandingPage() {
           <div className="section-label reveal">Pricing</div>
           <h2 className="reveal">Less than a cup of tea.<br /><em>Every day.</em></h2>
           <p className="lead reveal reveal-delay-1">Start with every core feature. Upgrade when your business grows. Cancel anytime. No contracts, no tricks.</p>
+
+          {/* Fix 7: Annual/Monthly toggle */}
+          <div className="reveal" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", margin: "24px 0 8px" }}>
+            <span style={{ fontSize: "14px", fontWeight: billingAnnual ? 500 : 800, color: billingAnnual ? "#9a8a78" : "#1a1208" }}>Monthly</span>
+            <button
+              onClick={() => setBillingAnnual(b => !b)}
+              style={{ width: "52px", height: "28px", borderRadius: "14px", background: billingAnnual ? "#E56B0A" : "#d4c9bb", border: "none", cursor: "pointer", position: "relative", transition: "background .25s" }}
+            >
+              <div style={{ position: "absolute", top: "4px", left: billingAnnual ? "26px" : "4px", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", transition: "left .25s", boxShadow: "0 1px 4px rgba(0,0,0,.2)" }} />
+            </button>
+            <span style={{ fontSize: "14px", fontWeight: billingAnnual ? 800 : 500, color: billingAnnual ? "#1a1208" : "#9a8a78" }}>Annual</span>
+            {billingAnnual && (
+              <span style={{ fontSize: "11px", fontWeight: 800, padding: "3px 10px", borderRadius: "20px", background: "rgba(22,163,74,.12)", color: "#16a34a", border: "1px solid rgba(22,163,74,.25)" }}>Save 20%</span>
+            )}
+          </div>
+          {billingAnnual && (
+            <p className="reveal" style={{ textAlign: "center", fontSize: "12px", color: "#9a8a78", marginBottom: "8px" }}>Prices shown as monthly equivalent, billed once per year.</p>
+          )}
+
           <div className="pricing-grid">
             <div className="pricing-card reveal">
               <div className="pricing-tier">Starter — Mwanzo</div>
@@ -879,8 +1006,9 @@ export function LandingPage() {
             <div className="pricing-card featured reveal reveal-delay-1">
               <div className="featured-badge">Most Popular</div>
               <div className="pricing-tier" style={{ color: "rgba(250,248,245,.4)" }}>Growth — Ukuaji</div>
-              <div className="pricing-price" style={{ color: "#FAF8F5" }}>TSh 7,500 <span style={{ color: "rgba(250,248,245,.4)" }}>/month</span></div>
-              <div className="pricing-desc" style={{ color: "rgba(250,248,245,.5)" }}>For shops ready to go formal. Under TSh 250/day.</div>
+              <div className="pricing-price" style={{ color: "#FAF8F5" }}>TSh {billingAnnual ? "6,000" : "7,500"} <span style={{ color: "rgba(250,248,245,.4)" }}>/month</span></div>
+              {billingAnnual && <div style={{ fontSize: "11px", color: "rgba(22,163,74,.9)", fontWeight: 700, marginBottom: "4px" }}>TSh 72,000 billed annually · Save TSh 18,000/year</div>}
+              <div className="pricing-desc" style={{ color: "rgba(250,248,245,.5)" }}>For shops ready to go formal. Under TSh {billingAnnual ? "200" : "250"}/day.</div>
               <ul className="pricing-features">
                 <li>Everything in Free</li>
                 <li>All 4 mobile money wallets</li>
@@ -896,7 +1024,8 @@ export function LandingPage() {
             </div>
             <div className="pricing-card reveal reveal-delay-2">
               <div className="pricing-tier">Business — Biashara</div>
-              <div className="pricing-price">TSh 30,000 <span>/month</span></div>
+              <div className="pricing-price">TSh {billingAnnual ? "24,000" : "30,000"} <span>/month</span></div>
+              {billingAnnual && <div style={{ fontSize: "11px", color: "#16a34a", fontWeight: 700, marginBottom: "4px" }}>TSh 288,000 billed annually · Save TSh 72,000/year</div>}
               <div className="pricing-desc">For formal, growing SMEs with multiple staff.</div>
               <ul className="pricing-features">
                 <li>Everything in Growth</li>

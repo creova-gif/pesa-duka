@@ -182,6 +182,25 @@ export function Customers() {
 
           {/* Customers List */}
           <div className="space-y-3 md:space-y-4">
+            {filteredCustomers.length === 0 && (
+              <div style={{ textAlign: "center", padding: "48px 24px", background: "hsl(var(--card))", borderRadius: "14px", border: "1px solid hsl(var(--border))" }}>
+                <div style={{ fontSize: "40px", marginBottom: "12px" }}>👥</div>
+                <div style={{ fontSize: "15px", fontWeight: 700, marginBottom: "6px" }}>{customers.length === 0 ? "No customers yet" : "No customers match your search"}</div>
+                <div style={{ fontSize: "13px", color: "hsl(var(--muted-foreground))", marginBottom: "16px" }}>
+                  {customers.length === 0
+                    ? "Add a customer to track their purchases, credit balance, and send debt reminders via WhatsApp automatically."
+                    : "Try a different name or phone number."}
+                </div>
+                {customers.length === 0 && (
+                  <button
+                    onClick={() => setShowAddCustomer(true)}
+                    style={{ fontSize: "13px", fontWeight: 700, padding: "10px 24px", borderRadius: "10px", border: "none", background: "hsl(var(--primary))", color: "#fff", cursor: "pointer" }}
+                  >
+                    + Add First Customer
+                  </button>
+                )}
+              </div>
+            )}
             {filteredCustomers.map((customer) => (
               <div
                 key={customer.id}

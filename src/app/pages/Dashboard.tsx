@@ -8,9 +8,29 @@ import CreditScoreCard from "../components/CreditScoreCard";
 import VATGuardian from "../components/VATGuardian";
 import TRAComplianceCalendar from "../components/TRAComplianceCalendar";
 import FirstTimeGuide from "../components/FirstTimeGuide";
+import AkiliMiniWidget from "../components/AkiliMiniWidget";
 import { useTransactions, useProducts } from "../hooks/useData";
 import { getProfile } from "../hooks/useBusinessProfile";
 import { toast } from "sonner";
+
+function getStreak(): number {
+  try {
+    const usedDates: string[] = JSON.parse(localStorage.getItem("pesa_used_dates") || "[]");
+    const today = new Date().toDateString();
+    if (!usedDates.includes(today)) {
+      usedDates.push(today);
+      if (usedDates.length > 90) usedDates.shift();
+      localStorage.setItem("pesa_used_dates", JSON.stringify(usedDates));
+    }
+    let streak = 0;
+    const check = new Date();
+    while (true) {
+      if (usedDates.includes(check.toDateString())) { streak++; check.setDate(check.getDate() - 1); }
+      else break;
+    }
+    return streak;
+  } catch { return 1; }
+}
 
 function formatLiveDate() {
   return new Date().toLocaleDateString("en-TZ", {
@@ -222,7 +242,18 @@ export function Dashboard() {
               return "🌙 End of Day";
             })()}
           </button>
-          <p className="text-xs md:text-sm text-muted-foreground">{liveDate}</p>
+          {(() => { const s = getStreak(); return s > 0 ? (
+            <div title={`${s}-day streak using PESA DUKA`} style={{ display: "flex", alignItems: "center", gap: "4px", background: "rgba(229,107,10,.1)", border: "1px solid rgba(229,107,10,.25)", borderRadius: "8px", padding: "4px 10px", cursor: "default" }}>
+              <span style={{ fontSize: "14px" }}>🔥</span>
+              <span style={{ fontSize: "12px", fontWeight: 800, color: "#E56B0A" }}>{s}d</span>
+            </div>
+          ) : null; })()}
+          <button
+            title="Invite a duka owner — share PESA DUKA"
+            onClick={() => { const msg = encodeURIComponent("Nimepata app nzuri ya biashara — PESA DUKA! Inasaidia na mauzo, hesabu, na TRA. Jaribu bure: https://pesaduka.co.tz 🛍️"); window.open(`https://wa.me/?text=${msg}`, "_blank"); }}
+            style={{ fontSize: "18px", cursor: "pointer", background: "none", border: "none", padding: "4px" }}
+          >📲</button>
+          <p className="text-xs md:text-sm text-muted-foreground hidden md:block">{liveDate}</p>
         </div>
       </div>
 
@@ -258,6 +289,13 @@ export function Dashboard() {
       <FirstTimeGuide
         hasTransactions={transactions.length > 0}
         hasProducts={products.length > 0}
+      />
+
+      <AkiliMiniWidget
+        txCount={transactions.length}
+        productCount={products.length}
+        avgDailySales={todayIncome}
+        ownerName={profile?.ownerName}
       />
 
       {showEndOfDay && (
@@ -306,6 +344,23 @@ export function Dashboard() {
           iconColor="text-red-600 dark:text-red-400"
         />
       </div>
+
+      {/* Fix 12: Upgrade Nudge */}
+      {!localStorage.getItem("pesa_upgrade_dismissed") && transactions.length >= 3 && (
+        <div style={{ background: "linear-gradient(135deg, rgba(229,107,10,.07) 0%, rgba(229,107,10,.03) 100%)", border: "1px solid rgba(229,107,10,.25)", borderRadius: "14px", padding: "16px 20px", marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ fontSize: "22px" }}>🚀</span>
+            <div>
+              <div style={{ fontSize: "13px", fontWeight: 800, color: "hsl(var(--foreground))", marginBottom: "2px" }}>You're on Starter — unlock your full business tools</div>
+              <div style={{ fontSize: "12px", color: "hsl(var(--muted-foreground))" }}>Growth plan adds Akili AI, all 4 mobile money wallets, WhatsApp debt reminders + unlimited invoices. <strong style={{ color: "#E56B0A" }}>TSh 250/day</strong></div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+            <a href="/#pricing" style={{ fontSize: "12px", fontWeight: 700, padding: "8px 18px", borderRadius: "9px", border: "none", background: "#E56B0A", color: "#fff", cursor: "pointer", textDecoration: "none" }}>Upgrade → Growth</a>
+            <button onClick={() => { localStorage.setItem("pesa_upgrade_dismissed", "true"); window.location.reload(); }} style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer", color: "hsl(var(--muted-foreground))", lineHeight: 1 }}>×</button>
+          </div>
+        </div>
+      )}
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">

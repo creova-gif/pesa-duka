@@ -207,6 +207,24 @@ export function Cashbook() {
 
       {/* Transactions List */}
       <div className="space-y-6">
+        {transactions.length === 0 && (
+          <div style={{ textAlign: "center", padding: "56px 24px", background: "hsl(var(--card))", borderRadius: "14px", border: "1px solid hsl(var(--border))" }}>
+            <div style={{ fontSize: "40px", marginBottom: "12px" }}>📒</div>
+            <div style={{ fontSize: "15px", fontWeight: 700, marginBottom: "6px" }}>Your cashbook is empty</div>
+            <div style={{ fontSize: "13px", color: "hsl(var(--muted-foreground))", marginBottom: "4px" }}>
+              Record every sale, expense, and payment in one place.
+            </div>
+            <div style={{ fontSize: "12px", color: "hsl(var(--muted-foreground))", marginBottom: "20px" }}>
+              Sales from POS appear here automatically. Add expenses manually using the button above.
+            </div>
+            <button
+              onClick={() => setShowAddExpense(true)}
+              style={{ fontSize: "13px", fontWeight: 700, padding: "10px 24px", borderRadius: "10px", border: "none", background: "hsl(var(--primary))", color: "#fff", cursor: "pointer" }}
+            >
+              + Record First Entry
+            </button>
+          </div>
+        )}
         {Object.entries(groupedTransactions).map(([date, dayTransactions]) => (
           <div key={date}>
             <h3 className="text-xs md:text-sm font-semibold text-muted-foreground mb-3">

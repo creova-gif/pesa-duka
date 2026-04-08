@@ -43,10 +43,26 @@ export function POS() {
         time: new Date().toLocaleTimeString('en-TZ', { hour: '2-digit', minute: '2-digit' }),
       });
 
-      toast.success('Sale completed! 🎉');
-
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
+
+      const isFirst = !localStorage.getItem("pesa_first_sale_done");
+      if (isFirst) {
+        localStorage.setItem("pesa_first_sale_done", "true");
+        toast.success("🎉 Mauzo ya kwanza! / First sale complete!", {
+          description: `TSh ${saleData.grandTotal.toLocaleString()} recorded. Share on WhatsApp?`,
+          duration: 10000,
+          action: {
+            label: "📲 Share",
+            onClick: () => {
+              const msg = encodeURIComponent(`Nimeweka mauzo yangu ya kwanza kwenye PESA DUKA! TSh ${saleData.grandTotal.toLocaleString()} 🎉 Jaribu sasa: https://pesaduka.co.tz`);
+              window.open(`https://wa.me/?text=${msg}`, "_blank");
+            },
+          },
+        });
+      } else {
+        toast.success(`Sale recorded — TSh ${saleData.grandTotal.toLocaleString()} ✓`);
+      }
 
       return true;
     } catch (error: any) {

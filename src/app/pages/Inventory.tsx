@@ -187,6 +187,27 @@ export function Inventory() {
               </tr>
             </thead>
             <tbody>
+              {filteredProducts.length === 0 && (
+                <tr>
+                  <td colSpan={6} style={{ padding: "48px 24px", textAlign: "center" }}>
+                    <div style={{ fontSize: "40px", marginBottom: "12px" }}>📦</div>
+                    <div style={{ fontSize: "15px", fontWeight: 700, marginBottom: "6px" }}>{products.length === 0 ? "No products yet" : "No products match your search"}</div>
+                    <div style={{ fontSize: "13px", color: "hsl(var(--muted-foreground))", marginBottom: "16px" }}>
+                      {products.length === 0
+                        ? "Add your first product to start tracking stock levels and get automatic low-stock alerts."
+                        : "Try a different search term or category filter."}
+                    </div>
+                    {products.length === 0 && (
+                      <button
+                        onClick={() => setShowAddProduct(true)}
+                        style={{ fontSize: "13px", fontWeight: 700, padding: "10px 24px", borderRadius: "10px", border: "none", background: "hsl(var(--primary))", color: "#fff", cursor: "pointer" }}
+                      >
+                        + Add First Product
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              )}
               {filteredProducts.map((product) => (
                 <tr key={product.id} className="border-b border-border hover:bg-muted/30">
                   <td className="p-3 md:p-4">

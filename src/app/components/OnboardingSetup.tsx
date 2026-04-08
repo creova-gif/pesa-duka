@@ -214,6 +214,14 @@ export default function OnboardingSetup({ onComplete }: Props) {
                 Back
               </button>
             )}
+            {step === 3 && (
+              <button
+                onClick={finish}
+                className="px-4 py-2.5 text-sm font-semibold border border-border rounded-lg text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+              >
+                Skip →
+              </button>
+            )}
             <button
               onClick={next}
               className="flex-1 bg-primary hover:bg-primary/90 text-white rounded-lg py-2.5 text-sm font-bold transition-colors"
@@ -221,6 +229,13 @@ export default function OnboardingSetup({ onComplete }: Props) {
               {step === 3 ? "🚀 Start Using PESA DUKA" : "Continue →"}
             </button>
           </div>
+          {step === 3 && (
+            <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+              <div className="text-xs font-bold text-green-700 dark:text-green-400 mb-1">📱 Prefer a feature phone? Dial USSD:</div>
+              <div className="text-base font-mono font-bold text-green-800 dark:text-green-300">*150*00# — PESA DUKA</div>
+              <div className="text-xs text-green-600 dark:text-green-500 mt-1">Works on any phone. No internet required.</div>
+            </div>
+          )}
         </div>
       </div>
     </div>
