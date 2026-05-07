@@ -4,6 +4,7 @@ import { useProducts, useUpdateStock, useCreateTransaction } from '../hooks/useD
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { getProfile } from '../hooks/useBusinessProfile';
+import { CardListSkeleton } from '../components/SkeletonLoader';
 
 export function POS() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -73,11 +74,8 @@ export function POS() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading POS...</p>
-        </div>
+      <div className="p-4 lg:p-6">
+        <CardListSkeleton />
       </div>
     );
   }

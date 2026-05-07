@@ -11,7 +11,8 @@ const PRODUCT_CATEGORIES = ["Food", "Beverages", "Personal Care", "Household", "
 
 const CATEGORY_EMOJI: Record<string, string> = {
   All: "🗂", Food: "🍞", Beverages: "🥤", "Personal Care": "🧴",
-  Household: "🏠", Electronics: "⚡", Stationery: "📝", Other: "📦",
+  Household: "🏠", Electronics: "⚡", Stationery: "📝",
+  Airtime: "📱", Building: "🏗", Other: "📦",
 };
 
 const CATEGORY_COLOR: Record<string, string> = {
@@ -21,6 +22,8 @@ const CATEGORY_COLOR: Record<string, string> = {
   Household: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   Electronics: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
   Stationery: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
+  Airtime: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400",
+  Building: "bg-stone-100 text-stone-700 dark:bg-stone-900/30 dark:text-stone-400",
   Other: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
 };
 

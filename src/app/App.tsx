@@ -4,7 +4,7 @@ import { router } from "./routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { initializeDatabase } from "./lib/api";
-import { Toaster, toast } from "sonner";
+import { Toaster } from "sonner";
 import { getProfile, saveProfile } from "./hooks/useBusinessProfile";
 import OnboardingSetup from "./components/OnboardingSetup";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -27,10 +27,6 @@ export default function App() {
     initializeDatabase()
       .catch((err) => {
         console.warn("[PESA DUKA] DB init warning:", err);
-        toast.warning("Could not reach the server. Some data may be unavailable — check your connection.", {
-          duration: 8000,
-          id: "db-init-warn",
-        });
       })
       .finally(() => {
         setIsInitializing(false);
@@ -50,8 +46,13 @@ export default function App() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Starting PESA DUKA...</p>
+          <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-5 shadow-lg" style={{ animation: "pulse 1.5s ease-in-out infinite" }}>
+            <span className="text-white font-black text-3xl">P</span>
+          </div>
+          <div className="font-black text-xl tracking-tight mb-1">
+            PESA <span style={{ color: "#E56B0A" }}>DUKA</span>
+          </div>
+          <p className="text-xs text-muted-foreground">Biashara Bora · Loading...</p>
         </div>
       </div>
     );

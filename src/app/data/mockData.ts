@@ -34,7 +34,7 @@ export interface Transaction {
   description: string;
   amount: number;
   paymentMethod: string;
-  date: Date;
+  date: string | Date;
   time: string;
 }
 
@@ -160,6 +160,6 @@ export const transactions: Transaction[] = [
   },
 ];
 
-export const paymentMethods = ['Cash', 'M-Pesa', 'Tigo Pesa', 'Airtel Money', 'Credit'];
+export const paymentMethods = ['Cash', 'M-Pesa', 'Tigo Pesa', 'Airtel Money', 'HaloPesa', 'Credit'];
 
-export const categories = ['All', 'Food', 'Beverages', 'Personal Care', 'Stationery', 'Airtime', 'Building', 'Household'];
+export const categories = ['All', 'Food', 'Beverages', 'Personal Care', 'Household', 'Electronics', 'Stationery', 'Airtime', 'Building', 'Other'];

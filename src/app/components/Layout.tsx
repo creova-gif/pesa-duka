@@ -24,10 +24,23 @@ export function Layout() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("online");
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(() =>
+    navigator.onLine ? "online" : "offline"
+  );
   const profile = getProfile();
 
   useEffect(() => { setMounted(true); }, []);
+
+  useEffect(() => {
+    const handleOnline = () => setConnectionStatus("online");
+    const handleOffline = () => setConnectionStatus("offline");
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";
@@ -131,11 +144,11 @@ export function Layout() {
               >
                 <Icon style={{ width: "18px", height: "18px", flexShrink: 0 }} className={active ? "text-primary" : ""} />
                 <span>{item.label}</span>
+                {item.path === "/tools" && !active && (
+                  <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 bg-primary/15 text-primary rounded-full">AI</span>
+                )}
                 {active && (
                   <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
-                )}
-                {item.path === "/tools" && (
-                  <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 bg-primary/15 text-primary rounded-full">AI</span>
                 )}
               </Link>
             );

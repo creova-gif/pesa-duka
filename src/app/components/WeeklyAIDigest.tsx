@@ -208,7 +208,7 @@ export default function WeeklyAIDigest({ weekData = SAMPLE_WEEK, isPro = true, t
             <div className="wd-upgrade-sub">
               Get a personalised AI-written analysis of your week — what went well, what to watch, and one action to take. Upgrade to Pro to unlock.
             </div>
-            <button className="wd-upgrade-btn">✨ Upgrade to Pro — TSh 30,000/mo</button>
+            <button className="wd-upgrade-btn">✨ Upgrade to Growth — TSh 7,500/mo</button>
             <div className="wd-preview-blurred">
               {digest.slice(0, 2).map((d, i) => (
                 <div key={i} className="wd-insight-card" style={{

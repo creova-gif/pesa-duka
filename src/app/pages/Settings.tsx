@@ -28,7 +28,12 @@ export function Settings() {
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setLogo(URL.createObjectURL(file));
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (ev.target?.result) setLogo(ev.target.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSave = () => {
@@ -173,7 +178,15 @@ export function Settings() {
                   value={form.region}
                   onChange={(e) => setForm({ ...form, region: e.target.value })}
                 >
-                  {["Dar es Salaam", "Mwanza", "Arusha", "Mbeya", "Dodoma", "Tanga", "Morogoro", "Zanzibar", "Tabora", "Kigoma", "Moshi", "Iringa"].map(r => (
+                  {[
+                    "Dar es Salaam", "Mwanza", "Arusha", "Mbeya", "Dodoma",
+                    "Tanga", "Morogoro", "Kilimanjaro", "Tabora", "Kigoma",
+                    "Iringa", "Kagera", "Lindi", "Mara", "Manyara",
+                    "Mtwara", "Njombe", "Pwani", "Rukwa", "Ruvuma",
+                    "Shinyanga", "Simiyu", "Singida", "Songwe", "Geita",
+                    "Katavi", "Zanzibar Mjini", "Zanzibar Kaskazini", "Zanzibar Kusini",
+                    "Pemba Kaskazini", "Pemba Kusini",
+                  ].map(r => (
                     <option key={r}>{r}</option>
                   ))}
                 </select>
@@ -323,7 +336,7 @@ export function Settings() {
             <div>
               <div className="text-base font-bold capitalize">{profile.tier === "free" ? "Free Plan" : profile.tier === "growth" ? "Growth Plan" : "Business Plan"}</div>
               <div className="text-sm text-muted-foreground">
-                {profile.tier === "free" ? "TSh 0/month" : profile.tier === "growth" ? "TSh 30,000/month" : "TSh 75,000/month"}
+                {profile.tier === "free" ? "TSh 0/month" : profile.tier === "growth" ? "TSh 7,500/month" : "TSh 30,000/month"}
               </div>
             </div>
             <span className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/30 rounded-full px-3 py-1 text-xs font-bold">
@@ -334,7 +347,7 @@ export function Settings() {
             <div className="space-y-3 mb-4">
               <div className="text-xs text-muted-foreground font-semibold mb-2">Free tier includes: POS, Inventory, Cashbook, 1 user</div>
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-xs text-muted-foreground">
-                <div className="font-bold text-primary mb-1">🚀 Upgrade to Growth — TSh 30,000/mo</div>
+                <div className="font-bold text-primary mb-1">🚀 Upgrade to Growth — TSh 7,500/mo</div>
                 <div>Unlocks: Akili AI Advisor, Staff Management, SMS Reminders, Credit Scoring, Mobile Money Ledger</div>
               </div>
             </div>
@@ -346,7 +359,7 @@ export function Settings() {
               }}
               className="w-full bg-primary hover:bg-primary/90 text-white border-none rounded-lg py-2.5 text-sm font-bold flex items-center justify-center gap-2 mt-2 transition-colors"
             >
-              ✨ Upgrade to Growth — TSh 30,000/mo
+              ✨ Upgrade to Growth — TSh 7,500/mo
             </button>
           )}
         </div>

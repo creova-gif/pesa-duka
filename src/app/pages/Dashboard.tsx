@@ -57,7 +57,8 @@ export function Dashboard() {
   const [showEndOfDay, setShowEndOfDay] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [liveDate, setLiveDate] = useState(formatLiveDate());
-  const isDemoMode = localStorage.getItem("pesa_demo_mode") === "true";
+  const [isDemoMode, setIsDemoMode] = useState(() => localStorage.getItem("pesa_demo_mode") === "true");
+  const [upgradeDismissed, setUpgradeDismissed] = useState(() => !!localStorage.getItem("pesa_upgrade_dismissed"));
   const prevTxnCount = useRef<number | null>(null);
 
   const { data: transactions = [], isLoading: loadingTransactions, isError: errorTransactions } = useTransactions();
@@ -264,7 +265,7 @@ export function Dashboard() {
             </div>
           </div>
           <button
-            onClick={() => { localStorage.removeItem("pesa_demo_mode"); window.location.reload(); }}
+            onClick={() => { localStorage.removeItem("pesa_demo_mode"); setIsDemoMode(false); }}
             style={{ fontSize: "11px", fontWeight: 700, padding: "5px 12px", borderRadius: "8px", border: "1px solid rgba(124,58,237,.4)", background: "transparent", color: "#7c3aed", cursor: "pointer", whiteSpace: "nowrap" }}
           >
             Exit Demo
@@ -277,7 +278,7 @@ export function Dashboard() {
           <MorningBriefing
             data={morningBriefingData}
             onDismiss={() => setShowMorningBriefing(false)}
-            onSetTarget={(target) => console.log("Target set:", target)}
+            onSetTarget={(target) => { localStorage.setItem("pesa_daily_target", String(target)); }}
             theme={theme}
           />
         </div>
@@ -347,8 +348,7 @@ export function Dashboard() {
         />
       </div>
 
-      {/* Fix 12: Upgrade Nudge */}
-      {!localStorage.getItem("pesa_upgrade_dismissed") && transactions.length >= 3 && (
+      {!upgradeDismissed && transactions.length >= 3 && (
         <div style={{ background: "linear-gradient(135deg, rgba(229,107,10,.07) 0%, rgba(229,107,10,.03) 100%)", border: "1px solid rgba(229,107,10,.25)", borderRadius: "14px", padding: "16px 20px", marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <span style={{ fontSize: "22px" }}>🚀</span>
@@ -359,7 +359,7 @@ export function Dashboard() {
           </div>
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
             <a href="/#pricing" style={{ fontSize: "12px", fontWeight: 700, padding: "8px 18px", borderRadius: "9px", border: "none", background: "#E56B0A", color: "#fff", cursor: "pointer", textDecoration: "none" }}>Upgrade → Growth</a>
-            <button onClick={() => { localStorage.setItem("pesa_upgrade_dismissed", "true"); window.location.reload(); }} style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer", color: "hsl(var(--muted-foreground))", lineHeight: 1 }}>×</button>
+            <button onClick={() => { localStorage.setItem("pesa_upgrade_dismissed", "true"); setUpgradeDismissed(true); }} style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer", color: "hsl(var(--muted-foreground))", lineHeight: 1 }}>×</button>
           </div>
         </div>
       )}
