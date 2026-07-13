@@ -50,13 +50,11 @@ The repo also contains Canadian small-business market research, suggesting a sec
 ### Installation
 
 ```bash
-git clone https://github.com/creova-gif/Darsme.git
-cd Darsme
+git clone https://github.com/creova-gif/pesa-duka.git
+cd pesa-duka
 npm install
 npm run dev
 ```
-
-*(Note: the repo name `Darsme` no longer matches the product name `Pesa Duka` — worth renaming the repo once you're ready, since this is likely to confuse anyone who lands on it via the GitHub name alone.)*
 
 ---
 
