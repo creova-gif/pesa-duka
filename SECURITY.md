@@ -23,6 +23,14 @@ This applies to the code in this repository. It does not cover third-party depen
 - If you believe you've found a credential committed to git history, report it via the contact above rather than opening a public issue — the fix requires history rewriting, not just deletion of the current file.
 - Check `.gitignore` before adding any new file that stores configuration or secrets.
 
+## Payments
+
+- Payment provider integrations (ClickPesa or any other) **must run server-side**. The server holds the provider credentials, creates the payment request, and confirms the result via a signed webhook before a sale is marked paid.
+- Provider secrets (client IDs paired with API keys, API keys, webhook secrets) must **never** appear in client code or client bundles. Anything shipped to the browser is public. Do not replace a hard-coded key with a `VITE_*` / browser-exposed environment variable either; that ships it in the bundle as well.
+- The client must never collect or hold raw card data (PAN, CVV, expiry). Use a provider-hosted checkout or a tokenized flow.
+- The client must never fabricate a transaction ID or show payment success without server confirmation.
+- Until a server-side integration exists, the in-app payment modal is intentionally disabled (CRE-107).
+
 ## Disclosure
 
 We aim to handle reports responsibly and will credit reporters (with permission) once a fix is released, unless anonymity is requested.
