@@ -5,6 +5,8 @@
 [![Status](https://img.shields.io/badge/status-active_development-yellow)]()
 [![License](https://img.shields.io/badge/license-proprietary-red)]()
 
+![Pesa Duka dashboard](docs/screenshots/dashboard.png)
+
 ---
 
 ## What this is

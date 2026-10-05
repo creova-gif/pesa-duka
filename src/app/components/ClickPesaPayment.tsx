@@ -1,17 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-// ─── ClickPesa Payment Gateway Integration ────────────────────────────────────
-// Handles payment processing via ClickPesa for:
-//   - M-Pesa (Vodacom)
-//   - Halopesa (Halotel)
-//   - Tigo Pesa
-//   - Airtel Money
-//   - Credit/Debit Cards
+// ─── Payment modal (disabled) ─────────────────────────────────────────────────
+// Payments are intentionally disabled in the client (CRE-107).
 //
-// PRODUCTION CONFIGURATION:
-//   API Key: REDACTED_CLICKPESA_API_KEY
-//   Client ID: REDACTED_CLICKPESA_CLIENT_ID
-//   Environment: PRODUCTION READY
+// The previous implementation called the ClickPesa API directly from the
+// browser with production credentials embedded in the bundle and collected
+// raw card data (PAN/CVV/expiry) in React state. Both are unsafe.
+//
+// Payments must be implemented through a server-side integration that holds
+// the provider credentials, creates the payment, and confirms it via a signed
+// webhook. See SECURITY.md. Do NOT re-add provider keys or card fields here.
 
 const BRAND = "#E56B0A";
 
@@ -74,275 +72,77 @@ interface ClickPesaPaymentProps {
   amount: number;
   receiptNo: string;
   customerPhone?: string;
+  /** Kept for caller compatibility. Never invoked while payments are disabled. */
   onSuccess: (transactionId: string) => void;
   onCancel: () => void;
   theme?: "dark" | "light";
 }
 
-type PaymentMethod = "mpesa" | "halopesa" | "tigopesa" | "airtel" | "card";
-type PaymentStatus = "idle" | "processing" | "success" | "failed";
+type PaymentMethod = "mobile" | "card";
 
 export default function ClickPesaPayment({
   amount,
   receiptNo,
-  customerPhone = "",
-  onSuccess,
   onCancel,
   theme = "dark"
 }: ClickPesaPaymentProps) {
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("mpesa");
-  const [phoneNumber, setPhoneNumber] = useState(customerPhone);
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardExpiry, setCardExpiry] = useState("");
-  const [cardCVV, setCardCVV] = useState("");
-  const [cardName, setCardName] = useState("");
-  const [status, setStatus] = useState<PaymentStatus>("idle");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("mobile");
 
   const methods = [
-    { id: "mpesa" as const, name: "M-Pesa", icon: "📱", desc: "Vodacom", color: "#22c55e" },
-    { id: "halopesa" as const, name: "Halopesa", icon: "📞", desc: "Halotel", color: "#f59e0b" },
-    { id: "tigopesa" as const, name: "Tigo Pesa", icon: "📲", desc: "Tigo", color: "#3b82f6" },
-    { id: "airtel" as const, name: "Airtel Money", icon: "💳", desc: "Airtel", color: "#ef4444" },
-    { id: "card" as const, name: "Card", icon: "💎", desc: "Visa/Mastercard", color: "#8b5cf6" },
+    { id: "mobile" as const, name: "Mobile Money", icon: "📱", desc: "M-Pesa · Airtel · Tigo · Halopesa" },
+    { id: "card" as const, name: "Card", icon: "💎", desc: "Visa/Mastercard" },
   ];
-
-  const isValidPhone = (phone: string) => {
-    const cleaned = phone.replace(/\D/g, "");
-    return cleaned.length >= 9 && cleaned.length <= 12;
-  };
-
-  const isValidCard = () => {
-    return cardNumber.length >= 15 && cardExpiry.length === 5 && cardCVV.length >= 3 && cardName.length > 2;
-  };
-
-  const canProceed = selectedMethod === "card" ? isValidCard() : isValidPhone(phoneNumber);
-
-  const processClickPesaPayment = async () => {
-    setStatus("processing");
-    setErrorMsg("");
-
-    // ClickPesa API Integration - PRODUCTION
-    const paymentPayload = {
-      client_id: "REDACTED_CLICKPESA_CLIENT_ID",
-      api_key: "REDACTED_CLICKPESA_API_KEY",
-      payment_method: selectedMethod,
-      amount: amount,
-      currency: "TZS",
-      reference: receiptNo,
-      ...(selectedMethod === "card" ? {
-        card_number: cardNumber.replace(/\s/g, ""),
-        card_expiry: cardExpiry,
-        card_cvv: cardCVV,
-        card_holder: cardName,
-      } : {
-        phone_number: phoneNumber.replace(/\D/g, ""),
-      })
-    };
-
-    try {
-      // ClickPesa API Endpoint
-      const response = await fetch("https://api.clickpesa.com/v1/payments", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${paymentPayload.api_key}`
-        },
-        body: JSON.stringify(paymentPayload)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Payment failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      
-      if (result.status === "success" || result.transaction_id) {
-        const transactionId = result.transaction_id || `CPTZ${Date.now().toString().slice(-10)}`;
-        setStatus("success");
-        setTimeout(() => onSuccess(transactionId), 1500);
-      } else {
-        throw new Error(result.message || "Payment declined by provider");
-      }
-    } catch (error) {
-      setStatus("failed");
-      setErrorMsg(error instanceof Error ? error.message : "Payment failed. Please try again.");
-    }
-  };
-
-  const formatCardNumber = (value: string) => {
-    const cleaned = value.replace(/\D/g, "");
-    const chunks = cleaned.match(/.{1,4}/g) || [];
-    return chunks.join(" ").substring(0, 19);
-  };
-
-  const formatExpiry = (value: string) => {
-    const cleaned = value.replace(/\D/g, "");
-    if (cleaned.length >= 2) {
-      return `${cleaned.substring(0, 2)}/${cleaned.substring(2, 4)}`;
-    }
-    return cleaned;
-  };
 
   return (
     <>
       <style>{css}</style>
       <div className={`cp-root ${theme}`}>
-        <div className="cp-overlay" onClick={status === "idle" ? onCancel : undefined}>
-          <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="cp-overlay" onClick={onCancel}>
+          <div className="cp-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <div className="cp-header">
-              <div className="cp-title">💳 ClickPesa Payment</div>
-              {status === "idle" && (
-                <button className="cp-close" onClick={onCancel}>×</button>
-              )}
+              <div className="cp-title">💳 Payment</div>
+              <button className="cp-close" onClick={onCancel} aria-label="Close">×</button>
             </div>
 
             <div className="cp-content">
-              {status === "idle" && (
-                <>
-                  <div className="cp-amount-display">
-                    <div className="cp-amount-label">Kiasi cha Kulipa</div>
-                    <div className="cp-amount-value">
-                      TSh {amount.toLocaleString("en-TZ")}
-                    </div>
-                  </div>
+              <div className="cp-amount-display">
+                <div className="cp-amount-label">Kiasi cha Kulipa · {receiptNo}</div>
+                <div className="cp-amount-value">
+                  TSh {amount.toLocaleString("en-TZ")}
+                </div>
+              </div>
 
-                  <div className="cp-method-grid">
-                    {methods.map(m => (
-                      <button
-                        key={m.id}
-                        className={`cp-method-btn ${selectedMethod === m.id ? "active" : ""}`}
-                        onClick={() => setSelectedMethod(m.id)}
-                      >
-                        <div className="cp-method-icon">{m.icon}</div>
-                        <div className="cp-method-name">{m.name}</div>
-                        <div className="cp-method-desc">{m.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {selectedMethod !== "card" ? (
-                    <>
-                      <div className="cp-info">
-                        <span className="cp-info-icon">ℹ️</span>
-                        Utapokea ombi la malipo kwenye simu yako. Weka PIN yako kukamilisha.
-                      </div>
-                      <div className="cp-input-group">
-                        <label className="cp-label">Namba ya Simu</label>
-                        <input
-                          type="tel"
-                          className="cp-input"
-                          placeholder="0754123456 or +255754123456"
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          autoFocus
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="cp-info">
-                        <span className="cp-info-icon">🔒</span>
-                        Taarifa zako za kadi ni salama na zimefungwa kwa SSL.
-                      </div>
-                      <div className="cp-input-group">
-                        <label className="cp-label">Namba ya Kadi</label>
-                        <input
-                          type="text"
-                          className="cp-input"
-                          placeholder="1234 5678 9012 3456"
-                          value={cardNumber}
-                          onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                          maxLength={19}
-                          autoFocus
-                        />
-                      </div>
-                      <div className="cp-input-group">
-                        <label className="cp-label">Jina kwenye Kadi</label>
-                        <input
-                          type="text"
-                          className="cp-input"
-                          placeholder="JUMA BAKARI"
-                          value={cardName}
-                          onChange={(e) => setCardName(e.target.value.toUpperCase())}
-                        />
-                      </div>
-                      <div className="cp-card-grid">
-                        <div className="cp-input-group">
-                          <label className="cp-label">Mwezi/Mwaka</label>
-                          <input
-                            type="text"
-                            className="cp-input"
-                            placeholder="MM/YY"
-                            value={cardExpiry}
-                            onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
-                            maxLength={5}
-                          />
-                        </div>
-                        <div className="cp-input-group">
-                          <label className="cp-label">CVV</label>
-                          <input
-                            type="password"
-                            className="cp-input"
-                            placeholder="123"
-                            value={cardCVV}
-                            onChange={(e) => setCardCVV(e.target.value.replace(/\D/g, "").substring(0, 4))}
-                            maxLength={4}
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
-
+              <div className="cp-method-grid">
+                {methods.map(m => (
                   <button
-                    className="cp-pay-btn"
-                    disabled={!canProceed}
-                    onClick={processClickPesaPayment}
+                    key={m.id}
+                    className={`cp-method-btn ${selectedMethod === m.id ? "active" : ""}`}
+                    onClick={() => setSelectedMethod(m.id)}
                   >
-                    🔒 Lipa TSh {amount.toLocaleString("en-TZ")}
+                    <div className="cp-method-icon">{m.icon}</div>
+                    <div className="cp-method-name">{m.name}</div>
+                    <div className="cp-method-desc">{m.desc}</div>
                   </button>
-                </>
-              )}
+                ))}
+              </div>
 
-              {status === "processing" && (
-                <div className="cp-status">
-                  <div className="cp-spinner" />
-                  <div className="cp-status-title">Inachakata malipo...</div>
-                  <div className="cp-status-msg">
-                    {selectedMethod === "card"
-                      ? "Tunaangalia taarifa za kadi yako..."
-                      : "Angalia simu yako na weka PIN kukamilisha malipo."}
-                  </div>
-                </div>
-              )}
+              <div className="cp-info" role="status">
+                <span className="cp-info-icon">⚠️</span>
+                {selectedMethod === "card"
+                  ? "Card payments are unavailable. Card details are not collected in this app."
+                  : "Payments not configured. Mobile money payments require a server-side integration and are disabled."}
+              </div>
 
-              {status === "success" && (
-                <div className="cp-status">
-                  <div className="cp-status-icon">✅</div>
-                  <div className="cp-status-title">Malipo Yamekamilika!</div>
-                  <div className="cp-status-msg">
-                    Asante! Malipo yako ya TSh {amount.toLocaleString("en-TZ")} yamepokewa.
-                  </div>
-                </div>
-              )}
-
-              {status === "failed" && (
-                <div className="cp-status">
-                  <div className="cp-status-icon">❌</div>
-                  <div className="cp-status-title">Malipo Yameshindwa</div>
-                  <div className="cp-status-msg">{errorMsg}</div>
-                  <button className="cp-pay-btn" onClick={() => setStatus("idle")}>
-                    🔄 Jaribu Tena
-                  </button>
-                  <button
-                    className="cp-pay-btn"
-                    style={{ background: "var(--t3)", marginTop: 8 }}
-                    onClick={onCancel}
-                  >
-                    Ghairi
-                  </button>
-                </div>
-              )}
+              <button className="cp-pay-btn" disabled>
+                🔒 Payments unavailable
+              </button>
+              <button
+                className="cp-pay-btn"
+                style={{ background: "var(--t3)", marginTop: 8 }}
+                onClick={onCancel}
+              >
+                Ghairi
+              </button>
             </div>
           </div>
         </div>
