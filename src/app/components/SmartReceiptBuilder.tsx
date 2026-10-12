@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from "react";
-import ClickPesaPayment from "./ClickPesaPayment";
+import { useState, useRef } from "react";
 
 // ─── SmartReceiptBuilder ──────────────────────────────────────────────────────
 // Owner/staff selects items already in the system → receipt auto-builds.
@@ -42,12 +41,12 @@ const INVENTORY = [
 ];
 
 const PAYMENT_METHODS = [
-  { id:"mpesa",    label:"M-Pesa",       icon:"📱", color:"#22c55e", requiresClickPesa: true },
-  { id:"halopesa", label:"Halopesa",     icon:"📞", color:"#f59e0b", requiresClickPesa: true },
-  { id:"tigopesa", label:"Tigo Pesa",    icon:"📲", color:"#3b82f6", requiresClickPesa: true },
-  { id:"airtel",   label:"Airtel Money", icon:"💳", color:"#ef4444", requiresClickPesa: true },
-  { id:"card",     label:"Card",         icon:"💎", color:"#8b5cf6", requiresClickPesa: true },
-  { id:"cash",     label:"Cash",         icon:"💵", color:"var(--t2)", requiresClickPesa: false },
+  { id:"mpesa",    label:"M-Pesa",       icon:"📱", color:"#22c55e", available: false },
+  { id:"halopesa", label:"Halopesa",     icon:"📞", color:"#f59e0b", available: false },
+  { id:"tigopesa", label:"Tigo Pesa",    icon:"📲", color:"#3b82f6", available: false },
+  { id:"airtel",   label:"Airtel Money", icon:"💳", color:"#ef4444", available: false },
+  { id:"card",     label:"Card",         icon:"💎", color:"#8b5cf6", available: false },
+  { id:"cash",     label:"Cash",         icon:"💵", color:"var(--t2)", available: true },
 ];
 
 let receiptCounter = 261;
@@ -96,6 +95,8 @@ const css = `
 .pay-btn.active{border-color:${BRAND};background:rgba(229,107,10,.06)}
 .pay-icon{font-size:18px;margin-bottom:3px}
 .pay-label{font-size:11px;font-weight:700;color:var(--t)}
+.pay-btn:disabled{opacity:.55;cursor:not-allowed}
+.pay-unavailable{font-size:9px;font-weight:800;color:#f59e0b;margin-top:2px}
 .charge-btn{width:100%;background:${BRAND};color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;transition:background .15s}
 .charge-btn:hover{background:#ff8c3a}
 .charge-btn:disabled{opacity:.4;cursor:not-allowed}
@@ -165,10 +166,9 @@ export default function SmartReceiptBuilder({
   const [cart, setCart]           = useState<CartItem[]>([]);
   const [discount, setDiscount]   = useState(0);
   const [discountInput, setDiscountInput] = useState("");
-  const [payMethod, setPayMethod] = useState("mpesa");
+  const [payMethod, setPayMethod] = useState("cash");
   const [view, setView]           = useState<"build" | "receipt" | "done">("build");
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
-  const [showClickPesa, setShowClickPesa] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -229,6 +229,8 @@ export default function SmartReceiptBuilder({
   };
 
   const processPayment = () => {
+    const selected = PAYMENT_METHODS.find(p => p.id === payMethod);
+    if (!selected?.available) return;
     receiptCounter++;
     const receipt: ReceiptData = {
       receiptNo: `EFD-${String(receiptCounter).padStart(5, "0")}`,
@@ -244,9 +246,6 @@ export default function SmartReceiptBuilder({
     };
     setReceiptData(receipt);
     setView("receipt");
-    if (PAYMENT_METHODS.find(p => p.id === payMethod)?.requiresClickPesa) {
-      setShowClickPesa(true);
-    }
   };
 
   const confirmPayment = async () => {
@@ -516,10 +515,13 @@ export default function SmartReceiptBuilder({
                   <div style={{ fontSize:10, fontWeight:700, color:"var(--t2)", margin:"10px 0 7px" }}>Payment method</div>
                   <div className="payment-grid">
                     {PAYMENT_METHODS.map(pm => (
-                      <button key={pm.id} className={`pay-btn ${payMethod===pm.id?"active":""}`}
-                        onClick={() => setPayMethod(pm.id)}>
+                      <button key={pm.id} type="button"
+                        className={`pay-btn ${payMethod===pm.id?"active":""}`}
+                        disabled={!pm.available}
+                        onClick={() => { if (pm.available) setPayMethod(pm.id); }}>
                         <div className="pay-icon" style={{ fontSize:18 }}>{pm.icon}</div>
                         <div className="pay-label">{pm.label}</div>
+                        {!pm.available && <div className="pay-unavailable">Not available</div>}
                       </button>
                     ))}
                   </div>
@@ -533,18 +535,6 @@ export default function SmartReceiptBuilder({
           </div>
         </div>
       </div>
-      {showClickPesa && receiptData && (
-        <ClickPesaPayment
-          amount={grandTotal}
-          receiptNo={receiptData.receiptNo}
-          onSuccess={(transactionId) => {
-            setShowClickPesa(false);
-            setView("done");
-          }}
-          onCancel={() => setShowClickPesa(false)}
-          theme={theme}
-        />
-      )}
     </>
   );
 }

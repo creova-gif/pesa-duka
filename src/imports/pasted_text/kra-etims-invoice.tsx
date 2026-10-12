@@ -462,7 +462,7 @@ export function PDPAConsentManager({ theme = "dark", userType = "merchant" }) {
     { key:"core", label:"Core App Functionality", labelSw:"Utendaji wa Msingi wa Programu", required:true, desc:"Transaction recording, inventory, invoicing — required to use the app." },
     { key:"analytics", label:"Usage Analytics", labelSw:"Uchanganuzi wa Matumizi", required:false, desc:"Anonymous usage data to improve the product (no financial data shared)." },
     { key:"marketing", label:"Marketing Communications", labelSw:"Mawasiliano ya Masoko", required:false, desc:"Product updates, tips, and new feature announcements via SMS/Email." },
-    { key:"thirdParty", label:"Third-Party Integrations", labelSw:"Ushirikiano wa Wahusika Wengine", required:false, desc:"Share data with ClickPesa, Africa's Talking for payment processing and SMS." },
+    { key:"thirdParty", label:"Third-Party Integrations", labelSw:"Ushirikiano wa Wahusika Wengine", required:false, desc:"Share data with Africa's Talking for SMS. Payment processing is not available." },
     { key:"creditBureau", label:"Credit Bureau Reporting", labelSw:"Ripoti ya Biro ya Mkopo", required:false, desc:"Share transaction history with credit bureaus to build your credit score." },
   ];
 

@@ -53,7 +53,7 @@ import { KRAeTIMSInvoice, CashbookDashboard, TANQRDisplay } from './RemainingFea
 ### Finance & Payments
 | File | What's inside |
 |---|---|
-| `MobileMoneyLedger.jsx` | ClickPesa integration, 5 wallets (M-Pesa/Airtel/Mixx/Halo/CRDB), auto-reconcile, webhook code |
+| `MobileMoneyLedger.jsx` | Local mobile-money ledger. Automatic wallet sync is not available. |
 | `InvoiceManager.jsx` | Full lifecycle: Draft→Sent→Partial→Paid, client history, overdue queue, payment recording |
 | `RemainingFeatures.jsx` | `KRAeTIMSInvoice`, `CashbookDashboard`, `TANQRDisplay`, `PDPAConsentManager` |
 
@@ -119,7 +119,6 @@ import { KRAeTIMSInvoice, CashbookDashboard, TANQRDisplay } from './RemainingFea
 
 | Integration | Code Template | Docs |
 |---|---|---|
-| ClickPesa webhooks (all 4 TZ wallets) | Top of `MobileMoneyLedger.jsx` | docs.clickpesa.com |
 | TRA EFD GPRS transmission | `handleTransmit()` in `EFDZReport` | tra.go.tz |
 | KRA eTIMS VSCU API | `transmit()` in `KRAeTIMSInvoice` | itax.kra.go.ke |
 | Africa's Talking USSD server | Node.js handler in `USSDInterface` | africastalking.com |

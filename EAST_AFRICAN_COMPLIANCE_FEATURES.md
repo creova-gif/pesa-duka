@@ -39,8 +39,8 @@ Integrated **2 critical regulatory compliance components** that differentiate CR
 ### 2. **Mobile Money Ledger** 💰
 **File**: `/src/app/components/MobileMoneyLedgerComponent.tsx`
 
-**Purpose**: Auto-reconciliation of mobile money transactions  
-**Integration**: ClickPesa API (all 4 Tanzanian wallets)
+**Purpose**: Local list of mobile-money rows already stored on sales  
+**Integration**: Retired. Automatic wallet sync is not available.
 
 **Supported Wallets**:
 1. 📱 **Vodacom M-Pesa** (most popular - 60% market share)
@@ -50,22 +50,10 @@ Integrated **2 critical regulatory compliance components** that differentiate CR
 5. 🏦 **CRDB Bank** (bonus)
 
 **Features**:
-- ✅ Real-time webhook integration from ClickPesa
-- ✅ Auto-reconciliation to ledger accounts
-- ✅ Manual matching for unrecognized transactions
-- ✅ Status tracking (Pending/Completed/Reconciled)
-- ✅ Fee calculation display (1% ClickPesa + 0.5% CREOVA)
-- ✅ Reference number matching (INV-xxx, RENT-xxx, STOCK-xxx)
-- ✅ Smart auto-reconcile based on reference patterns
-- ✅ Phone number tracking per transaction
-- ✅ Transaction timestamp logging
-
-**Revenue Model**:
-```
-ClickPesa: 1.0% per transaction
-CREOVA:    0.5-1.0% margin
-Example:   TSh 312,800 inflow = TSh 3,128 revenue for CREOVA
-```
+- Automatic wallet sync is not available
+- No payment provider is called from this screen
+- Payments are not marked successful here
+- Manual matching remains for rows already stored on sales
 
 **Ledger Accounts Supported**:
 - Sales — Retail
@@ -117,48 +105,8 @@ Example:   TSh 312,800 inflow = TSh 3,128 revenue for CREOVA
 | **VAT 18% Tracking** | ✅ Built | EFDZReport |
 | **Receipt Serial Numbers** | ✅ Built | EFDZReport |
 | **GPRS Transmission** | ✅ Built | EFDZReport |
-| **Mobile Money Reconciliation** | ✅ Built | MobileMoneyLedger |
-| **Multi-wallet Support** | ✅ Built | MobileMoneyLedger |
-
----
-
-## 💡 **CLICKPESA INTEGRATION**
-
-### Backend Webhook Handler
-
-**Endpoint**: `POST /api/webhooks/clickpesa`
-
-**Sample Payload**:
-```javascript
-{
-  transactionId: "MPE260314-8821",
-  amount: 45000,  // TSh (no decimals)
-  provider: "MPESA",  // MPESA | AIRTEL | TIGOPESA | HALOPESA
-  reference: "INV-2026-041",
-  status: "COMPLETED",
-  phone: "+255712334556",
-  timestamp: "2026-03-14T09:14:22Z"
-}
-```
-
-**Security**: HMAC-SHA256 signature verification required
-
-**Database Table**:
-```sql
-CREATE TABLE mobile_money_transactions (
-  id SERIAL PRIMARY KEY,
-  external_id VARCHAR NOT NULL,  -- ClickPesa transaction ID
-  amount INTEGER NOT NULL,
-  provider VARCHAR NOT NULL,
-  reference VARCHAR,
-  status VARCHAR NOT NULL,
-  phone VARCHAR NOT NULL,
-  timestamp TIMESTAMP NOT NULL,
-  reconciled BOOLEAN DEFAULT FALSE,
-  ledger_match VARCHAR,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-```
+| **Mobile Money Reconciliation** | Not available | MobileMoneyLedger |
+| **Multi-wallet Support** | Not available | MobileMoneyLedger |
 
 ---
 
@@ -183,8 +131,8 @@ CREATE TABLE mobile_money_transactions (
   - Green bar: Reconciled
   - Amber bar: Unreconciled (needs matching)
   - Gray bar: Pending payment
-- **Auto-reconcile button** for batch processing
-- **Fee transparency**: Shows ClickPesa + CREOVA fees
+- Wallet tiles are labeled **Not available**
+- The screen does not confirm a payment
 
 ---
 
@@ -235,11 +183,7 @@ CREATE TABLE mobile_money_transactions (
 - [ ] Add loading states and error handling
 
 ### Short-term (Next 2 Weeks)
-- [ ] **ClickPesa Integration**:
-  - Register for ClickPesa developer account
-  - Set up webhook endpoint
-  - Implement HMAC signature verification
-  - Test with sandbox environment
+- [x] Provider integration retired. Do not add payment credentials to the client or to deployment env.
 
 - [ ] **TRA EFD Certification**:
   - Apply for EFD device registration
@@ -269,8 +213,8 @@ CREATE TABLE mobile_money_transactions (
 - **Compliance Penalty Avoidance**: # of merchants saved from TZS 4M fine
 
 ### Technical Metrics
-- **Webhook Success Rate**: % of ClickPesa webhooks received
-- **Reconciliation Speed**: Time from webhook → ledger match
+- **Wallet sync**: not available
+- **Reconciliation Speed**: local matching only, when a sale is already stored
 - **TRA Transmission Success Rate**: % of Z-reports accepted by TRA
 
 ---
@@ -280,9 +224,8 @@ CREATE TABLE mobile_money_transactions (
 | Feature | CREOVA | Competitors |
 |---------|--------|-------------|
 | **TRA EFD Compliance** | ✅ Full Z-Report | ❌ Manual only |
-| **4-Wallet Mobile Money** | ✅ All 4 TZ wallets | ⚠️ 1-2 wallets max |
-| **Auto-Reconciliation** | ✅ Smart matching | ❌ Manual entry |
-| **ClickPesa Integration** | ✅ Built-in | ❌ Not integrated |
+| **4-Wallet Mobile Money** | Not available | ⚠️ 1-2 wallets max |
+| **Auto-Reconciliation** | Not available | ❌ Manual entry |
 | **TSh Currency** | ✅ Native | ⚠️ Often KES/USD |
 | **Swahili Support** | ✅ Bilingual | ❌ English only |
 
@@ -326,7 +269,6 @@ CREATE TABLE mobile_money_transactions (
 ## 📚 **DOCUMENTATION LINKS**
 
 ### External Resources
-- **ClickPesa**: https://docs.clickpesa.com
 - **TRA EFD**: https://tra.go.tz/
 - **Tanzania PDPA**: https://www.pdpc.go.tz/
 - **Bank of Tanzania (TAN-QR)**: https://www.bot.go.tz/
@@ -344,9 +286,9 @@ CREATE TABLE mobile_money_transactions (
 **Features Built**: 2 critical compliance components  
 **Lines of Code**: ~900 lines (TypeScript + CSS)  
 **Integration**: Business Tools page (6 tabs)  
-**Status**: ✅ **PRODUCTION READY** (pending backend webhook setup)
+**Status**: Mobile money collection is not available. Cash sales can still be recorded.
 
-**Next Deploy**: After ClickPesa sandbox testing complete
+**Next Deploy**: Do not ship payment-provider credentials with this app.
 
 ---
 

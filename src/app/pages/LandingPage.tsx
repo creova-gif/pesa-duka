@@ -123,7 +123,7 @@ export function LandingPage() {
             </h1>
             <p className="hero-sub">
               The first <strong>Swahili-first business OS</strong> for East African shop owners.
-              Mobile money reconciliation, TRA compliance, and an AI advisor who knows your shop better than you do.
+              Cash sales, TRA compliance, and an AI advisor who knows your shop better than you do. Mobile money collection is not available.
             </p>
             <div style={{ marginTop: "24px" }}>
               <div style={{ display: "flex", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
@@ -222,8 +222,8 @@ export function LandingPage() {
 
             <div className="float-card fc2">
               <div className="float-card-label">Pending Action</div>
-              <div className="float-card-value" style={{ fontSize: "15px", lineHeight: "1.3" }}>M-Pesa auto-reconciled</div>
-              <div className="float-card-sub warn">34 txns · TSh 312,800</div>
+              <div className="float-card-value" style={{ fontSize: "15px", lineHeight: "1.3" }}>Mobile money</div>
+              <div className="float-card-sub warn">Not available</div>
             </div>
           </div>
         </div>
@@ -233,8 +233,6 @@ export function LandingPage() {
       <div className="trust-strip">
         <div className="marquee" ref={marqueeRef}>
           <div className="marquee-item">✦ TRA EFD Certified <div className="marquee-dot"></div></div>
-          <div className="marquee-item">✦ ClickPesa Integrated <div className="marquee-dot"></div></div>
-          <div className="marquee-item">✦ M-Pesa · Airtel · Mixx · HaloPesa <div className="marquee-dot"></div></div>
           <div className="marquee-item">✦ Swahili First <div className="marquee-dot"></div></div>
           <div className="marquee-item">✦ Offline Capable <div className="marquee-dot"></div></div>
           <div className="marquee-item">✦ PDPA 2022 Compliant <div className="marquee-dot"></div></div>
@@ -248,7 +246,6 @@ export function LandingPage() {
         <div className="container">
           <p className="partners-label">Integrated with the platforms you already use</p>
           <div className="logos-row">
-            <div className="logo-item">ClickPesa</div>
             <div className="logo-item">Vodacom M-Pesa</div>
             <div className="logo-item">Airtel Money</div>
             <div className="logo-item">Africa's Talking</div>
@@ -409,7 +406,7 @@ export function LandingPage() {
               { stat: "17M", label: "MSMEs across East Africa", note: "Less than 4% using any digital business tool" },
               { stat: "85%", label: "Still tracking on paper or WhatsApp", note: "Losing revenue they can't even measure" },
               { stat: "$5.2T", label: "SME finance gap Sub-Saharan Africa", note: "Invisible businesses can't access bank credit" },
-              { stat: "92%", label: "Mobile money penetration in Tanzania", note: "The payment rail already exists — we connect it" },
+              { stat: "92%", label: "Mobile money penetration in Tanzania", note: "The payment rail already exists. Collection in this app is not available." },
               { stat: "TSh 4M", label: "Max TRA EFD non-compliance fine", note: "12,000+ businesses audited in 2023 alone" },
               { stat: "8% p.a.", label: "East Africa GDP growth forecast", note: "Rising SME class — timing is exactly right" },
             ].map((item, i) => (
@@ -479,7 +476,7 @@ export function LandingPage() {
               </thead>
               <tbody>
                 {[
-                  ["Daily mobile money reconciliation", "45 min", "0 min", "45 min/day"],
+                  ["Daily mobile money reconciliation", "45 min", "Not available", "—"],
                   ["Issue 1 EFD-compliant receipt", "3–4 min", "4 seconds", "~3 min × every sale"],
                   ["Monthly VAT return filing", "8 hours", "2 taps", "8 hrs/month"],
                   ["Chase 1 overdue debt", "20 min call", "1 WhatsApp (auto)", "20 min/debtor"],
@@ -511,8 +508,8 @@ export function LandingPage() {
             <div className="feature-card reveal">
               <div className="feature-icon-wrap">📱</div>
               <h3>Mobile Money Ledger</h3>
-              <p>Every M-Pesa, Airtel, Mixx, and HaloPesa payment auto-reconciles into your cashbook via ClickPesa. No more manual matching.</p>
-              <span className="feature-tag">All 4 TZ wallets →</span>
+              <p>Mobile money collection is not available. Cash sales still record in the cashbook. Wallet payments are not taken in the app and are never marked paid on their own.</p>
+              <span className="feature-tag">Not available</span>
             </div>
             <div className="feature-card reveal reveal-delay-1">
               <div className="feature-icon-wrap">🧾</div>
@@ -656,12 +653,12 @@ export function LandingPage() {
             <div className="step reveal reveal-delay-2">
               <div className="step-num">3</div>
               <h3>Sell and get paid</h3>
-              <p>Any payment — M-Pesa, cash, or split — generates a TRA-compliant EFD receipt instantly.</p>
+              <p>Cash sales generate a receipt in the app. Mobile money and card payments are not available.</p>
             </div>
             <div className="step reveal reveal-delay-3">
               <div className="step-num">4</div>
               <h3>Akili runs your finances</h3>
-              <p>AI reconciles mobile money, files tax returns, chases debts, and tells you what to do tomorrow.</p>
+              <p>AI reviews your recorded sales, chases debts, and tells you what to do tomorrow. It does not collect mobile money.</p>
             </div>
           </div>
         </div>
@@ -775,7 +772,7 @@ export function LandingPage() {
                 icon: "📲",
                 color: "#E56B0A",
                 title: "PESA DUKA is the easiest path",
-                body: "We're the only app that handles EFD compliance, BRELA registration, and mobile money reconciliation together. Competitors require multiple tools and English literacy.",
+                body: "We're built around EFD compliance and BRELA registration in one Swahili-first app. Mobile money collection is not available.",
               },
               {
                 step: "03",
@@ -861,7 +858,7 @@ export function LandingPage() {
               <tbody>
                 {[
                   ["Swahili-first UI", "✅ Native", "❌ English only", "❌ None", "⚠️ Partial"],
-                  ["M-Pesa / Airtel / Tigo reconciliation", "✅ Automatic", "❌ Manual import", "❌ Manual", "⚠️ M-Pesa only"],
+                  ["M-Pesa / Airtel / Tigo reconciliation", "Not available", "❌ Manual import", "❌ Manual", "⚠️ M-Pesa only"],
                   ["TRA EFD compliance built-in", "✅ Certified", "❌ Not supported", "❌ None", "⚠️ Add-on extra"],
                   ["Works on feature phones (USSD)", "✅ *150*00#", "❌ Smartphone only", "✅ (paper)", "❌ App only"],
                   ["Credit score → loan package", "✅ Automated", "❌ None", "❌ None", "❌ None"],
@@ -1011,8 +1008,7 @@ export function LandingPage() {
               <div className="pricing-desc" style={{ color: "rgba(250,248,245,.5)" }}>For shops ready to go formal. Under TSh {billingAnnual ? "200" : "250"}/day.</div>
               <ul className="pricing-features">
                 <li>Everything in Free</li>
-                <li>All 4 mobile money wallets</li>
-                <li>Auto-reconciliation</li>
+                <li>Mobile money payments: not available</li>
                 <li>Akili AI insights feed</li>
                 <li>EFD Z-Reports</li>
                 <li>Staff management + tracking</li>
