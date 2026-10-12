@@ -5,36 +5,20 @@ import { useState } from "react";
 // "Auto-reconcile mobile money transactions from all 4 Tanzanian wallets
 //  (Vodacom M-Pesa, Airtel Money, Mixx by Yas, HaloPesa) into accounting ledgers"
 //
-// ClickPesa API integration layer.
-// Spec: clickpesa.com — All 4 TZ wallets + CRDB bank. 1% fee.
-//
-// In production:
-// - Webhooks from ClickPesa fire on every payment → POST /api/webhooks/clickpesa
-// - Backend stores in transactions table, marks as unreconciled
-// - This component fetches unreconciled items and lets owner match/auto-match
-//
-// BACKEND WEBHOOK HANDLER (Node.js example):
-// app.post('/webhooks/clickpesa', async (req, res) => {
-//   const { transactionId, amount, provider, reference, status, phone, timestamp } = req.body;
-//   await db.transactions.create({
-//     externalId: transactionId, amount, provider, reference, status,
-//     phone, timestamp, reconciled: false, source: 'clickpesa'
-//   });
-//   res.json({ received: true });
-// });
+// Automatic wallet sync is retired. This paste does not call a payment provider.
 
 const BRAND = "#E56B0A";
 const fmt = n => "TSh " + Number(n).toLocaleString("en-TZ");
 
 const WALLET_CONFIG = {
-  mpesa:  { name: "M-Pesa",      color: "#22c55e", icon: "📱", provider: "Vodacom", apiKey: "CLICKPESA_MPESA" },
-  airtel: { name: "Airtel Money", color: "#ef4444", icon: "📲", provider: "Airtel", apiKey: "CLICKPESA_AIRTEL" },
-  mixx:   { name: "Mixx by Yas",  color: "#3b82f6", icon: "💳", provider: "Yas (Tigo)", apiKey: "CLICKPESA_TIGO" },
-  halo:   { name: "HaloPesa",    color: "#f59e0b", icon: "🟡", provider: "Halotel", apiKey: "CLICKPESA_HALO" },
-  crdb:   { name: "CRDB Bank",   color: "#7c3aed", icon: "🏦", provider: "CRDB", apiKey: "CLICKPESA_CRDB" },
+  mpesa:  { name: "M-Pesa",      color: "#22c55e", icon: "📱", provider: "Vodacom" },
+  airtel: { name: "Airtel Money", color: "#ef4444", icon: "📲", provider: "Airtel" },
+  mixx:   { name: "Mixx by Yas",  color: "#3b82f6", icon: "💳", provider: "Yas (Tigo)" },
+  halo:   { name: "HaloPesa",    color: "#f59e0b", icon: "🟡", provider: "Halotel" },
+  crdb:   { name: "CRDB Bank",   color: "#7c3aed", icon: "🏦", provider: "CRDB" },
 };
 
-// Sample transactions as they would arrive from ClickPesa webhooks
+// Sample ledger rows for this archived paste. Not a live payment feed.
 const SAMPLE_TRANSACTIONS = [
   { id: "CP-001", externalId: "MPE240314-8821", provider: "mpesa", amount: 45000, phone: "+255712334556", reference: "INV-2025-041", timestamp: "2025-03-14T09:14:22Z", status: "completed", reconciled: true, ledgerMatch: "Sales - Duka" },
   { id: "CP-002", externalId: "AIR240314-3341", provider: "airtel", amount: 8500, phone: "+255754889001", reference: "WALK-IN-001", timestamp: "2025-03-14T09:47:11Z", status: "completed", reconciled: true, ledgerMatch: "Sales - Duka" },
@@ -112,7 +96,6 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
   const reconciled   = transactions.filter(t => t.reconciled);
   const pending      = transactions.filter(t => t.status === "pending");
   const totalInflow  = transactions.filter(t => t.reconciled || t.status === "completed").reduce((s, t) => s + t.amount, 0);
-  const feeEarned    = Math.round(totalInflow * 0.01); // CREOVA's 1% margin on top of ClickPesa
 
   const reconcile = (txnId) => {
     const account = selectedLedger[txnId];
@@ -150,7 +133,7 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
             Mobile Money <span style={{ color: BRAND }}>Ledger</span>
           </div>
           <div style={{ fontSize: 11, color: "var(--t2)", marginTop: 2 }}>
-            Auto-reconcile all 4 TZ wallets via ClickPesa · 1% + 0.5% fee
+            Automatic wallet sync is not available.
           </div>
         </div>
 
@@ -163,15 +146,13 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
               onClick={() => setActiveWallet(activeWallet === key ? null : key)}>
               <div className="ml-wallet-icon">{w.icon}</div>
               <div className="ml-wallet-name">{w.name}</div>
-              <div className="ml-wallet-status" style={{ color: "#22c55e" }}>✓ Connected</div>
+              <div className="ml-wallet-status" style={{ color: "#f59e0b" }}>Not available</div>
             </div>
           ))}
         </div>
 
-        {/* Fee note */}
-        <div className="ml-fee-note">
-          💡 <strong>Revenue model:</strong> ClickPesa charges 1% per transaction. CREOVA adds 0.5–1% margin.
-          Today's inflow of {fmt(totalInflow)} generates approx. {fmt(feeEarned)} in transaction revenue for CREOVA.
+        <div className="ml-fee-note" role="status">
+          Not available. This screen does not contact a payment provider and will not mark a payment successful.
         </div>
 
         {/* Summary */}
@@ -273,46 +254,10 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
           </div>
         )}
 
-        {/* API setup guide */}
-        <div className="ml-api-card" style={{ marginTop: 16 }}>
-          <div className="ml-lbl">ClickPesa Webhook Setup</div>
-          <div style={{ fontSize: 11, color: "var(--t2)", marginBottom: 10, lineHeight: 1.5 }}>
-            Configure your ClickPesa dashboard to send payment webhooks to your backend.
-            Every payment across all 4 wallets fires to one endpoint.
-          </div>
-          <div className="ml-code">{`// POST /api/webhooks/clickpesa
-// ClickPesa fires this on every completed payment
-
-app.post('/webhooks/clickpesa', async (req, res) => {
-  const {
-    transactionId,  // "MPE240314-8821"
-    amount,         // 45000 (in TZS, no decimals)
-    provider,       // "MPESA" | "AIRTEL" | "TIGOPESA" | "HALOPESA"
-    reference,      // Your BillPay reference number
-    status,         // "COMPLETED" | "PENDING" | "FAILED"
-    phone,          // "+255712334556"
-    timestamp       // ISO 8601
-  } = req.body;
-
-  // Verify signature: HMAC-SHA256(payload, CLICKPESA_WEBHOOK_SECRET)
-  
-  await db.mobileMoneyTransactions.create({
-    externalId: transactionId, amount, provider: provider.toLowerCase(),
-    reference, status: status.toLowerCase(), phone, timestamp,
-    reconciled: false  // UI handles matching to ledger
-  });
-  
-  res.json({ received: true });
-});`}</div>
-          <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-            <a href="https://docs.clickpesa.com" target="_blank" rel="noreferrer"
-              style={{ background: BRAND, color: "#fff", borderRadius: 8, padding: "7px 14px", fontSize: 11, fontWeight: 700, textDecoration: "none", display: "inline-block" }}>
-              ClickPesa Docs →
-            </a>
-            <a href="https://clickpesa.com" target="_blank" rel="noreferrer"
-              style={{ background: "var(--inp)", color: "var(--t2)", border: "1px solid var(--border)", borderRadius: 8, padding: "7px 14px", fontSize: 11, fontWeight: 700, textDecoration: "none", display: "inline-block" }}>
-              Register Account
-            </a>
+        <div className="ml-api-card" style={{ marginTop: 16 }} role="status">
+          <div className="ml-lbl">Wallet sync</div>
+          <div style={{ fontSize: 11, color: "var(--t2)", lineHeight: 1.5 }}>
+            Not available. No payment is sent or confirmed from this screen.
           </div>
         </div>
       </div>

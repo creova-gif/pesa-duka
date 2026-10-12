@@ -18,7 +18,7 @@ const TOOLS: { id: TabId; icon: typeof Brain; label: string; desc: string; badge
   { id: "academy",      icon: BookOpen,     label: "Business Academy",       desc: "Training to grow your business skills",                  color: "text-green-600",  bg: "bg-green-100 dark:bg-green-900/30" },
   { id: "formalization",icon: Building2,    label: "Registration Hub",       desc: "BRELA, TIN, EFD registration guides",                    color: "text-amber-600",  bg: "bg-amber-100 dark:bg-amber-900/30" },
   { id: "efd",          icon: Receipt,      label: "EFD Z-Report",           desc: "Daily TRA EFD transmission report",   badge: "TRA", color: "text-red-600",    bg: "bg-red-100 dark:bg-red-900/30" },
-  { id: "mobilemoney",  icon: Smartphone,   label: "Mobile Money Ledger",    desc: "Reconcile M-Pesa, Airtel, Tigo, Halo",                   color: "text-teal-600",   bg: "bg-teal-100 dark:bg-teal-900/30" },
+  { id: "mobilemoney",  icon: Smartphone,   label: "Mobile Money Ledger",    desc: "Not available — wallet sync is off",                     color: "text-teal-600",   bg: "bg-teal-100 dark:bg-teal-900/30" },
   { id: "payroll",      icon: Users,        label: "Payroll Calculator",     desc: "NSSF, NHIF, PAYE, SDL deductions",                       color: "text-orange-600", bg: "bg-orange-100 dark:bg-orange-900/30" },
 ];
 

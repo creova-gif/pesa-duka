@@ -4,15 +4,15 @@ import { useTransactions } from "../hooks/useData";
 const fmt = (n: number) => "TSh " + Number(n).toLocaleString("en-TZ");
 
 // ─── MobileMoneyLedger ────────────────────────────────────────────────────────
-// Auto-reconcile mobile money transactions from all 4 Tanzanian wallets
-// (Vodacom M-Pesa, Airtel Money, Mixx by Yas, HaloPesa) into accounting ledgers
+// Local view of mobile-money rows already stored on sales. Automatic wallet
+// sync is retired: this screen does not call a payment provider.
 
 const WALLET_CONFIG = {
-  mpesa:  { name: "M-Pesa",      color: "#22c55e", icon: "📱", provider: "Vodacom", apiKey: "CLICKPESA_MPESA" },
-  airtel: { name: "Airtel Money", color: "#ef4444", icon: "📲", provider: "Airtel", apiKey: "CLICKPESA_AIRTEL" },
-  mixx:   { name: "Mixx by Yas",  color: "#3b82f6", icon: "💳", provider: "Yas (Tigo)", apiKey: "CLICKPESA_TIGO" },
-  halo:   { name: "HaloPesa",    color: "#f59e0b", icon: "🟡", provider: "Halotel", apiKey: "CLICKPESA_HALO" },
-  crdb:   { name: "CRDB Bank",   color: "#7c3aed", icon: "🏦", provider: "CRDB", apiKey: "CLICKPESA_CRDB" },
+  mpesa:  { name: "M-Pesa",      color: "#22c55e", icon: "📱", provider: "Vodacom" },
+  airtel: { name: "Airtel Money", color: "#ef4444", icon: "📲", provider: "Airtel" },
+  mixx:   { name: "Mixx by Yas",  color: "#3b82f6", icon: "💳", provider: "Yas (Tigo)" },
+  halo:   { name: "HaloPesa",    color: "#f59e0b", icon: "🟡", provider: "Halotel" },
+  crdb:   { name: "CRDB Bank",   color: "#7c3aed", icon: "🏦", provider: "CRDB" },
 };
 
 const METHOD_TO_PROVIDER: Record<string, string> = {
@@ -22,17 +22,6 @@ const METHOD_TO_PROVIDER: Record<string, string> = {
   "HaloPesa": "halo",
   "CRDB": "crdb",
 };
-
-// Sample transactions shown when no real mobile money transactions exist
-const SAMPLE_TRANSACTIONS = [
-  { id: "CP-001", externalId: "MPE260314-8821", provider: "mpesa", amount: 45000, phone: "+255712334556", reference: "INV-2026-041", timestamp: "2026-03-14T09:14:22Z", status: "completed", reconciled: true, ledgerMatch: "Sales — Retail" },
-  { id: "CP-002", externalId: "AIR260314-3341", provider: "airtel", amount: 8500, phone: "+255754889001", reference: "WALK-IN-001", timestamp: "2026-03-14T09:47:11Z", status: "completed", reconciled: true, ledgerMatch: "Sales — Retail" },
-  { id: "CP-003", externalId: "MPE260314-9102", provider: "mpesa", amount: 22000, phone: "+255699334556", reference: "INV-2026-044", timestamp: "2026-03-14T11:22:08Z", status: "completed", reconciled: false, ledgerMatch: null },
-  { id: "CP-004", externalId: "TIG260314-4421", provider: "mixx", amount: 15000, phone: "+255765112334", reference: "RENT-MAR", timestamp: "2026-03-14T12:10:45Z", status: "completed", reconciled: false, ledgerMatch: null },
-  { id: "CP-005", externalId: "MPE260314-9998", provider: "mpesa", amount: 3500, phone: "+255713556009", reference: null, timestamp: "2026-03-14T13:44:02Z", status: "completed", reconciled: false, ledgerMatch: null },
-  { id: "CP-006", externalId: "HAL260314-1122", provider: "halo", amount: 67000, phone: "+255744123456", reference: "INV-2026-043", timestamp: "2026-03-14T14:55:30Z", status: "completed", reconciled: false, ledgerMatch: null },
-  { id: "CP-007", externalId: "MPE260314-0011", provider: "mpesa", amount: 120000, phone: "+255712445667", reference: "STOCK-PAY-001", timestamp: "2026-03-14T15:30:18Z", status: "pending", reconciled: false, ledgerMatch: null },
-];
 
 const LEDGER_ACCOUNTS = [
   "Sales — Retail",
@@ -71,11 +60,7 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
       }));
   }, [rawTransactions, manualReconciled]);
 
-  const transactions = realMMTransactions.length > 0 ? realMMTransactions : SAMPLE_TRANSACTIONS.map(t => ({
-    ...t,
-    reconciled: t.reconciled || !!manualReconciled[t.id],
-    ledgerMatch: manualReconciled[t.id] || t.ledgerMatch,
-  }));
+  const transactions = realMMTransactions;
 
   const isUsingRealData = realMMTransactions.length > 0;
 
@@ -83,7 +68,6 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
   const reconciled   = transactions.filter(t => t.reconciled);
   const pending      = transactions.filter(t => t.status === "pending");
   const totalInflow  = transactions.filter(t => t.reconciled || t.status === "completed").reduce((s, t) => s + t.amount, 0);
-  const feeEarned    = Math.round(totalInflow * 0.01);
 
   const reconcile = (txnId: string) => {
     const account = selectedLedger[txnId];
@@ -167,7 +151,7 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
                 Mobile Money <span style={{ color: "var(--primary)" }}>Ledger</span>
               </div>
               <div style={{ fontSize: 11, color: "var(--t2)", marginTop: 2 }}>
-                Auto-reconcile all 4 TZ wallets via ClickPesa · 1% + 0.5% fee
+                Automatic wallet sync is not available. Recorded sales can still be matched by hand.
               </div>
             </div>
             <div style={{
@@ -176,7 +160,7 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
               color: isUsingRealData ? "#22c55e" : "#f59e0b",
               fontSize: 9, fontWeight: 800, padding: "4px 10px", borderRadius: 20, flexShrink: 0,
             }}>
-              {isUsingRealData ? `✓ ${realMMTransactions.length} LIVE TXN${realMMTransactions.length !== 1 ? "S" : ""}` : "DEMO DATA"}
+              {isUsingRealData ? `${realMMTransactions.length} recorded` : "Not available"}
             </div>
           </div>
         </div>
@@ -185,20 +169,18 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
         <div className="ml-wallet-grid">
           {Object.entries(WALLET_CONFIG).map(([key, w]) => (
             <div key={key}
-              className={`ml-wallet ${activeWallet === key ? "active" : ""} connected`}
+              className={`ml-wallet ${activeWallet === key ? "active" : ""}`}
               style={{ "--walletColor": w.color } as React.CSSProperties}
               onClick={() => setActiveWallet(activeWallet === key ? null : key)}>
               <div className="ml-wallet-icon">{w.icon}</div>
               <div className="ml-wallet-name">{w.name}</div>
-              <div className="ml-wallet-status" style={{ color: "#22c55e" }}>✓ Connected</div>
+              <div className="ml-wallet-status" style={{ color: "#f59e0b" }}>Not available</div>
             </div>
           ))}
         </div>
 
-        {/* Fee note */}
-        <div className="ml-fee-note">
-          💡 <strong>Revenue model:</strong> ClickPesa charges 1% per transaction. PESA DUKA adds 0.5–1% margin.
-          Today's inflow of {fmt(totalInflow)} generates approx. {fmt(feeEarned)} in transaction revenue for PESA DUKA.
+        <div className="ml-fee-note" role="status">
+          Not available. This screen does not contact a payment provider and will not mark a payment successful.
         </div>
 
         {/* Summary */}
@@ -268,9 +250,6 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
                   <div className="ml-txn-amount" style={{ color: txn.reconciled ? "#22c55e" : "var(--t)" }}>
                     {fmt(txn.amount)}
                   </div>
-                  <div style={{ fontSize: 9, color: "var(--t2)", marginTop: 2 }}>
-                    Fee: {fmt(Math.round(txn.amount * 0.015))}
-                  </div>
                 </div>
               </div>
 
@@ -294,54 +273,20 @@ export default function MobileMoneyLedger({ theme = "dark" }) {
         })}
 
         {filtered.length === 0 && (
-          <div style={{ textAlign: "center", padding: "32px", color: "var(--t2)", fontSize: 13 }}>
-            <div style={{ fontSize: 28, marginBottom: 8 }}>✅</div>
-            All transactions reconciled!
+          <div style={{ textAlign: "center", padding: "32px", color: "var(--t2)", fontSize: 13 }} role="status">
+            {transactions.length === 0 ? (
+              <>
+                <div style={{ fontSize: 16, fontWeight: 800, color: "var(--t)", marginBottom: 6 }}>Not available</div>
+                No wallet payments are collected here.
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: 28, marginBottom: 8 }}>✅</div>
+                All matching transactions are reconciled.
+              </>
+            )}
           </div>
         )}
-
-        {/* API setup guide */}
-        <div className="ml-api-card" style={{ marginTop: 16 }}>
-          <div className="ml-lbl">ClickPesa Webhook Setup</div>
-          <div style={{ fontSize: 11, color: "var(--t2)", marginBottom: 10, lineHeight: 1.5 }}>
-            Configure your ClickPesa dashboard to send payment webhooks to your backend.
-            Every payment across all 4 wallets fires to one endpoint.
-          </div>
-          <div className="ml-code">{`// POST /api/webhooks/clickpesa
-// ClickPesa fires this on every completed payment
-
-app.post('/webhooks/clickpesa', async (req, res) => {
-  const {
-    transactionId,  // "MPE240314-8821"
-    amount,         // 45000 (in TZS, no decimals)
-    provider,       // "MPESA" | "AIRTEL" | "TIGOPESA" | "HALOPESA"
-    reference,      // Your BillPay reference number
-    status,         // "COMPLETED" | "PENDING" | "FAILED"
-    phone,          // "+255712334556"
-    timestamp       // ISO 8601
-  } = req.body;
-
-  // Verify signature: HMAC-SHA256(payload, CLICKPESA_WEBHOOK_SECRET)
-  
-  await db.mobileMoneyTransactions.create({
-    externalId: transactionId, amount, provider: provider.toLowerCase(),
-    reference, status: status.toLowerCase(), phone, timestamp,
-    reconciled: false  // UI handles matching to ledger
-  });
-  
-  res.json({ received: true });
-});`}</div>
-          <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-            <a href="https://docs.clickpesa.com" target="_blank" rel="noreferrer"
-              style={{ background: "var(--primary)", color: "#fff", borderRadius: 8, padding: "7px 14px", fontSize: 11, fontWeight: 700, textDecoration: "none", display: "inline-block" }}>
-              ClickPesa Docs →
-            </a>
-            <a href="https://clickpesa.com" target="_blank" rel="noreferrer"
-              style={{ background: "var(--inp)", color: "var(--t2)", border: "1px solid var(--border)", borderRadius: 8, padding: "7px 14px", fontSize: 11, fontWeight: 700, textDecoration: "none", display: "inline-block" }}>
-              Register Account
-            </a>
-          </div>
-        </div>
       </div>
     </>
   );

@@ -354,7 +354,7 @@ export function Dashboard() {
             <span style={{ fontSize: "22px" }}>🚀</span>
             <div>
               <div style={{ fontSize: "13px", fontWeight: 800, color: "hsl(var(--foreground))", marginBottom: "2px" }}>You're on Starter — unlock your full business tools</div>
-              <div style={{ fontSize: "12px", color: "hsl(var(--muted-foreground))" }}>Growth plan adds Akili AI, all 4 mobile money wallets, WhatsApp debt reminders + unlimited invoices. <strong style={{ color: "#E56B0A" }}>TSh 250/day</strong></div>
+              <div style={{ fontSize: "12px", color: "hsl(var(--muted-foreground))" }}>Growth plan adds Akili AI, WhatsApp debt reminders + unlimited invoices. Mobile money payments are not available. <strong style={{ color: "#E56B0A" }}>TSh 250/day</strong></div>
             </div>
           </div>
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>

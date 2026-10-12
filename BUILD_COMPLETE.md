@@ -17,9 +17,9 @@ Successfully integrated **2 critical regulatory compliance features** for the Ea
 
 ### 2. ✅ **Mobile Money Ledger**
 - **Location**: `/src/app/components/MobileMoneyLedgerComponent.tsx`  
-- **Purpose**: Auto-reconcile all 4 Tanzanian wallets
-- **Integration**: ClickPesa API webhooks
-- **Features**: M-Pesa, Airtel Money, Mixx, HaloPesa, CRDB Bank
+- **Purpose**: Local list of mobile-money rows already stored on sales
+- **Integration**: Retired. Automatic wallet sync is not available.
+- **Features**: Wallet tiles show "Not available". Cash sales can still be recorded.
 
 ---
 
@@ -82,21 +82,19 @@ Successfully integrated **2 critical regulatory compliance features** for the Ea
 ### Mobile Money Compliance
 | Wallet | Status | Integration |
 |--------|--------|-------------|
-| M-Pesa (Vodacom) | ✅ Built | ClickPesa API |
-| Airtel Money | ✅ Built | ClickPesa API |
-| Mixx by Yas (Tigo) | ✅ Built | ClickPesa API |
-| HaloPesa | ✅ Built | ClickPesa API |
-| CRDB Bank | ✅ Built | ClickPesa API |
+| M-Pesa (Vodacom) | Not available | Retired |
+| Airtel Money | Not available | Retired |
+| Mixx by Yas (Tigo) | Not available | Retired |
+| HaloPesa | Not available | Retired |
+| CRDB Bank | Not available | Retired |
 
 ---
 
 ## 💰 **REVENUE MODEL**
 
 ### Mobile Money Transaction Fees
-```
-ClickPesa:  1.0% per transaction (industry standard)
-CREOVA:     0.5-1.0% margin
-```
+
+Automatic wallet collection is not available, so there is no provider fee to charge from this app.
 
 **Example Revenue**:
 ```
@@ -124,8 +122,8 @@ Monthly (30 days):  TSh 4,692,000 - TSh 9,384,000
 - ✅ **Real-time status tracking** (Reconciled/Unreconciled/Pending)
 - ✅ **Smart auto-reconcile** based on reference patterns
 - ✅ **Dropdown ledger matching** for manual assignment
-- ✅ **Fee transparency** showing ClickPesa + CREOVA fees
-- ✅ **ClickPesa API docs** embedded in UI
+- Wallet tiles labeled **Not available**
+- No provider setup guide in the UI
 
 ---
 
@@ -166,16 +164,7 @@ Both components fully responsive:
 - [x] Documentation complete
 
 ### Backend Setup (Next Steps)
-- [ ] **ClickPesa Account**:
-  - [ ] Register at clickpesa.com
-  - [ ] Get API credentials
-  - [ ] Set up sandbox environment
-  
-- [ ] **Webhook Endpoint**:
-  - [ ] Create POST `/api/webhooks/clickpesa`
-  - [ ] Implement HMAC signature verification
-  - [ ] Database schema for mobile_money_transactions
-  - [ ] Test with ClickPesa sandbox
+- [x] Payment-provider client, env names, and webhook handler removed. Delete any leftover provider env vars in the hosting dashboard. Do not add new client-side payment credentials.
 
 - [ ] **TRA EFD Certification**:
   - [ ] Apply for EFD device registration
@@ -226,8 +215,8 @@ CREOVA is now the **ONLY** POS system in Tanzania with:
 3. ✅ **Auto-Reconciliation**  
    Competitors: Manual ledger matching (2-3 hrs/day)
 
-4. ✅ **ClickPesa Integration**  
-   Competitors: No payment gateway integration
+4. Mobile money collection is **not available**  
+   Do not advertise it as a live payment gateway
 
 5. ✅ **Swahili + English Bilingual**  
    Competitors: English only
@@ -247,12 +236,11 @@ CREOVA is now the **ONLY** POS system in Tanzania with:
 
 ### For Business Team
 - **EFD Z-Report**: Explanation of TRA compliance value
-- **Mobile Money Ledger**: ClickPesa revenue model breakdown
+- **Mobile Money Ledger**: automatic sync is not available
 - **Target Market**: Dar es Salaam dukas, agro-dealers, pharmacies
 - **Competitive Analysis**: Why CREOVA wins vs competitors
 
 ### External Resources
-- ClickPesa Docs: https://docs.clickpesa.com
 - TRA Website: https://tra.go.tz/
 - Tanzania PDPA: https://www.pdpc.go.tz/
 
@@ -291,14 +279,14 @@ CREOVA is now the **ONLY** POS system in Tanzania with:
 - Documentation complete
 
 ### What's Pending ⏳
-- ClickPesa webhook backend (need API credentials)
+- Payment provider integration (retired; do not restore client credentials)
 - TRA EFD device registration (3-6 month process)
 - Production database schema
 - Load testing with real volume
 - Security audit
 
 ### What's Next 🔜
-1. **Week 1**: Set up ClickPesa sandbox
+1. **Week 1**: Confirm hosting env has no retired payment-provider variables
 2. **Week 2**: Build webhook endpoint
 3. **Week 3**: Test with beta merchants
 4. **Month 2**: Apply for TRA EFD certification
@@ -335,7 +323,7 @@ CREOVA is now the **ONLY** POS system in Tanzania with:
 - [x] Error handling included
 - [x] Loading states implemented
 - [x] Security considerations noted
-- [x] ClickPesa webhook code documented
+- [x] Retired payment-provider client and webhook notes removed
 - [x] TRA compliance requirements met
 - [x] Revenue model documented
 - [x] Competitive analysis complete
@@ -353,7 +341,7 @@ CREOVA is now the **ONLY** POS system in Tanzania with:
 ✅ Government partnership ready  
 ✅ Dar es Salaam pilot launch ready  
 
-**Next step**: Backend webhook setup + ClickPesa API integration
+**Next step**: Keep mobile money marked not available until a server-side provider exists
 
 ---
 
@@ -363,5 +351,5 @@ CREOVA is now the **ONLY** POS system in Tanzania with:
 ---
 
 **Build Completed**: March 15, 2026  
-**Next Milestone**: ClickPesa Integration (Week 1-2)  
+**Next Milestone**: TRA EFD certification (payment-provider checkout stays unavailable)  
 **Launch Target**: Dar es Salaam Pilot (Q2 2026)
