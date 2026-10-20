@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { buildSupplierPOUrl } from "../lib/whatsapp";
+import { toast } from "sonner";
+
 
 const BRAND = "#E56B0A";
 const fmt = (n: number) => "TSh " + Number(n).toLocaleString("en-TZ");
@@ -61,13 +64,40 @@ export function StockOrderModal({ onClose, onSubmit, theme = "dark" }: StockOrde
 
   const handleSubmit = () => {
     setSubmitted(true);
+    const selectedItems = supplier.items
+      .filter((i) => (Number(orderItems[i.sku]) || 0) > 0)
+      .map((i) => ({
+        ...i,
+        qty: orderItems[i.sku],
+      }));
+
     const order = {
       supplier: supplier.name,
-      items: supplier.items.filter(i => (orderItems[i.sku] || 0) > 0).map(i => ({
-        ...i, qty: orderItems[i.sku]
-      })),
-      totalCost, deliveryDate, note,
+      items: selectedItems,
+      totalCost,
+      deliveryDate,
+      note,
     };
+
+    // Open pre-filled WhatsApp Purchase Order
+    try {
+      const poUrl = buildSupplierPOUrl({
+        supplierName: supplier.name,
+        supplierPhone: supplier.phone,
+        items: selectedItems.map((i) => ({
+          name: i.name,
+          quantity: Number(i.qty),
+          unit: i.unit,
+          wholesalePrice: i.price,
+        })),
+        deliveryNotes: note ? `${note} (Tarajiwa: ${deliveryDate || 'Haraka'})` : undefined,
+      });
+      window.open(poUrl, '_blank');
+      toast.success(`Agizo limetumwa WhatsApp kwa ${supplier.name}`);
+    } catch (err: any) {
+      console.warn('WhatsApp PO open error:', err);
+    }
+
     onSubmit?.(order);
   };
 

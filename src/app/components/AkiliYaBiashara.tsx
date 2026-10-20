@@ -1,4 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { useProducts, useTransactions, useCustomers } from "../hooks/useData";
+
 
 // ─── AkiliYaBiashara ──────────────────────────────────────────────────────────
 // The selling point. An AI business advisor that speaks like a trusted friend,
@@ -347,10 +349,34 @@ const QUICK_PROMPTS_SW = [
 ];
 
 export default function AkiliYaBiashara({ shopData = SAMPLE_SHOP, theme = "dark" }: { shopData?: typeof SAMPLE_SHOP; theme?: "dark" | "light" }) {
+  const { data: liveProducts = [] } = useProducts();
+  const { data: liveTransactions = [] } = useTransactions();
+  const { data: liveCustomers = [] } = useCustomers();
+
+  const effectiveShopData = useMemo(() => {
+    if (liveProducts.length === 0 && liveTransactions.length === 0) {
+      return shopData;
+    }
+
+    const totalRev = liveTransactions.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
+    const lowStockCount = liveProducts.filter((p) => (p.stock || 0) <= 5).length;
+    const totalDebt = liveCustomers.reduce((acc, c) => acc + (Number(c.owes) || 0), 0);
+
+    return {
+      ...shopData,
+      weekRevenue: totalRev > 0 ? totalRev : shopData.weekRevenue,
+      weekTransactions: liveTransactions.length > 0 ? liveTransactions.length : shopData.weekTransactions,
+      stockoutsThisWeek: lowStockCount > 0 ? lowStockCount : shopData.stockoutsThisWeek,
+      overdueDebt: totalDebt > 0 ? totalDebt : shopData.overdueDebt,
+      debtors: liveCustomers.filter((c) => (c.owes || 0) > 0).length || shopData.debtors,
+    };
+  }, [shopData, liveProducts, liveTransactions, liveCustomers]);
+
   const [tab, setTab] = useState<"insights" | "chat" | "predict">("insights");
   const [lang, setLang] = useState<"both" | "sw" | "en">("both");
-  const [messages, setMessages] = useState<Message[]>(() => buildInitialMessages(shopData.owner, shopData));
+  const [messages, setMessages] = useState<Message[]>(() => buildInitialMessages(effectiveShopData.owner, effectiveShopData));
   const [inputVal, setInputVal] = useState("");
+
   const [isTyping, setIsTyping] = useState(false);
   const [expandedInsight, setExpandedInsight] = useState<number | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -366,22 +392,22 @@ export default function AkiliYaBiashara({ shopData = SAMPLE_SHOP, theme = "dark"
     setInputVal("");
     setIsTyping(true);
 
-    // Simulated responses keyed to common questions
-    const marginPct = shopData.weekRevenue > 0 ? Math.round((shopData.weekProfit / shopData.weekRevenue) * 100) : 0;
-    const digitalPct = shopData.paymentSplit.mpesa + (shopData.paymentSplit.airtel || 0);
-    const hasData = shopData.weekRevenue > 0;
+    // Responses computed from effective shop data
+    const marginPct = effectiveShopData.weekRevenue > 0 ? Math.round((effectiveShopData.weekProfit / effectiveShopData.weekRevenue) * 100) : 0;
+    const digitalPct = effectiveShopData.paymentSplit.mpesa + (effectiveShopData.paymentSplit.airtel || 0);
+    const hasData = effectiveShopData.weekRevenue > 0;
     const responses: Record<string, string> = {
-      "monday": `Jumatatu ni polepole kwa sababu wateja wanamaliza pesa za mwisho wa wiki Jumapili. Wastani wako ni ${fmt(Math.round(shopData.avgDailySales * 0.6))} tu Jumatatu. Tumia siku hiyo kupanga hisa na kuhesabu — si kutegemea mauzo.\n\nMonday is slow because customers spent their weekend money on Sunday. Your Monday average is around ${fmt(Math.round(shopData.avgDailySales * 0.6))}. Use Monday for stock planning and stocktaking — not sales volume.`,
+      "monday": `Jumatatu ni polepole kwa sababu wateja wanamaliza pesa za mwisho wa wiki Jumapili. Wastani wako ni ${fmt(Math.round(effectiveShopData.avgDailySales * 0.6))} tu Jumatatu. Tumia siku hiyo kupanga hisa na kuhesabu — si kutegemea mauzo.\n\nMonday is slow because customers spent their weekend money on Sunday. Your Monday average is around ${fmt(Math.round(effectiveShopData.avgDailySales * 0.6))}. Use Monday for stock planning and stocktaking — not sales volume.`,
       "profit": hasData
-        ? `Ndio — unapata faida ya ${marginPct}% wiki hii (${fmt(shopData.weekProfit)}). ${marginPct >= 25 ? "Hii ni nzuri — bora kuliko wastani." : "Lakini iko chini ya kiwango salama cha 25% — angalia gharama zako."} ${shopData.overdueDebt > 0 ? `Tatizo kubwa ni deni la ${fmt(shopData.overdueDebt)} kutoka kwa wateja — hii inabeba kama hasara.` : "Deni lako uko sawa."}\n\nYes — you're at ${marginPct}% margin this week (${fmt(shopData.weekProfit)}). ${marginPct >= 25 ? "That's solid — better than average." : "But it's below the safe 25% threshold — review your costs."} ${shopData.overdueDebt > 0 ? `Your biggest drag is ${fmt(shopData.overdueDebt)} in customer debt — that's sitting as lost profit.` : "Your debt book looks clean."}`
+        ? `Ndio — unapata faida ya ${marginPct}% wiki hii (${fmt(effectiveShopData.weekProfit)}). ${marginPct >= 25 ? "Hii ni nzuri — bora kuliko wastani." : "Lakini iko chini ya kiwango salama cha 25% — angalia gharama zako."} ${effectiveShopData.overdueDebt > 0 ? `Tatizo kubwa ni deni la ${fmt(effectiveShopData.overdueDebt)} kutoka kwa wateja — hii inabeba kama hasara.` : "Deni lako uko sawa."}\n\nYes — you're at ${marginPct}% margin this week (${fmt(effectiveShopData.weekProfit)}). ${marginPct >= 25 ? "That's solid — better than average." : "But it's below the safe 25% threshold — review your costs."} ${effectiveShopData.overdueDebt > 0 ? `Your biggest drag is ${fmt(effectiveShopData.overdueDebt)} in customer debt — that's sitting as lost profit.` : "Your debt book looks clean."}`
         : "Fanya mauzo ya kwanza kupitia POS nikusaidie kuhesabu faida yako halisi.\n\nRecord your first sale through the POS so I can calculate your real profit margin.",
-      "owes": shopData.overdueDebt > 0
-        ? `Wateja ${shopData.debtors} wanakudai ${fmt(shopData.overdueDebt)}. Tuma ujumbe WhatsApp sasa hivi asubuhi — uwezekano wa kulipwa ni mara mbili zaidi kuliko jioni. Anza na wale wanaodaiwa zaidi.\n\n${shopData.debtors} customer${shopData.debtors > 1 ? "s" : ""} owe you ${fmt(shopData.overdueDebt)}. Send WhatsApp reminders this morning — twice as likely to get paid versus evenings. Start with your biggest outstanding balance.`
+      "owes": effectiveShopData.overdueDebt > 0
+        ? `Wateja ${effectiveShopData.debtors} wanakudai ${fmt(effectiveShopData.overdueDebt)}. Tuma ujumbe WhatsApp sasa hivi asubuhi — uwezekano wa kulipwa ni mara mbili zaidi kuliko jioni. Anza na wale wanaodaiwa zaidi.\n\n${effectiveShopData.debtors} customer${effectiveShopData.debtors > 1 ? "s" : ""} owe you ${fmt(effectiveShopData.overdueDebt)}. Send WhatsApp reminders this morning — twice as likely to get paid versus evenings. Start with your biggest outstanding balance.`
         : "Habari njema — deni lako iko safi wiki hii! Hakuna wateja wanaokudai sasa hivi.\n\nGood news — your debt book is clean this week! No outstanding customer debts right now.",
-      "staff": `Wafanyakazi ${shopData.staffCount} wako ni ${shopData.staffCount >= 2 ? "wa kutosha wiki nzima isipokuwa Jumamosi asubuhi" : "kidogo — fikiria kuongeza msaada Jumamosi"}. Saa za kilele ni ${shopData.bestHour} — hakikisha una nguvu kazi ya kutosha wakati huo.\n\nYour ${shopData.staffCount} staff ${shopData.staffCount >= 2 ? "are enough most of the week but Saturday mornings are tight" : "may not be enough — consider extra help on Saturdays"}. Peak hours are ${shopData.bestHour} — make sure you're fully covered then.`,
-      "loan": `Alama yako ya mkopo ni ${shopData.creditScore}/100. ${shopData.creditScore >= 65 ? "Unastahili mkopo wa Pesapal." : `Unahitaji ${65 - shopData.creditScore} pointi zaidi kufika kiwango cha Pesapal (65).`} Malipo ya kidijitali yako ni ${digitalPct}% — ${digitalPct >= 60 ? "juu ya kiwango cha mkopo." : `unahitaji ${60 - digitalPct}% zaidi.`}\n\nYour credit score is ${shopData.creditScore}/100. ${shopData.creditScore >= 65 ? "You qualify for a Pesapal loan." : `You need ${65 - shopData.creditScore} more points to reach the Pesapal threshold (65).`} Your digital payment rate is ${digitalPct}% — ${digitalPct >= 60 ? "above the loan eligibility threshold." : `${60 - digitalPct}% more needed.`}`,
-      "stock": shopData.stockoutsThisWeek > 0
-        ? `Bidhaa ${shopData.stockoutsThisWeek} ziko chini ya kiwango cha agizo. Angalia orodha yako ya hisa sasa na uagize kabla ya Ijumaa ili uwe tayari Jumamosi.\n\n${shopData.stockoutsThisWeek} product${shopData.stockoutsThisWeek > 1 ? "s are" : " is"} below reorder level. Check your inventory now and order before Friday to be ready for Saturday peak sales.`
+      "staff": `Wafanyakazi ${effectiveShopData.staffCount} wako ni ${effectiveShopData.staffCount >= 2 ? "wa kutosha wiki nzima isipokuwa Jumamosi asubuhi" : "kidogo — fikiria kuongeza msaada Jumamosi"}. Saa za kilele ni ${effectiveShopData.bestHour} — hakikisha una nguvu kazi ya kutosha wakati huo.\n\nYour ${effectiveShopData.staffCount} staff ${effectiveShopData.staffCount >= 2 ? "are enough most of the week but Saturday mornings are tight" : "may not be enough — consider extra help on Saturdays"}. Peak hours are ${effectiveShopData.bestHour} — make sure you're fully covered then.`,
+      "loan": `Alama yako ya mkopo ni ${effectiveShopData.creditScore}/100. ${effectiveShopData.creditScore >= 65 ? "Unastahili mkopo wa Pesapal." : `Unahitaji ${65 - effectiveShopData.creditScore} pointi zaidi kufika kiwango cha Pesapal (65).`} Malipo ya kidijitali yako ni ${digitalPct}% — ${digitalPct >= 60 ? "juu ya kiwango cha mkopo." : `unahitaji ${60 - digitalPct}% zaidi.`}\n\nYour credit score is ${effectiveShopData.creditScore}/100. ${effectiveShopData.creditScore >= 65 ? "You qualify for a Pesapal loan." : `You need ${65 - effectiveShopData.creditScore} more points to reach the Pesapal threshold (65).`} Your digital payment rate is ${digitalPct}% — ${digitalPct >= 60 ? "above the loan eligibility threshold." : `${60 - digitalPct}% more needed.`}`,
+      "stock": effectiveShopData.stockoutsThisWeek > 0
+        ? `Bidhaa ${effectiveShopData.stockoutsThisWeek} ziko chini ya kiwango cha agizo. Angalia orodha yako ya hisa sasa na uagize kabla ya Ijumaa ili uwe tayari Jumamosi.\n\n${effectiveShopData.stockoutsThisWeek} product${effectiveShopData.stockoutsThisWeek > 1 ? "s are" : " is"} below reorder level. Check your inventory now and order before Friday to be ready for Saturday peak sales.`
         : "Hisa zako ziko vizuri wiki hii — hakuna bidhaa zinazokaribia kukwisha.\n\nYour stock levels are good this week — no products are near running out.",
       "default": hasData
         ? `Mauzo yako ya wiki hii ni ${fmt(shopData.weekRevenue)} kutoka miamala ${shopData.weekTransactions}. ${shopData.stockoutsThisWeek > 0 ? `Kumbuka: bidhaa ${shopData.stockoutsThisWeek} zinahitaji kuagizwa.` : "Hisa zako ziko vizuri."} Niulize chochote kuhusu biashara yako.\n\nYour revenue this week is ${fmt(shopData.weekRevenue)} from ${shopData.weekTransactions} transactions. ${shopData.stockoutsThisWeek > 0 ? `Remember: ${shopData.stockoutsThisWeek} product${shopData.stockoutsThisWeek > 1 ? "s need" : " needs"} reordering.` : "Stock levels are fine."} Ask me anything about your business.`
@@ -407,7 +433,7 @@ export default function AkiliYaBiashara({ shopData = SAMPLE_SHOP, theme = "dark"
     }, 1800);
   };
 
-  const predictions = generatePredictions(shopData);
+  const predictions = generatePredictions(effectiveShopData);
   const maxPred = Math.max(...predictions.map(p => p.predicted));
 
   return (
@@ -423,10 +449,10 @@ export default function AkiliYaBiashara({ shopData = SAMPLE_SHOP, theme = "dark"
                 Akili ya Biashara · Business Intelligence
               </div>
               <div style={{ fontSize: 16, fontWeight: 800, color: "var(--t)" }}>
-                Habari, {shopData.owner}!
+                Habari, {effectiveShopData.owner}!
               </div>
               <div style={{ fontSize: 11, color: "var(--t2)", marginTop: 2 }}>
-                Nina uchanganuzi {generateInsights(shopData).length} mpya leo · I have {generateInsights(shopData).length} new insights for you
+                Nina uchanganuzi {generateInsights(effectiveShopData).length} mpya leo · I have {generateInsights(effectiveShopData).length} new insights for you
               </div>
             </div>
             <div style={{ textAlign: "right", flexShrink: 0 }}>

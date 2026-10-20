@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Pesa Duka v1 — Continuous Thermal Receipt Print Stylesheet
+   Formats print canvas strictly for 58mm (32 chars) and 80mm (48 chars) rolls
+   ========================================================================== */
+
+#printable-thermal-receipt {
+  display: none;
+}
+
+@media print {
+  /* Hide standard page elements and chrome */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Only make thermal container visible */
+  #printable-thermal-receipt,
+  #printable-thermal-receipt * {
+    visibility: visible !important;
+  }
+
+  #printable-thermal-receipt {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    margin: 0 !important;
+    padding: 2mm !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    line-height: 1.35 !important;
+  }
+
+  #printable-thermal-receipt.thermal-58mm {
+    width: 58mm !important;
+    font-size: 11px !important;
+  }
+
+  #printable-thermal-receipt.thermal-80mm {
+    width: 80mm !important;
+    font-size: 12px !important;
+  }
+
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+
+  #printable-thermal-receipt h2 {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 0 2px 0;
+  }
+
+  #printable-thermal-receipt p {
+    margin: 1px 0;
+    text-align: center;
+    font-size: 10px;
+  }
+
+  #printable-thermal-receipt .row {
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  #printable-thermal-receipt .item-name {
+    font-weight: 500;
+    margin-top: 3px;
+  }
+
+  #printable-thermal-receipt .divider-single {
+    border-top: 1px dashed #000;
+    margin: 4px 0;
+  }
+
+  #printable-thermal-receipt .divider-double {
+    border-top: 2px solid #000;
+    margin: 4px 0;
+  }
+
+  #printable-thermal-receipt .grand-total {
+    font-size: 13px;
+    font-weight: bold;
+    padding: 2px 0;
+  }
+
+  #printable-thermal-receipt .tra-code {
+    font-size: 9px;
+    margin-top: 4px;
+  }
+
+  #printable-thermal-receipt .footer-msg {
+    margin-top: 6px;
+    text-align: center;
+    font-weight: bold;
+  }
+}

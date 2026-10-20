@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { Send, Phone, AlertCircle } from "lucide-react";
+import { Send, Phone, AlertCircle, Check } from "lucide-react";
 import { getProfile } from "../hooks/useBusinessProfile";
+import { buildDebtReminderUrl, normalizeE164Phone } from "../lib/whatsapp";
+import { toast } from "sonner";
+
 
 // ─── DebtFollowUpQueue ────────────────────────────────────────────────────────
 // Proactive debt collection workflow with credit scoring + WhatsApp reminders
@@ -264,21 +267,30 @@ export default function DebtFollowUpQueue({ customers = SAMPLE_CUSTOMERS, theme 
                     <div className="dq-actions">
                       {c.debt > 0 && (
                         <a
-                          href={buildWhatsAppLink(c.phone, c.name, c.debt, businessProfile.businessName || "our shop")}
+                          href={buildDebtReminderUrl({
+                            customerName: c.name,
+                            phone: c.phone,
+                            debtAmount: c.debt,
+                            purchaseDate: c.lastPurchase,
+                            businessName: businessProfile.businessName || "Duka Langu",
+                          })}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="dq-action-btn wa"
                           style={{ textDecoration: "none" }}
-                          onClick={e => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toast.success(`Ujumbe wa WhatsApp umeanza kutumwa kwa ${c.name}`);
+                          }}
                         >
                           💬 WhatsApp Reminder
                         </a>
                       )}
                       <a
-                        href={`tel:${c.phone.replace(/\s/g, "")}`}
+                        href={`tel:${normalizeE164Phone(c.phone)}`}
                         className="dq-action-btn"
                         style={{ textDecoration: "none" }}
-                        onClick={e => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         📞 Call
                       </a>

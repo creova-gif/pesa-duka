@@ -1,3 +1,5 @@
+# Pesa Duka v1 — AI Agent & gstack Guidelines
+
 ## gstack (REQUIRED — global install)
 
 **Before doing ANY work, verify gstack is installed:**
@@ -24,5 +26,32 @@ Do not skip skills, ignore gstack errors, or work around missing gstack.
 
 Using gstack skills: After install, skills like /qa, /ship, /review, /investigate,
 and /browse are available. Use /browse for all web browsing (Aside first, the bundled gstack browser as fallback).
-Use the resolved install path above for gstack file paths
-(default: ~/.claude/skills/gstack).
+Use the resolved install path above for gstack file paths (default: ~/.claude/skills/gstack).
+
+---
+
+## Local Project gstack Integration
+
+gstack tools are integrated directly into `pesa-duka-v1`:
+- **Headless Browser CLI**: `./bin/browse` or `npm run browse`
+- **QA Automation**: `npm run gstack:qa` (or `bash ./scripts/gstack-qa.sh`)
+- **Security / Guard Check**: `npm run gstack:guard` (or `bash ./scripts/gstack-guard.sh`)
+- **Code Review**: `npm run gstack:review` (or `bash ./scripts/gstack-review.sh`)
+- **Skills Directory**: `.agents/skills/` (linked to 53+ gstack specialist skills)
+- **Browser Configurations**: `.gstack/config.json` & `.gstack/flows/`
+- **Conductor Automation**: `conductor.json` & `.conductor/*.sh`
+
+## Development Commands
+- Start dev server: `npm run dev` (Runs Vite on `http://localhost:5173`)
+- Build application: `npm run build`
+- Browse command: `./bin/browse goto http://localhost:5173`
+
+## Conductor Workspaces
+When running in Conductor, lifecycle scripts are automatically picked up:
+- Setup: `.conductor/setup.sh`
+- Run: `.conductor/run.sh`
+- QA: `.conductor/qa.sh`
+
+## QA & Testing Policy
+- Always run `npm run gstack:qa` or `./bin/browse` to verify UI rendering and capture annotated screenshots before opening PRs.
+- Ensure no console errors are reported in `docs/qa/reports/console-errors.txt`.

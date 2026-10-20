@@ -12,6 +12,7 @@ id_rsa
 
 # Node.js
 node_modules/
+dist/
 npm-debug.log
 
 # Python
@@ -29,3 +30,11 @@ env/
 .DS_Store
 Thumbs.db
 .claude/skills/gstack/
+
+# gstack local sessions and test outputs
+.gstack/sessions/
+docs/qa/screenshots/*.png
+docs/qa/reports/*.txt
+.agents/
+
+.gstack/

@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import ClickPesaPayment from "./ClickPesaPayment";
+import { ReceiptPrinterModal } from "./ReceiptPrinterModal";
+import { buildCustomerReceiptUrl } from "../lib/whatsapp";
 
 // ─── SmartReceiptBuilder ──────────────────────────────────────────────────────
 // Owner/staff selects items already in the system → receipt auto-builds.
@@ -169,8 +171,45 @@ export default function SmartReceiptBuilder({
   const [view, setView]           = useState<"build" | "receipt" | "done">("build");
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
   const [showClickPesa, setShowClickPesa] = useState(false);
+  const [showPrinterModal, setShowPrinterModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  const handleShareWhatsApp = () => {
+    if (!receiptData) return;
+    const url = buildCustomerReceiptUrl({
+      businessName: receiptData.businessName,
+      receiptNo: receiptData.receiptNo,
+      grandTotal: receiptData.grandTotal,
+      fiscalNo: receiptData.fiscalNo,
+      items: receiptData.items.map(it => ({
+        name: it.nameShort || it.name,
+        qty: it.qty,
+        price: it.price,
+      })),
+    });
+    window.open(url, "_blank");
+  };
+
+  const escposReceipt = receiptData ? {
+    businessName: receiptData.businessName,
+    tin: receiptData.tin,
+    receiptNo: receiptData.receiptNo,
+    dateTime: `${receiptData.date} ${receiptData.time}`,
+    cashier: receiptData.cashier,
+    items: receiptData.items.map(i => ({
+      name: i.nameShort || i.name,
+      qty: i.qty,
+      price: i.price,
+      vatTaxCode: (i.vat ? 'A' : 'C') as 'A' | 'C',
+    })),
+    subtotal: receiptData.subtotal,
+    discountAmt: receiptData.discountAmt,
+    vatAmt: receiptData.vatAmt,
+    grandTotal: receiptData.grandTotal,
+    paymentMethod: receiptData.payMethod.toUpperCase(),
+    vfdVerificationUrl: receiptData.fiscalNo ? `https://verify.tra.go.tz/efd/${receiptData.fiscalNo}` : undefined,
+  } : null;
 
   // Transform inventory to match expected format
   const transformedInventory = inventory.map(p => ({
@@ -276,13 +315,29 @@ export default function SmartReceiptBuilder({
               Payment confirmed · {fmt(receiptData?.grandTotal || 0)} via {receiptData?.payMethod?.toUpperCase()}
             </div>
             <div style={{ display:"flex", gap:8, justifyContent:"center", marginBottom:16 }}>
-              <button className="charge-btn" style={{ width:"auto", padding:"10px 20px", fontSize:13, background:"#22c55e" }}>
+              <button
+                className="charge-btn"
+                onClick={handleShareWhatsApp}
+                style={{ width:"auto", padding:"10px 20px", fontSize:13, background:"#22c55e" }}
+              >
                 💬 WhatsApp Receipt
               </button>
-              <button className="charge-btn" style={{ width:"auto", padding:"10px 20px", fontSize:13 }}>
+              <button
+                className="charge-btn"
+                onClick={() => setShowPrinterModal(true)}
+                style={{ width:"auto", padding:"10px 20px", fontSize:13 }}
+              >
                 🖨️ Print
               </button>
-              <button className="charge-btn" style={{ width:"auto", padding:"10px 20px", fontSize:13, background:"#3b82f6" }}>
+              <button
+                className="charge-btn"
+                onClick={() => {
+                  if (receiptData) {
+                    navigator.clipboard?.writeText?.(`Risiti ya Pesa Duka ${receiptData.receiptNo}: TSh ${receiptData.grandTotal.toLocaleString()}`);
+                  }
+                }}
+                style={{ width:"auto", padding:"10px 20px", fontSize:13, background:"#3b82f6" }}
+              >
                 📲 SMS
               </button>
             </div>
@@ -292,6 +347,13 @@ export default function SmartReceiptBuilder({
             </button>
           </div>
         </div>
+        {showPrinterModal && escposReceipt && (
+          <ReceiptPrinterModal
+            isOpen={showPrinterModal}
+            onClose={() => setShowPrinterModal(false)}
+            receipt={escposReceipt}
+          />
+        )}
       </>
     );
   }
@@ -355,13 +417,37 @@ export default function SmartReceiptBuilder({
             </button>
           </div>
           <div style={{ display:"flex", gap:7, marginTop:8 }}>
-            {["💬 WhatsApp","🖨️ Print","📲 SMS"].map(a => (
-              <button key={a} style={{ flex:1, background:"var(--inp)", border:"1px solid var(--border)", borderRadius:9, padding:9, fontSize:11, fontWeight:700, cursor:"pointer", color:"var(--t2)", fontFamily:"inherit" }}>
-                {a}
-              </button>
-            ))}
+            <button
+              onClick={handleShareWhatsApp}
+              style={{ flex:1, background:"var(--inp)", border:"1px solid var(--border)", borderRadius:9, padding:9, fontSize:11, fontWeight:700, cursor:"pointer", color:"var(--t2)", fontFamily:"inherit" }}
+            >
+              💬 WhatsApp
+            </button>
+            <button
+              onClick={() => setShowPrinterModal(true)}
+              style={{ flex:1, background:"var(--inp)", border:"1px solid var(--border)", borderRadius:9, padding:9, fontSize:11, fontWeight:700, cursor:"pointer", color:"var(--t2)", fontFamily:"inherit" }}
+            >
+              🖨️ Print
+            </button>
+            <button
+              onClick={() => {
+                if (receiptData) {
+                  navigator.clipboard?.writeText?.(`Risiti ${receiptData.receiptNo}: TSh ${receiptData.grandTotal.toLocaleString()}`);
+                }
+              }}
+              style={{ flex:1, background:"var(--inp)", border:"1px solid var(--border)", borderRadius:9, padding:9, fontSize:11, fontWeight:700, cursor:"pointer", color:"var(--t2)", fontFamily:"inherit" }}
+            >
+              📲 SMS
+            </button>
           </div>
         </div>
+        {showPrinterModal && escposReceipt && (
+          <ReceiptPrinterModal
+            isOpen={showPrinterModal}
+            onClose={() => setShowPrinterModal(false)}
+            receipt={escposReceipt}
+          />
+        )}
       </>
     );
   }

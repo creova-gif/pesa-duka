@@ -5,7 +5,13 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "browse": "./bin/browse",
+    "gstack:setup": "./scripts/gstack-setup.sh",
+    "gstack:browse": "./scripts/browse.sh",
+    "gstack:qa": "./scripts/gstack-qa.sh",
+    "gstack:guard": "./scripts/gstack-guard.sh",
+    "gstack:review": "./scripts/gstack-review.sh"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

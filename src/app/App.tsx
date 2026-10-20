@@ -4,6 +4,7 @@ import { router } from "./routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { initializeDatabase } from "./lib/api";
+import { initDb } from "./lib/db";
 import { Toaster } from "sonner";
 import { getProfile, saveProfile } from "./hooks/useBusinessProfile";
 import OnboardingSetup from "./components/OnboardingSetup";
@@ -24,9 +25,14 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    initializeDatabase()
+    initDb()
+      .then(() => {
+        if (navigator.onLine) {
+          initializeDatabase().catch(() => {});
+        }
+      })
       .catch((err) => {
-        console.warn("[PESA DUKA] DB init warning:", err);
+        console.warn("[PESA DUKA] DB init:", err);
       })
       .finally(() => {
         setIsInitializing(false);
