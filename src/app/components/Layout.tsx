@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { NotificationCenter } from "./NotificationCenter";
 import { OfflineStatusPill, type ConnectionStatus } from "./OfflineStatus";
 import { getProfile } from "../hooks/useBusinessProfile";
+import { useSyncQueue } from "../hooks/useSyncQueue";
 
 const navItems = [
   { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -24,23 +25,11 @@ export function Layout() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(() =>
-    navigator.onLine ? "online" : "offline"
-  );
+  const { isOnline, isSyncing, queueCount, syncNow } = useSyncQueue();
+  const connectionStatus: ConnectionStatus = !isOnline ? "offline" : (isSyncing ? "syncing" : "online");
   const profile = getProfile();
 
   useEffect(() => { setMounted(true); }, []);
-
-  useEffect(() => {
-    const handleOnline = () => setConnectionStatus("online");
-    const handleOffline = () => setConnectionStatus("offline");
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
 
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";
@@ -68,7 +57,13 @@ export function Layout() {
           <span className="font-black text-base tracking-tight">PESA <span style={{ color: "#E56B0A" }}>DUKA</span></span>
         </Link>
         <div className="ml-auto flex items-center gap-2">
-          <OfflineStatusPill status={connectionStatus} queuedCount={0} />
+          <div
+            onClick={() => isOnline && queueCount > 0 && syncNow()}
+            className={queueCount > 0 && isOnline ? "cursor-pointer" : ""}
+            title={queueCount > 0 ? (isOnline ? "Tap to synchronize queued sales" : "Queued offline sales") : undefined}
+          >
+            <OfflineStatusPill status={connectionStatus} queuedCount={queueCount} />
+          </div>
           <NotificationCenter />
         </div>
       </div>
@@ -206,7 +201,13 @@ export function Layout() {
       <main className="flex-1 overflow-auto pt-14 lg:pt-0">
         {/* Desktop Header */}
         <div className="hidden lg:flex h-14 items-center justify-end px-8 border-b border-border bg-card/60 backdrop-blur-sm sticky top-0 z-30 gap-3">
-          <OfflineStatusPill status={connectionStatus} queuedCount={0} />
+          <div
+            onClick={() => isOnline && queueCount > 0 && syncNow()}
+            className={queueCount > 0 && isOnline ? "cursor-pointer" : ""}
+            title={queueCount > 0 ? (isOnline ? "Click to synchronize queued sales" : "Queued offline sales") : undefined}
+          >
+            <OfflineStatusPill status={connectionStatus} queuedCount={queueCount} />
+          </div>
           <NotificationCenter />
         </div>
         <div className="pd-page">

@@ -123,13 +123,13 @@ window.__DUKA_DEV__ = {
 
 ---
 
-## 4. Implementation Tasks (Locked & Ready)
+## 4. Implementation Tasks (Completed & Verified)
 
-- [ ] **T1 (P1, CC: ~30min)** — `OfflineSyncEngine` — Build local IndexedDB repository in `src/app/lib/db.ts` using native promises, auto-seeding, UUIDv4 idempotency, and FIFO queue manager in `src/app/hooks/useSyncQueue.ts`.
-- [ ] **T2 (P1, CC: ~25min)** — `ThermalPrinting` — Implement pluggable `PrinterAdapter` with 32-col 58mm / 48-col 80mm ESC/POS byte generator in `src/app/lib/escpos.ts` and continuous thermal CSS fallback in `src/styles/receipt-print.css`.
-- [ ] **T3 (P1, CC: ~15min)** — `DebtFollowUpQueue` — Connect live customer credit ledger in `src/app/components/DebtFollowUpQueue.tsx` with E.164 phone normalization and respectful Swahili WhatsApp deep-links in `src/app/lib/whatsapp.ts`.
-- [ ] **T4 (P2, CC: ~15min)** — `SupplierRestock` — Connect low-stock triggers in `src/app/pages/Inventory.tsx` to `src/app/components/StockOrderModal.tsx` generating pre-filled WhatsApp Purchase Orders.
-- [ ] **T5 (P2, CC: ~20min)** — `AkiliYaBiashara` — Implement Swahili analytical query quick-cards with deterministic data calculations in `src/app/components/AkiliYaBiashara.tsx`.
+- [x] **T1 (P1, CC: ~30min)** — `OfflineSyncEngine` — Build local IndexedDB repository in `src/app/lib/db.ts` using native promises, auto-seeding, UUIDv4 idempotency, and FIFO queue manager in `src/app/hooks/useSyncQueue.ts`.
+- [x] **T2 (P1, CC: ~25min)** — `ThermalPrinting` — Implement pluggable `PrinterAdapter` with 32-col 58mm / 48-col 80mm ESC/POS byte generator in `src/app/lib/escpos.ts` and continuous thermal CSS fallback in `src/styles/receipt-print.css`.
+- [x] **T3 (P1, CC: ~15min)** — `DebtFollowUpQueue` — Connect live customer credit ledger in `src/app/components/DebtFollowUpQueue.tsx` with E.164 phone normalization and respectful Swahili WhatsApp deep-links in `src/app/lib/whatsapp.ts`.
+- [x] **T4 (P2, CC: ~15min)** — `SupplierRestock` — Connect low-stock triggers in `src/app/pages/Inventory.tsx` to `src/app/components/StockOrderModal.tsx` generating pre-filled WhatsApp Purchase Orders.
+- [x] **T5 (P2, CC: ~20min)** — `AkiliYaBiashara` — Implement Swahili analytical query quick-cards with deterministic data calculations in `src/app/components/AkiliYaBiashara.tsx`.
 
 ---
 
